@@ -131,7 +131,7 @@ namespace SqlExpression
         public ArithmeticOperator(string literal) : base(literal) { }
     }
 
-    public class  UnionOperator : Operator, IUnionOperator
+    public class UnionOperator : Operator, IUnionOperator
     {
         public UnionOperator(string literal) : base(literal) { }
     }

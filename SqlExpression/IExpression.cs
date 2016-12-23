@@ -60,7 +60,7 @@ namespace SqlExpression
         /// </summary>
         ITableExpression Table { get; set; }
     }
-    
+
     /// <summary>
     /// 字面值
     /// </summary>
@@ -416,7 +416,7 @@ namespace SqlExpression
         /// 连接运算符
         /// </summary>
         IJoinOperator JoinOp { get; set; }
-        
+
         /// <summary>
         /// 连接表
         /// </summary>
