@@ -25,43 +25,6 @@ namespace SqlExpression
             return delete;
         }
 
-        #region OrderBy
-
-        public static IDeleteStatement OrderBy(this IDeleteStatement delete, IEnumerable<IOrderExpression> orders)
-        {
-            var orderby = new OrderByClause(orders.ToArray());
-            return OrderBy(delete, orderby);
-        }
-        public static IDeleteStatement OrderBy(this IDeleteStatement delete, params IOrderExpression[] orders)
-        {
-            var orderby = new OrderByClause(orders);
-            return OrderBy(delete, orderby);
-        }
-
-        public static IDeleteStatement OrderBy(this IDeleteStatement delete, IOrderByClause orderby)
-        {
-            delete.OrderBy = orderby;
-            return delete;
-        }
-
-        #endregion
-
-        #region Limit
-
-        public static IDeleteStatement Limit(this IDeleteStatement delete, int count)
-        {
-            delete.Limit = new LimitClause(0, count);
-            return delete;
-        }
-
-        public static IDeleteStatement Limit(this IDeleteStatement delete, IValueExpression count)
-        {
-            delete.Limit = new LimitClause(null, count);
-            return delete;
-        }
-
-        #endregion
-
         #endregion
     }
 }

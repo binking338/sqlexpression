@@ -337,42 +337,6 @@ namespace SqlExpression
 
         #endregion
 
-        #region OrderBy
-
-        public static IUpdateStatement OrderBy(this IUpdateStatement update, IEnumerable<IOrderExpression> orders)
-        {
-            var orderby = new OrderByClause(orders.ToArray());
-            return OrderBy(update, orderby);
-        }
-        public static IUpdateStatement OrderBy(this IUpdateStatement update, params IOrderExpression[] orders)
-        {
-            var orderby = new OrderByClause(orders);
-            return OrderBy(update, orderby);
-        }
-
-        public static IUpdateStatement OrderBy(this IUpdateStatement update, IOrderByClause orderby)
-        {
-            update.OrderBy = orderby;
-            return update;
-        }
-
-        #endregion
-
-        #region Limit
-
-        public static IUpdateStatement Limit(this IUpdateStatement update, int count)
-        {
-            update.Limit = new LimitClause(0, count);
-            return update;
-        }
-
-        public static IUpdateStatement Limit(this IUpdateStatement update, IValueExpression count)
-        {
-            update.Limit = new LimitClause(null, count);
-            return update;
-        }
-
-        #endregion
 
         #endregion
     }

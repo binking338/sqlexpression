@@ -54,6 +54,26 @@ namespace SqlExpression
             return Params(_params);
         }
 
+        public static  CollectionExpression Cols(IEnumerable<ILiteralValueExpression> values)
+        {
+            return Collection(values);
+        }
+
+        public static CollectionExpression Cols(IEnumerable<object> values)
+        {
+            return Collection(values);
+        }
+
+        public static CollectionExpression Cols(params ILiteralValueExpression[] values)
+        {
+            return Collection(values);
+        }
+
+        public static CollectionExpression Cols(params object[] values)
+        {
+            return Collection(values);
+        }
+
         public static CustomerExpression C(string expression)
         {
             return Customer(expression);
@@ -191,16 +211,6 @@ namespace SqlExpression
         public static OrderExpression Asc(PropertyExpression property)
         {
             return new OrderExpression(property);
-        }
-
-        public static LimitClause Limit(int count, int offset = 0)
-        {
-            return new LimitClause(offset, count);
-        }
-
-        public static LimitClause Page(int pageindex, int pagesize)
-        {
-            return new LimitClause(pagesize * (pageindex - 1), pagesize);
         }
 
         public static UnionStatement Union(IEnumerable<ISelectStatement> sqls)

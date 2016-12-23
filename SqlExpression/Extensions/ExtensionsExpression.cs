@@ -16,30 +16,6 @@ namespace SqlExpression
             return new BatchSqlStatement(sqls.ToArray());
         }
 
-        public static IInsertStatement Clone(this IInsertStatement insert)
-        {
-            if (insert == null) return null;
-            return new InsertStatement(insert.Table, insert.Properties, insert.Values);
-        }
-
-        public static IDeleteStatement Clone(this IDeleteStatement delete)
-        {
-            if (delete == null) return null;
-            return new DeleteStatement(delete.Table, delete.Where);
-        }
-
-        public static IUpdateStatement Clone(this IUpdateStatement update)
-        {
-            if (update == null) return null;
-            return new UpdateStatement(update.Table, new SetClause(update.Set?.Sets), update.Where);
-        }
-
-        public static ISelectStatement Clone(this ISelectStatement select)
-        {
-            if (select == null) return null;
-            return new SelectStatement(select.Tables, select.Items, select.Joins, select.Where, select.GroupBy, select.Having, select.OrderBy, select.Limit);
-        }
-
         #region Property
 
         #region ShortCut

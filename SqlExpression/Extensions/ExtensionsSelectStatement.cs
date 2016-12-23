@@ -265,45 +265,6 @@ namespace SqlExpression
 
         #endregion
 
-        #region Limit
-
-        public static ISelectStatement Limit(this ISelectStatement select, int count)
-        {
-            select.Limit = new LimitClause(0, count);
-            return select;
-        }
-
-        public static ISelectStatement Limit(this ISelectStatement select, int offset, int count)
-        {
-            select.Limit = new LimitClause(offset, count);
-            return select;
-        }
-
-        public static ISelectStatement Limit(this ISelectStatement select, IValueExpression count)
-        {
-            select.Limit = new LimitClause(null, count);
-            return select;
-        }
-
-        public static ISelectStatement Limit(this ISelectStatement select, IValueExpression offset, IValueExpression count)
-        {
-            select.Limit = new LimitClause(offset, count);
-            return select;
-        }
-
-        public static ISelectStatement Limit(this ISelectStatement select, ILimitClause limit)
-        {
-            select.Limit = limit;
-            return select;
-        }
-
-        public static ISelectStatement Page(this ISelectStatement select, int pageindex, int pagesize)
-        {
-            select.Limit = new LimitClause(pagesize * (pageindex - 1), pagesize);
-            return select;
-        }
-
-        #endregion
 
         #endregion
     }

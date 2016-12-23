@@ -213,16 +213,6 @@ namespace SqlExpression
         /// 过滤条件
         /// </summary>
         IWhereClause Where { get; set; }
-
-        /// <summary>
-        /// 排序方式(MySql)
-        /// </summary>
-        IOrderByClause OrderBy { get; set; }
-
-        /// <summary>
-        /// 限制行数(MySql)
-        /// </summary>
-        ILimitClause Limit { get; set; }
     }
 
     /// <summary>
@@ -244,16 +234,6 @@ namespace SqlExpression
         /// 过滤条件
         /// </summary>
         IWhereClause Where { get; set; }
-
-        /// <summary>
-        /// 排序方式(MySql)
-        /// </summary>
-        IOrderByClause OrderBy { get; set; }
-
-        /// <summary>
-        /// 限制行数(MySql)
-        /// </summary>
-        ILimitClause Limit { get; set; }
     }
 
     /// <summary>
@@ -321,11 +301,6 @@ namespace SqlExpression
         /// 分组条件
         /// </summary>
         IHavingClause Having { get; set; }
-
-        /// <summary>
-        /// 限制行数(MySql)
-        /// </summary>
-        ILimitClause Limit { get; set; }
     }
 
     /// <summary>
@@ -474,22 +449,6 @@ namespace SqlExpression
         /// 字段排序方式
         /// </summary>
         IOrderExpression[] Orders { get; set; }
-    }
-
-    /// <summary>
-    /// 限制行数子句（MySql）
-    /// </summary>
-    public interface ILimitClause : IExpression
-    {
-        /// <summary>
-        /// 偏移
-        /// </summary>
-        IValueExpression Offset { get; set; }
-
-        /// <summary>
-        /// 限制数量
-        /// </summary>
-        IValueExpression Count { get; set; }
     }
 
     /// <summary>

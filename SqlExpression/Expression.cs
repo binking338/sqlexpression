@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
+    public enum ExpressionType
+    {
+        MySql = 1
+    }
+
     /// <summary>
     /// 表达式抽象类
     /// </summary>
@@ -20,6 +25,15 @@ namespace SqlExpression
         {
             get;
             protected set;
+        }
+
+        /// <summary>
+        /// Sql语句类型
+        /// </summary>
+        public ExpressionType Type
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -57,7 +71,15 @@ namespace SqlExpression
 
         protected override void GenExpression()
         {
-            Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("`{0}`", Name);
+            switch (Type)
+            {
+                case ExpressionType.MySql:
+                    Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("`{0}`", Name);
+                    break;
+                default:
+                    Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("{0}", Name);
+                    break;
+            }
         }
 
         public static implicit operator TableExpression(string name)
@@ -107,7 +129,7 @@ namespace SqlExpression
                 GenExpression();
             }
         }
-        
+
         protected override void GenExpression()
         {
             if (string.IsNullOrWhiteSpace(Name))
@@ -116,10 +138,18 @@ namespace SqlExpression
             }
             else
             {
-                Expression = (new string[] {
-                    Table?.Expression,
-                    string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("`{0}`", Name)
-                }).Where(s => !string.IsNullOrWhiteSpace(s)).Join(".");
+                switch (Type)
+                {
+                    case ExpressionType.MySql:
+                        Expression = (new string[] {
+                            Table?.Expression,
+                            string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("`{0}`", Name)
+                        }).Where(s => !string.IsNullOrWhiteSpace(s)).Join(".");
+                        break;
+                    default:
+                        Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("{0}", Name);
+                        break;
+                }
             }
         }
 
@@ -232,7 +262,7 @@ namespace SqlExpression
 
         public override bool Equals(object obj)
         {
-            if(obj is PropertyExpression)
+            if (obj is PropertyExpression)
             {
                 return (obj as PropertyExpression).Name == this.Name;
             }
@@ -368,7 +398,15 @@ namespace SqlExpression
 
         protected override void GenExpression()
         {
-            Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("@{0}", Name);
+            switch (Type)
+            {
+                case ExpressionType.MySql:
+                    Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("@{0}", Name);
+                    break;
+                default:
+                    Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("@{0}", Name);
+                    break;
+            }
         }
 
         #region 隐式转换
@@ -394,7 +432,7 @@ namespace SqlExpression
         }
 
         private ILiteralValueExpression[] _values = null;
-        
+
         public ILiteralValueExpression[] Values
         {
             get
@@ -502,7 +540,7 @@ namespace SqlExpression
         /// 操作符
         /// </summary>
         public IUnaryOperator Op { get { return _op; } set { _op = value; GenExpression(); } }
-        
+
         protected override void GenExpression()
         {
             if (A == null || Op == null)
@@ -544,7 +582,7 @@ namespace SqlExpression
         /// 值
         /// </summary>
         public IExpression B { get { return _b; } set { _b = value; GenExpression(); } }
-        
+
         protected override void GenExpression()
         {
             if (A == null || B == null || Op == null)
@@ -870,6 +908,8 @@ namespace SqlExpression
 
     public class InsertStatement : ExpressionBase, IInsertStatement
     {
+        public InsertStatement() { }
+
         public InsertStatement(ITableExpression table, IPropertyExpression[] properties, IValueExpression[] values)
         {
             _table = table;
@@ -954,25 +994,19 @@ namespace SqlExpression
 
     public class DeleteStatement : ExpressionBase, IDeleteStatement
     {
-        public DeleteStatement(ITableExpression table, IWhereClause where)
-            : this(table, where, null, null)
-        {
-        }
+        public DeleteStatement()
+        { }
 
-        public DeleteStatement(ITableExpression table, IWhereClause where, IOrderByClause orderby, ILimitClause limit)
+        public DeleteStatement(ITableExpression table, IWhereClause where)
         {
             _table = table;
             _where = where;
-            _orderby = orderby;
-            _limit = limit;
             GenExpression();
         }
 
         private ITableExpression _table = null;
         private IWhereClause _where = null;
-        private IOrderByClause _orderby = null;
-        private ILimitClause _limit = null;
-        
+
         public ITableExpression Table
         {
             get
@@ -1001,34 +1035,6 @@ namespace SqlExpression
             }
         }
 
-        public IOrderByClause OrderBy
-        {
-            get
-            {
-                return _orderby;
-            }
-
-            set
-            {
-                _orderby = value;
-                GenExpression();
-            }
-        }
-
-        public ILimitClause Limit
-        {
-            get
-            {
-                return _limit;
-            }
-
-            set
-            {
-                _limit = value;
-                GenExpression();
-            }
-        }
-
         public IEnumerable<string> Params
         {
             get
@@ -1045,33 +1051,28 @@ namespace SqlExpression
             }
             else
             {
-                Expression = string.Format("DELETE FROM {0} {1} {2} {3}", Table?.Expression, Where?.Expression, OrderBy?.Expression, Limit?.Expression).TrimEnd();
+                Expression = string.Format("DELETE FROM {0} {1}", Table?.Expression, Where?.Expression).TrimEnd();
             }
         }
     }
 
     public class UpdateStatement : ExpressionBase, IUpdateStatement
     {
+        public UpdateStatement()
+        { }
+
         public UpdateStatement(ITableExpression table, ISetClause set, IWhereClause where)
-            : this(table, set, where, null, null)
-        {
-        }
-        public UpdateStatement(ITableExpression table, ISetClause set, IWhereClause where, IOrderByClause orderby, ILimitClause limit)
         {
             _table = table;
             _set = set;
             _where = where;
-            _orderby = orderby;
-            _limit = limit;
             GenExpression();
         }
 
         private ITableExpression _table = null;
         private ISetClause _set = null;
         private IWhereClause _where = null;
-        private IOrderByClause _orderby = null;
-        private ILimitClause _limit = null;
-        
+
         public ITableExpression Table
         {
             get
@@ -1113,34 +1114,6 @@ namespace SqlExpression
             }
         }
 
-        public IOrderByClause OrderBy
-        {
-            get
-            {
-                return _orderby;
-            }
-
-            set
-            {
-                _orderby = value;
-                GenExpression();
-            }
-        }
-
-        public ILimitClause Limit
-        {
-            get
-            {
-                return _limit;
-            }
-
-            set
-            {
-                _limit = value;
-                GenExpression();
-            }
-        }
-
         public IEnumerable<string> Params
         {
             get
@@ -1170,7 +1143,10 @@ namespace SqlExpression
             }
             else
             {
-                Expression = string.Format("UPDATE {0} {1} {2} {3} {4}", Table?.Expression, Set?.Expression, Where?.Expression, OrderBy?.Expression, Limit?.Expression).TrimEnd();
+                Expression = string.Format("UPDATE {0} {1} {2}",
+                    Table?.Expression,
+                    Set?.Expression,
+                    Where?.Expression).TrimEnd();
             }
         }
     }
@@ -1191,7 +1167,7 @@ namespace SqlExpression
 
         private IPropertyExpression _property = null;
         private IValueExpression _value = null;
-        
+
         public IPropertyExpression Property
         {
             get
@@ -1271,7 +1247,10 @@ namespace SqlExpression
 
     public class SelectStatement : ExpressionBase, ISelectStatement
     {
-        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null, ILimitClause limit = null)
+        public SelectStatement()
+        { }
+
+        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
         {
             _tables = tables;
             _items = items;
@@ -1280,17 +1259,16 @@ namespace SqlExpression
             _groupby = groupby;
             _having = having;
             _orderby = orderby;
-            _limit = limit;
             GenExpression();
         }
 
-        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null, ILimitClause limit = null)
-            : this(tables, items, null, where, groupby, having, orderby, limit)
+        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
+            : this(tables, items, null, where, groupby, having, orderby)
         {
         }
 
-        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IWhereClause where, IOrderByClause orderby = null, ILimitClause limit = null)
-            : this(tables, items, where, null, null, orderby, limit)
+        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IWhereClause where, IOrderByClause orderby = null)
+            : this(tables, items, where, null, null, orderby)
         {
 
         }
@@ -1302,7 +1280,6 @@ namespace SqlExpression
         private IGroupByClause _groupby = null;
         private IHavingClause _having = null;
         private IOrderByClause _orderby = null;
-        private ILimitClause _limit = null;
 
         public ITableExpression[] Tables
         {
@@ -1396,20 +1373,6 @@ namespace SqlExpression
             }
         }
 
-        public ILimitClause Limit
-        {
-            get
-            {
-                return _limit;
-            }
-
-            set
-            {
-                _limit = value;
-                GenExpression();
-            }
-        }
-
         public IEnumerable<string> Params
         {
             get
@@ -1433,13 +1396,12 @@ namespace SqlExpression
             }
             else
             {
-                Expression = string.Format("SELECT {1} FROM {7} {0} {2} {3} {4} {5} {6}", Tables?.Join(",", t => t.Expression),
+                Expression = string.Format("SELECT {1} FROM {6} {0} {2} {3} {4} {5}", Tables?.Join(",", t => t.Expression),
                     Items?.Join(",", s => s.Expression),
                     Where?.Expression,
                     GroupBy?.Expression,
                     string.IsNullOrWhiteSpace(GroupBy?.Expression) ? string.Empty : Having?.Expression,
                     OrderBy?.Expression,
-                    Limit?.Expression,
                     Joins?.Join(" ", j => j?.Expression)).TrimEnd();
             }
         }
@@ -1583,7 +1545,7 @@ namespace SqlExpression
                 GenExpression();
             }
         }
-        
+
         protected override void GenExpression()
         {
             if (JoinOp == null || Table == null || On == null)
@@ -1619,7 +1581,7 @@ namespace SqlExpression
                 _property = value;
             }
         }
-        
+
         protected override void GenExpression()
         {
             if (Property == null)
@@ -1642,7 +1604,7 @@ namespace SqlExpression
         }
 
         private IFilterExpression _filter = null;
-        
+
         public IFilterExpression Filter
         {
             get
@@ -1691,7 +1653,7 @@ namespace SqlExpression
             this.order = order;
             GenExpression();
         }
-        
+
         private OrderEnum order = OrderEnum.Asc;
         private ISelectableValueExpression property = null;
         public OrderEnum Order
@@ -1740,7 +1702,7 @@ namespace SqlExpression
             _orders = orders;
             GenExpression();
         }
-        
+
         private IOrderExpression[] _orders;
         public IOrderExpression[] Orders
         {
@@ -1769,79 +1731,6 @@ namespace SqlExpression
         }
     }
 
-    public class LimitClause : ExpressionBase, ILimitClause
-    {
-        public LimitClause(int count)
-            : this(0, count)
-        { }
-
-        public LimitClause(int offset, int count)
-        {
-            if (offset < 0) offset = 0;
-            if (count < 1) count = 1;
-            _offset = offset == 0 ? null : new LiteralValueExpression(offset);
-            _count = new LiteralValueExpression(count);
-        }
-
-        public LimitClause(IValueExpression count)
-            : this(null, count)
-        { }
-
-        public LimitClause(IValueExpression offset, IValueExpression count)
-        {
-            _offset = offset;
-            _count = count;
-            GenExpression();
-        }
-
-        private IValueExpression _offset;
-        private IValueExpression _count;
-        
-        public IValueExpression Count
-        {
-            get
-            {
-                return _count;
-            }
-
-            set
-            {
-                _count = value;
-                GenExpression();
-            }
-        }
-
-        public IValueExpression Offset
-        {
-            get
-            {
-                return _offset;
-            }
-
-            set
-            {
-                _offset = value;
-                GenExpression();
-            }
-        }
-
-        protected override void GenExpression()
-        {
-            if (Count == null)
-            {
-                Expression = string.Empty;
-            }
-            if (Offset == null)
-            {
-                Expression = string.Format("LIMIT {0}", Count?.Expression);
-            }
-            else
-            {
-                Expression = string.Format("LIMIT {0},{1}", Offset?.Expression, Count?.Expression);
-            }
-        }
-    }
-
     public class WhereClause : ExpressionBase, IWhereClause
     {
         public WhereClause(IFilterExpression filter)
@@ -1851,7 +1740,7 @@ namespace SqlExpression
         }
 
         private IFilterExpression _filter = null;
-        
+
         public IFilterExpression Filter
         {
             get
@@ -1951,14 +1840,14 @@ namespace SqlExpression
         {
             Expression = expression;
         }
-        
+
         public IEnumerable<string> Params
         {
             get
             {
                 var list = new List<string>();
                 var matchs = Regex.Matches(Expression, "(?<=@)[_a-zA-Z]+[_a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)");
-                foreach(Match match in matchs)
+                foreach (Match match in matchs)
                 {
                     list.Add(match.Value);
                 }
