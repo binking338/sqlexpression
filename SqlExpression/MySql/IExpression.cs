@@ -51,7 +51,7 @@ namespace SqlExpression.MySql
     /// <summary>
     /// delete语句（MySql）
     /// </summary>
-    public interface IMySqlDeleteStatement:IDeleteStatement
+    public interface IMySqlDeleteStatement : IDeleteStatement
     {
         /// <summary>
         /// 排序方式(MySql)
@@ -62,5 +62,9 @@ namespace SqlExpression.MySql
         /// 限制行数(MySql)
         /// </summary>
         ILimitClause Limit { get; set; }
+    }
+
+    public interface IMySqlInsertStatement : IInsertStatement
+    {
     }
 }

@@ -143,7 +143,7 @@ namespace SqlExpression.MySql
 
         }
 
-        public MySqlUpdateStatement(ITableExpression table, ISetClause set, IWhereClause where) 
+        public MySqlUpdateStatement(ITableExpression table, ISetClause set, IWhereClause where)
             : base(table, set, where)
         {
         }
@@ -176,7 +176,7 @@ namespace SqlExpression.MySql
                 GenExpression();
             }
         }
-        
+
         protected override void GenExpression()
         {
             if (Table == null || Set == null)
@@ -185,9 +185,9 @@ namespace SqlExpression.MySql
             }
             else
             {
-                Expression = string.Format("UPDATE {0} {1} {2} {3} {4}", 
-                    Table?.Expression, 
-                    Set?.Expression, 
+                Expression = string.Format("UPDATE {0} {1} {2} {3} {4}",
+                    Table?.Expression,
+                    Set?.Expression,
                     Where?.Expression,
                     OrderBy?.Expression,
                     Limit?.Expression).TrimEnd();
@@ -203,7 +203,7 @@ namespace SqlExpression.MySql
 
         }
 
-        public MySqlDeleteStatement(ITableExpression table, IWhereClause where) 
+        public MySqlDeleteStatement(ITableExpression table, IWhereClause where)
             : base(table, where)
         {
         }
@@ -245,12 +245,23 @@ namespace SqlExpression.MySql
             }
             else
             {
-                Expression = string.Format("DELETE FROM {0} {1} {2} {3}", 
-                    Table?.Expression, 
-                    Where?.Expression, 
-                    OrderBy?.Expression, 
+                Expression = string.Format("DELETE FROM {0} {1} {2} {3}",
+                    Table?.Expression,
+                    Where?.Expression,
+                    OrderBy?.Expression,
                     Limit?.Expression).TrimEnd();
             }
         }
+    }
+
+    public class MySqlInsertStatement : InsertStatement, IMySqlInsertStatement
+    {
+        public MySqlInsertStatement() : base() { }
+
+        public MySqlInsertStatement(ITableExpression table, IPropertyExpression[] properties, IValueExpression[] values)
+            : base(table, properties, values)
+        {
+        }
+
     }
 }
