@@ -344,6 +344,16 @@ namespace SqlExpression
             return new ComparisonExpression(prop, Operator.NotIn, new CollectionExpression(values.Select(val => new LiteralValueExpression(val)).ToArray()));
         }
 
+        public  static ComparisonExpression In(this IPropertyExpression prop, ISelectStatement select)
+        {
+            return new ComparisonExpression(prop, Operator.In, select);
+        }
+
+        public static ComparisonExpression NotIn(this IPropertyExpression prop, ISelectStatement select)
+        {
+            return new ComparisonExpression(prop, Operator.NotIn, select);
+        }
+
         public static ComparisonExpression EqVarParam(this IPropertyExpression prop, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param)) param = prop.Name;
