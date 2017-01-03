@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
-    public enum ExpressionType
+    public enum DBType
     {
         Common = 0,
         MySql = 1

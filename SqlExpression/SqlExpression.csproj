@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
+    <Compile Include="E.cs" />
     <Compile Include="Expression.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Extensions\ExtensionsDeleteStatement.cs" />
@@ -49,12 +49,9 @@
     <Compile Include="Extensions\ExtensionsInsertStatement.cs" />
     <Compile Include="Extensions\ExtensionsSelectStatement.cs" />
     <Compile Include="Extensions\ExtensionsUpdateStatement.cs" />
-    <Compile Include="MySql\Expression.cs" />
-    <Compile Include="MySql\ExtensionsExpression.cs" />
-    <Compile Include="MySql\IExpression.cs" />
+    <Compile Include="MySql\Extensions.cs" />
     <Compile Include="Operator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="E.cs" />
     <Compile Include="IExpression.cs" />
   </ItemGroup>
   <ItemGroup />

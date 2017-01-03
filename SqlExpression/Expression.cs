@@ -8,24 +8,43 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
+    public delegate string ExpressionHandler<Exp>(Exp exp) where Exp : class, IExpression;
+
     /// <summary>
     /// 表达式抽象类
     /// </summary>
-    public abstract class ExpressionBase : IExpression
+    public abstract class ExpressionBase<Exp> : IExpression
+        where Exp : class, IExpression
     {
+        private static Dictionary<DBType, ExpressionHandler<Exp>> handlers = new Dictionary<DBType, ExpressionHandler<Exp>>();
+        public static Dictionary<DBType, ExpressionHandler<Exp>> Handlers
+        {
+            get
+            {
+                return handlers;
+            }
+        }
+
         /// <summary>
         /// 表达式
         /// </summary>
         public string Expression
         {
-            get;
-            protected set;
+            get
+            {
+                Type type = this.GetType();
+                if (Handlers.ContainsKey(Type) && Handlers[Type] != null)
+                {
+                    return Handlers[Type](this as Exp);
+                }
+                return GenExpression();
+            }
         }
 
         /// <summary>
-        /// Sql语句类型
+        /// 数据库类型
         /// </summary>
-        public ExpressionType Type
+        public DBType Type
         {
             get;
             set;
@@ -34,7 +53,7 @@ namespace SqlExpression
         /// <summary>
         /// 构建表达式
         /// </summary>
-        protected abstract void GenExpression();
+        protected abstract string GenExpression();
 
         public override string ToString()
         {
@@ -45,7 +64,7 @@ namespace SqlExpression
     /// <summary>
     /// 表
     /// </summary>
-    public class TableExpression : ExpressionBase, ITableExpression
+    public class TableExpression : ExpressionBase<TableExpression>, ITableExpression
     {
         public TableExpression(string name)
         {
@@ -63,21 +82,12 @@ namespace SqlExpression
             set
             {
                 _name = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
-            switch (Type)
-            {
-                case ExpressionType.MySql:
-                    Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("`{0}`", Name);
-                    break;
-                default:
-                    Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("{0}", Name);
-                    break;
-            }
+            return string.IsNullOrWhiteSpace(Name) ? string.Empty : Name;
         }
 
         public static implicit operator TableExpression(string name)
@@ -85,17 +95,115 @@ namespace SqlExpression
             return new TableExpression(name);
         }
     }
+    /// <summary>
+    /// 字面值
+    /// </summary>
+    public class LiteralValueExpression : ExpressionBase<LiteralValueExpression>, ILiteralValueExpression
+    {
+        public LiteralValueExpression(object value)
+        {
+            if (value is LiteralValueExpression)
+            {
+                Value = (value as LiteralValueExpression).Value;
+            }
+            else if (value is IExpression)
+            {
+                throw new ArgumentException("value");
+            }
+            else
+            {
+                Value = value;
+            }
+        }
+
+        private object _value = null;
+
+        public object Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                _value = value;
+            }
+        }
+
+        protected override string GenExpression()
+        {
+            var valueType = Value?.GetType();
+            if (Value == null || Value is DBNull)
+            {
+                return " NULL ";
+            }
+            else if (valueType == typeof(string) || valueType == typeof(char))
+            {
+                return string.Format("'{0}'", Value);
+            }
+            else if (valueType == typeof(DateTime))
+            {
+                return string.Format("'{0:yyyy-MM-dd HH:mm:ss}'", Value);
+            }
+            else if (valueType.IsEnum)
+            {
+                return Convert.ToInt32(Value).ToString();
+            }
+            else
+            {
+                return Value?.ToString();
+            }
+        }
+
+        #region 隐式转换
+
+        public static implicit operator LiteralValueExpression(string value)
+        {
+            return new LiteralValueExpression(value);
+        }
+
+        public static implicit operator LiteralValueExpression(DateTime value)
+        {
+            return new LiteralValueExpression(value);
+        }
+
+        public static implicit operator LiteralValueExpression(int value)
+        {
+            return new LiteralValueExpression(value);
+        }
+
+        public static implicit operator LiteralValueExpression(long value)
+        {
+            return new LiteralValueExpression(value);
+        }
+
+        public static implicit operator LiteralValueExpression(decimal value)
+        {
+            return new LiteralValueExpression(value);
+        }
+
+        public static implicit operator LiteralValueExpression(double value)
+        {
+            return new LiteralValueExpression(value);
+        }
+
+        public static implicit operator LiteralValueExpression(float value)
+        {
+            return new LiteralValueExpression(value);
+        }
+
+        #endregion
+    }
 
     /// <summary>
     /// 字段
     /// </summary>
-    public class PropertyExpression : ExpressionBase, IPropertyExpression
+    public class PropertyExpression : ExpressionBase<PropertyExpression>, IPropertyExpression
     {
         public PropertyExpression(string name, ITableExpression table = null)
         {
             _name = name;
             _table = table;
-            GenExpression();
         }
 
         private string _name = null;
@@ -113,7 +221,6 @@ namespace SqlExpression
             set
             {
                 _name = value;
-                GenExpression();
             }
         }
 
@@ -127,30 +234,21 @@ namespace SqlExpression
             set
             {
                 _table = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                switch (Type)
-                {
-                    case ExpressionType.MySql:
-                        Expression = (new string[] {
+                return (new string[] {
                             Table?.Expression,
-                            string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("`{0}`", Name)
+                            string.IsNullOrWhiteSpace(Name) ? string.Empty : Name
                         }).Where(s => !string.IsNullOrWhiteSpace(s)).Join(".");
-                        break;
-                    default:
-                        Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("{0}", Name);
-                        break;
-                }
             }
         }
 
@@ -277,112 +375,11 @@ namespace SqlExpression
             return this.Name?.GetHashCode() ?? 0;
         }
     }
-
-    /// <summary>
-    /// 字面值
-    /// </summary>
-    public class LiteralValueExpression : ExpressionBase, ILiteralValueExpression
-    {
-        public LiteralValueExpression(object value)
-        {
-            if (value is LiteralValueExpression)
-            {
-                Value = (value as LiteralValueExpression).Value;
-            }
-            else if (value is IExpression)
-            {
-                throw new ArgumentException("value");
-            }
-            else
-            {
-                Value = value;
-            }
-        }
-
-        private object _value = null;
-
-        public object Value
-        {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                _value = value;
-                GenExpression();
-            }
-        }
-
-        protected override void GenExpression()
-        {
-            var valueType = Value?.GetType();
-            if (Value == null || Value is DBNull)
-            {
-                Expression = " NULL ";
-            }
-            else if (valueType == typeof(string) || valueType == typeof(char))
-            {
-                Expression = string.Format("'{0}'", Value);
-            }
-            else if (valueType == typeof(DateTime))
-            {
-                Expression = string.Format("'{0:yyyy-MM-dd HH:mm:ss}'", Value);
-            }
-            else if (valueType.IsEnum)
-            {
-                Expression = Convert.ToInt32(Value).ToString();
-            }
-            else
-            {
-                Expression = Value?.ToString();
-            }
-        }
-
-        #region 隐式转换
-
-        public static implicit operator LiteralValueExpression(string value)
-        {
-            return new LiteralValueExpression(value);
-        }
-
-        public static implicit operator LiteralValueExpression(DateTime value)
-        {
-            return new LiteralValueExpression(value);
-        }
-
-        public static implicit operator LiteralValueExpression(int value)
-        {
-            return new LiteralValueExpression(value);
-        }
-
-        public static implicit operator LiteralValueExpression(long value)
-        {
-            return new LiteralValueExpression(value);
-        }
-
-        public static implicit operator LiteralValueExpression(decimal value)
-        {
-            return new LiteralValueExpression(value);
-        }
-
-        public static implicit operator LiteralValueExpression(double value)
-        {
-            return new LiteralValueExpression(value);
-        }
-
-        public static implicit operator LiteralValueExpression(float value)
-        {
-            return new LiteralValueExpression(value);
-        }
-
-        #endregion
-    }
-
+    
     /// <summary>
     /// 参数
     /// </summary>
-    public class ParamExpression : ExpressionBase, IParamExpression
+    public class ParamExpression : ExpressionBase<ParamExpression>, IParamExpression
     {
         public ParamExpression(string param)
         {
@@ -399,21 +396,12 @@ namespace SqlExpression
             set
             {
                 _paramName = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
-            switch (Type)
-            {
-                case ExpressionType.MySql:
-                    Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("@{0}", Name);
-                    break;
-                default:
-                    Expression = string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("@{0}", Name);
-                    break;
-            }
+            return string.IsNullOrWhiteSpace(Name) ? string.Empty : string.Format("@{0}", Name);
         }
 
         #region 隐式转换
@@ -434,7 +422,7 @@ namespace SqlExpression
     /// <summary>
     /// 集合（In）
     /// </summary>
-    public class CollectionExpression : ExpressionBase, IValueExpression
+    public class CollectionExpression : ExpressionBase<CollectionExpression>, IValueExpression
     {
         public CollectionExpression(params ILiteralValueExpression[] values)
         {
@@ -453,19 +441,18 @@ namespace SqlExpression
             set
             {
                 _values = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Values == null || Values.Length == 0)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("({0})", _values.Join(",", exp => exp.Expression));
+                return string.Format("({0})", _values.Join(",", exp => exp.Expression));
             }
         }
 
@@ -482,13 +469,12 @@ namespace SqlExpression
     /// <summary>
     /// 值范围（Between）
     /// </summary>
-    public class BetweenValueExpression : ExpressionBase, IValueExpression
+    public class BetweenValueExpression : ExpressionBase<BetweenValueExpression>, IValueExpression
     {
         public BetweenValueExpression(IValueExpression min, IValueExpression max)
         {
             _min = min;
             _max = max;
-            GenExpression();
         }
 
         private IValueExpression _min;
@@ -503,7 +489,6 @@ namespace SqlExpression
             set
             {
                 _min = value;
-                GenExpression();
             }
         }
         public IValueExpression Max
@@ -515,19 +500,18 @@ namespace SqlExpression
             set
             {
                 _max = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Min == null || Max == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("{0} AND {1}", Min.Expression, Max.Expression);
+                return string.Format("{0} AND {1}", Min.Expression, Max.Expression);
             }
         }
     }
@@ -535,13 +519,12 @@ namespace SqlExpression
     /// <summary>
     /// 一元表达式
     /// </summary>
-    public class UnaryExpression : ExpressionBase, IUnaryExpression
+    public class UnaryExpression : ExpressionBase<UnaryExpression>, IUnaryExpression
     {
         public UnaryExpression(IExpression a, IUnaryOperator op)
         {
             _a = a;
             _op = op;
-            GenExpression();
         }
 
         private IExpression _a = null;
@@ -550,22 +533,22 @@ namespace SqlExpression
         /// <summary>
         /// 属性名称
         /// </summary>
-        public IExpression A { get { return _a; } set { _a = value; GenExpression(); } }
+        public IExpression A { get { return _a; } set { _a = value; } }
 
         /// <summary>
         /// 操作符
         /// </summary>
-        public IUnaryOperator Op { get { return _op; } set { _op = value; GenExpression(); } }
+        public IUnaryOperator Op { get { return _op; } set { _op = value; } }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (A == null || Op == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("{0}{1}", A?.Expression, Op);
+                return string.Format("{0}{1}", A?.Expression, Op);
             }
         }
     }
@@ -573,7 +556,7 @@ namespace SqlExpression
     /// <summary>
     /// 二元表达式
     /// </summary>
-    public class BinaryExpression : ExpressionBase, IBinaryExpression
+    public class BinaryExpression : ExpressionBase<BinaryExpression>, IBinaryExpression
     {
 
         public BinaryExpression(IExpression a, IBinaryOperator op, IExpression b)
@@ -581,36 +564,35 @@ namespace SqlExpression
             _a = a;
             _op = op;
             _b = b;
-            GenExpression();
         }
 
         private IExpression _a = null;
         /// <summary>
         /// 属性名称
         /// </summary>
-        public IExpression A { get { return _a; } set { _a = value; GenExpression(); } }
+        public IExpression A { get { return _a; } set { _a = value; } }
 
         private IBinaryOperator _op = null;
         /// <summary>
         /// 操作符
         /// </summary>
-        public IBinaryOperator Op { get { return _op; } set { _op = value; GenExpression(); } }
+        public IBinaryOperator Op { get { return _op; } set { _op = value;  } }
 
         private IExpression _b = null;
         /// <summary>
         /// 值
         /// </summary>
-        public IExpression B { get { return _b; } set { _b = value; GenExpression(); } }
+        public IExpression B { get { return _b; } set { _b = value; } }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (A == null || B == null || Op == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("{0}{1}{2}", A?.Expression, Op, B?.Expression);
+                return string.Format("{0}{1}{2}", A?.Expression, Op, B?.Expression);
             }
         }
     }
@@ -629,7 +611,7 @@ namespace SqlExpression
     /// <summary>
     /// 函数表达式
     /// </summary>
-    public class FunctionExpression : ExpressionBase, IFunctionExpression
+    public class FunctionExpression : ExpressionBase<FunctionExpression>, IFunctionExpression
     {
         public static AggregateFunctionExpression Count(IValueExpression prop)
         {
@@ -670,7 +652,6 @@ namespace SqlExpression
         {
             _name = name;
             _values = values;
-            GenExpression();
         }
 
         private string _name;
@@ -686,7 +667,6 @@ namespace SqlExpression
             set
             {
                 _name = value;
-                GenExpression();
             }
         }
 
@@ -699,7 +679,6 @@ namespace SqlExpression
             set
             {
                 _values = value;
-                GenExpression();
             }
         }
 
@@ -715,15 +694,15 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Name == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("{0}({1})", Name, Values.Join(",", v => v?.Expression));
+                return string.Format("{0}({1})", Name, Values.Join(",", v => v?.Expression));
             }
         }
     }
@@ -743,7 +722,7 @@ namespace SqlExpression
     /// <summary>
     /// 批量Sql语句
     /// </summary>
-    public class BatchSqlStatement : ExpressionBase, IBatchSqlStatement
+    public class BatchSqlStatement : ExpressionBase<BatchSqlStatement>, IBatchSqlStatement
     {
         public BatchSqlStatement(params ISqlStatement[] sqls)
         {
@@ -760,7 +739,6 @@ namespace SqlExpression
                 }
             }
             _sqls = list.ToArray();
-            GenExpression();
         }
 
         private ISqlStatement[] _sqls = null;
@@ -773,7 +751,6 @@ namespace SqlExpression
             set
             {
                 _sqls = value;
-                GenExpression();
             }
         }
 
@@ -790,15 +767,15 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Sqls == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = Sqls.Where(sql => !string.IsNullOrWhiteSpace(sql?.Expression)).Join(";", sql => sql.Expression);
+                return Sqls.Where(sql => !string.IsNullOrWhiteSpace(sql?.Expression)).Join(";", sql => sql.Expression);
             }
         }
     }
@@ -806,14 +783,13 @@ namespace SqlExpression
     /// <summary>
     /// 合并查询语句
     /// </summary>
-    public class UnionStatement : ExpressionBase, IUnionStatement
+    public class UnionStatement : ExpressionBase<UnionStatement>, IUnionStatement
     {
         public UnionStatement(ISelectStatement select, IUnionItemExpression[] unionItems, IOrderByClause orderBy)
         {
             _select = select;
             _unionItems = unionItems;
             _orderBy = orderBy;
-            GenExpression();
         }
 
         private ISelectStatement _select;
@@ -829,7 +805,6 @@ namespace SqlExpression
             set
             {
                 _select = value;
-                GenExpression();
             }
         }
 
@@ -842,7 +817,6 @@ namespace SqlExpression
             set
             {
                 _unionItems = value;
-                GenExpression();
             }
         }
 
@@ -855,7 +829,6 @@ namespace SqlExpression
             set
             {
                 _orderBy = value;
-                GenExpression();
             }
         }
 
@@ -872,15 +845,15 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Select == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = (new string[] {
+                return (new string[] {
                     Select.Expression,
                     UnionItems?.Join(" ", union => union.Expression),
                     OrderBy?.Expression
@@ -892,13 +865,12 @@ namespace SqlExpression
     /// <summary>
     /// 合并查询子项
     /// </summary>
-    public class UnionItemExpression : ExpressionBase, IUnionItemExpression
+    public class UnionItemExpression : ExpressionBase<UnionItemExpression>, IUnionItemExpression
     {
         public UnionItemExpression(IUnionOperator unionOp, ISelectStatement select)
         {
             _unionOp = unionOp;
             _select = select;
-            GenExpression();
         }
 
         private IUnionOperator _unionOp;
@@ -913,7 +885,6 @@ namespace SqlExpression
             set
             {
                 _unionOp = value;
-                GenExpression();
             }
         }
 
@@ -926,19 +897,18 @@ namespace SqlExpression
             set
             {
                 _select = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Select == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("{0}{1}", UnionOp, Select?.Expression);
+                return string.Format("{0}{1}", UnionOp, Select?.Expression);
             }
         }
     }
@@ -946,7 +916,7 @@ namespace SqlExpression
     /// <summary>
     /// 插入语句
     /// </summary>
-    public class InsertStatement : ExpressionBase, IInsertStatement
+    public class InsertStatement : ExpressionBase<InsertStatement>, IInsertStatement
     {
         public InsertStatement() { }
 
@@ -955,7 +925,6 @@ namespace SqlExpression
             _table = table;
             _properties = properties;
             _values = values;
-            GenExpression();
         }
 
         private ITableExpression _table = null;
@@ -973,7 +942,6 @@ namespace SqlExpression
             set
             {
                 _table = value;
-                GenExpression();
             }
         }
 
@@ -987,7 +955,6 @@ namespace SqlExpression
             set
             {
                 _properties = value;
-                GenExpression();
             }
         }
 
@@ -1001,7 +968,6 @@ namespace SqlExpression
             set
             {
                 _values = value;
-                GenExpression();
             }
         }
 
@@ -1019,15 +985,15 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Table == null || Properties == null || Values == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("INSERT INTO {0}({1}) VALUES({2})", Table?.Expression, Properties?.Join(",", p => p.Expression), Values?.Join(",", v => v?.Expression));
+                return string.Format("INSERT INTO {0}({1}) VALUES({2})", Table?.Expression, Properties?.Join(",", p => p.Expression), Values?.Join(",", v => v?.Expression));
             }
         }
     }
@@ -1035,7 +1001,7 @@ namespace SqlExpression
     /// <summary>
     /// 删除语句
     /// </summary>
-    public class DeleteStatement : ExpressionBase, IDeleteStatement
+    public class DeleteStatement : ExpressionBase<DeleteStatement>, IDeleteStatement
     {
         public DeleteStatement()
         { }
@@ -1044,7 +1010,6 @@ namespace SqlExpression
         {
             _table = table;
             _where = where;
-            GenExpression();
         }
 
         private ITableExpression _table = null;
@@ -1060,7 +1025,6 @@ namespace SqlExpression
             set
             {
                 _table = value;
-                GenExpression();
             }
         }
 
@@ -1074,7 +1038,6 @@ namespace SqlExpression
             set
             {
                 _where = value;
-                GenExpression();
             }
         }
 
@@ -1086,15 +1049,15 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Table == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("DELETE FROM {0} {1}", Table?.Expression, Where?.Expression).TrimEnd();
+                return string.Format("DELETE FROM {0} {1}", Table?.Expression, Where?.Expression).TrimEnd();
             }
         }
     }
@@ -1102,7 +1065,7 @@ namespace SqlExpression
     /// <summary>
     /// 更新语句
     /// </summary>
-    public class UpdateStatement : ExpressionBase, IUpdateStatement
+    public class UpdateStatement : ExpressionBase<UpdateStatement>, IUpdateStatement
     {
         public UpdateStatement()
         { }
@@ -1112,7 +1075,6 @@ namespace SqlExpression
             _table = table;
             _set = set;
             _where = where;
-            GenExpression();
         }
 
         private ITableExpression _table = null;
@@ -1129,7 +1091,6 @@ namespace SqlExpression
             set
             {
                 _table = value;
-                GenExpression();
             }
         }
         public ISetClause Set
@@ -1142,7 +1103,6 @@ namespace SqlExpression
             set
             {
                 _set = value;
-                GenExpression();
             }
         }
 
@@ -1156,7 +1116,6 @@ namespace SqlExpression
             set
             {
                 _where = value;
-                GenExpression();
             }
         }
 
@@ -1181,15 +1140,15 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Table == null || Set == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("UPDATE {0} {1} {2}",
+                return string.Format("UPDATE {0} {1} {2}",
                     Table?.Expression,
                     Set?.Expression,
                     Where?.Expression).TrimEnd();
@@ -1200,13 +1159,12 @@ namespace SqlExpression
     /// <summary>
     /// 更新赋值项
     /// </summary>
-    public class SetItemExpression : ExpressionBase, ISetItemExpression
+    public class SetItemExpression : ExpressionBase<SetItemExpression>, ISetItemExpression
     {
         public SetItemExpression(IPropertyExpression property, IValueExpression value)
         {
             _property = property;
             _value = value;
-            GenExpression();
         }
 
         public SetItemExpression(IPropertyExpression property)
@@ -1227,7 +1185,6 @@ namespace SqlExpression
             set
             {
                 _property = value;
-                GenExpression();
             }
         }
 
@@ -1241,19 +1198,18 @@ namespace SqlExpression
             set
             {
                 _value = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Property == null || Value == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("{0}={1}", Property?.Expression, Value?.Expression);
+                return string.Format("{0}={1}", Property?.Expression, Value?.Expression);
             }
         }
     }
@@ -1261,12 +1217,11 @@ namespace SqlExpression
     /// <summary>
     /// 更新赋值子句
     /// </summary>
-    public class SetClause : ExpressionBase, ISetClause
+    public class SetClause : ExpressionBase<SetClause>, ISetClause
     {
         public SetClause(ISetItemExpression[] sets)
         {
             _sets = sets;
-            GenExpression();
         }
 
         private ISetItemExpression[] _sets = null;
@@ -1280,19 +1235,18 @@ namespace SqlExpression
             set
             {
                 _sets = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Sets == null || Sets.Length == 0)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("SET {0}", Sets?.Join(",", set => set.Expression));
+                return string.Format("SET {0}", Sets?.Join(",", set => set.Expression));
             }
         }
     }
@@ -1300,7 +1254,7 @@ namespace SqlExpression
     /// <summary>
     /// 查询语句
     /// </summary>
-    public class SelectStatement : ExpressionBase, ISelectStatement
+    public class SelectStatement : ExpressionBase<SelectStatement>, ISelectStatement
     {
         public SelectStatement()
         { }
@@ -1314,7 +1268,6 @@ namespace SqlExpression
             _groupby = groupby;
             _having = having;
             _orderby = orderby;
-            GenExpression();
         }
 
         public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
@@ -1346,7 +1299,6 @@ namespace SqlExpression
             set
             {
                 _tables = value;
-                GenExpression();
             }
         }
 
@@ -1360,7 +1312,6 @@ namespace SqlExpression
             set
             {
                 _items = value;
-                GenExpression();
             }
         }
 
@@ -1370,7 +1321,6 @@ namespace SqlExpression
             set
             {
                 _joins = value;
-                GenExpression();
             }
         }
 
@@ -1384,7 +1334,6 @@ namespace SqlExpression
             set
             {
                 _where = value;
-                GenExpression();
             }
         }
 
@@ -1397,7 +1346,6 @@ namespace SqlExpression
             set
             {
                 _groupby = value;
-                GenExpression();
             }
         }
 
@@ -1410,7 +1358,6 @@ namespace SqlExpression
             set
             {
                 _having = value;
-                GenExpression();
             }
         }
 
@@ -1424,7 +1371,6 @@ namespace SqlExpression
             set
             {
                 _orderby = value;
-                GenExpression();
             }
         }
 
@@ -1443,15 +1389,15 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Tables == null || Tables.Length == 0 || Items == null || Items.Length == 0)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("SELECT {1} FROM {6} {0} {2} {3} {4} {5}", Tables?.Join(",", t => t.Expression),
+                return string.Format("SELECT {1} FROM {6} {0} {2} {3} {4} {5}", Tables?.Join(",", t => t.Expression),
                     Items?.Join(",", s => s.Expression),
                     Where?.Expression,
                     GroupBy?.Expression,
@@ -1465,7 +1411,7 @@ namespace SqlExpression
     /// <summary>
     /// 查询列别名
     /// </summary>
-    public class AsExpression : ExpressionBase, IAsExpression
+    public class AsExpression : ExpressionBase<AsExpression>, IAsExpression
     {
         public AsExpression(ISelectItemExpression selectItem, IPropertyExpression asProperty)
         {
@@ -1475,7 +1421,6 @@ namespace SqlExpression
             }
             _selectItem = selectItem;
             _asProperty = asProperty;
-            GenExpression();
         }
 
         private ISelectItemExpression _selectItem = null;
@@ -1491,7 +1436,6 @@ namespace SqlExpression
             set
             {
                 _selectItem = value;
-                GenExpression();
             }
         }
 
@@ -1505,19 +1449,18 @@ namespace SqlExpression
             set
             {
                 _asProperty = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (SelectItem == null || AsProperty == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format(" {0} as {1} ", SelectItem?.Expression, AsProperty?.Expression);
+                return string.Format(" {0} as {1} ", SelectItem?.Expression, AsProperty?.Expression);
             }
         }
     }
@@ -1525,12 +1468,11 @@ namespace SqlExpression
     /// <summary>
     /// 所有项 *
     /// </summary>
-    public class AllPropertiesExpression : ExpressionBase, ISelectItemExpression
+    public class AllPropertiesExpression : ExpressionBase<AllPropertiesExpression>, ISelectItemExpression
     {
         public AllPropertiesExpression(ITableExpression table)
         {
             _table = table;
-            GenExpression();
         }
 
         private ITableExpression _table = null;
@@ -1548,23 +1490,22 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
-            Expression = string.Format(" {0}* ", Table == null ? string.Empty : Table.Expression + ".");
+            return string.Format(" {0}* ", Table == null ? string.Empty : Table.Expression + ".");
         }
     }
 
     /// <summary>
     /// 查询联接
     /// </summary>
-    public class JoinExpression : ExpressionBase, IJoinExpression
+    public class JoinExpression : ExpressionBase<JoinExpression>, IJoinExpression
     {
         public JoinExpression(IJoinOperator joinOp, ITableExpression table, IFilterExpression on)
         {
             _joinOp = joinOp;
             _table = table;
             _on = on;
-            GenExpression();
         }
 
         private IJoinOperator _joinOp;
@@ -1580,7 +1521,6 @@ namespace SqlExpression
             set
             {
                 _joinOp = value;
-                GenExpression();
             }
         }
 
@@ -1593,7 +1533,6 @@ namespace SqlExpression
             set
             {
                 _table = value;
-                GenExpression();
             }
         }
 
@@ -1606,19 +1545,18 @@ namespace SqlExpression
             set
             {
                 _on = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (JoinOp == null || Table == null || On == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("{0} {1} ON {2}", JoinOp, Table?.Expression, On?.Expression);
+                return string.Format("{0} {1} ON {2}", JoinOp, Table?.Expression, On?.Expression);
             }
         }
     }
@@ -1626,12 +1564,11 @@ namespace SqlExpression
     /// <summary>
     /// 分组子句
     /// </summary>
-    public class GroupByClause : ExpressionBase, IGroupByClause
+    public class GroupByClause : ExpressionBase<GroupByClause>, IGroupByClause
     {
         public GroupByClause(IPropertyExpression property)
         {
             _property = property;
-            GenExpression();
         }
 
         private IPropertyExpression _property;
@@ -1649,15 +1586,15 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Property == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("GROUP BY {0}", Property?.Expression);
+                return string.Format("GROUP BY {0}", Property?.Expression);
             }
         }
     }
@@ -1665,12 +1602,11 @@ namespace SqlExpression
     /// <summary>
     /// 分组条件
     /// </summary>
-    public class HavingClause : ExpressionBase, IHavingClause
+    public class HavingClause : ExpressionBase<HavingClause>, IHavingClause
     {
         public HavingClause(IFilterExpression filter)
         {
             _filter = filter;
-            GenExpression();
         }
 
         private IFilterExpression _filter = null;
@@ -1685,19 +1621,18 @@ namespace SqlExpression
             set
             {
                 _filter = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Filter == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("HAVING {0}", Filter?.Expression);
+                return string.Format("HAVING {0}", Filter?.Expression);
             }
         }
     }
@@ -1705,26 +1640,23 @@ namespace SqlExpression
     /// <summary>
     /// 排序项
     /// </summary>
-    public class OrderExpression : ExpressionBase, IOrderExpression
+    public class OrderExpression : ExpressionBase<OrderExpression>, IOrderExpression
     {
         public OrderExpression(string property, OrderEnum order = OrderEnum.Asc)
         {
             this.property = new PropertyExpression(property);
             this.order = order;
-            GenExpression();
         }
         public OrderExpression(IPropertyExpression property, OrderEnum order = OrderEnum.Asc)
         {
             this.property = property;
             this.order = order;
-            GenExpression();
         }
 
         public OrderExpression(IAggregateFunctionExpression fun, OrderEnum order = OrderEnum.Asc)
         {
             this.property = fun;
             this.order = order;
-            GenExpression();
         }
 
         private OrderEnum order = OrderEnum.Asc;
@@ -1738,7 +1670,6 @@ namespace SqlExpression
             set
             {
                 order = value;
-                GenExpression();
             }
         }
 
@@ -1751,19 +1682,18 @@ namespace SqlExpression
             set
             {
                 property = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Property == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("{0} {1}", Property?.Expression, Order == OrderEnum.Asc ? "ASC" : "DESC");
+                return string.Format("{0} {1}", Property?.Expression, Order == OrderEnum.Asc ? "ASC" : "DESC");
             }
         }
     }
@@ -1771,12 +1701,11 @@ namespace SqlExpression
     /// <summary>
     /// 排序子句
     /// </summary>
-    public class OrderByClause : ExpressionBase, IOrderByClause
+    public class OrderByClause : ExpressionBase<OrderByClause>, IOrderByClause
     {
         public OrderByClause(params IOrderExpression[] orders)
         {
             _orders = orders;
-            GenExpression();
         }
 
         private IOrderExpression[] _orders;
@@ -1790,19 +1719,18 @@ namespace SqlExpression
             set
             {
                 _orders = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Orders == null || Orders.Length == 0)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("ORDER BY {0}", Orders.Join(",", order => order.Expression));
+                return string.Format("ORDER BY {0}", Orders.Join(",", order => order.Expression));
             }
         }
     }
@@ -1810,12 +1738,11 @@ namespace SqlExpression
     /// <summary>
     /// 筛选条件子句 
     /// </summary>
-    public class WhereClause : ExpressionBase, IWhereClause
+    public class WhereClause : ExpressionBase<WhereClause>, IWhereClause
     {
         public WhereClause(IFilterExpression filter)
         {
             _filter = filter;
-            GenExpression();
         }
 
         private IFilterExpression _filter = null;
@@ -1830,19 +1757,18 @@ namespace SqlExpression
             set
             {
                 _filter = value;
-                GenExpression();
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (Filter == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("WHERE {0}", Filter.Expression);
+                return string.Format("WHERE {0}", Filter.Expression);
             }
         }
     }
@@ -1899,15 +1825,15 @@ namespace SqlExpression
         {
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
             if (A == null || B == null || Op == null)
             {
-                Expression = string.Empty;
+                return string.Empty;
             }
             else
             {
-                Expression = string.Format("({0}){1}({2})", A?.Expression, Op, B?.Expression);
+                return string.Format("({0}){1}({2})", A?.Expression, Op, B?.Expression);
             }
         }
 
@@ -1925,11 +1851,12 @@ namespace SqlExpression
     /// <summary>
     /// 自定义表达式
     /// </summary>
-    public class CustomerExpression : ExpressionBase, ICustomerExpression
+    public class CustomerExpression : ExpressionBase<CustomerExpression>, ICustomerExpression
     {
+        string _expression;
         public CustomerExpression(string expression)
         {
-            Expression = expression;
+            _expression = expression;
         }
 
         public IEnumerable<string> Params
@@ -1946,8 +1873,9 @@ namespace SqlExpression
             }
         }
 
-        protected override void GenExpression()
+        protected override string GenExpression()
         {
+            return _expression;
         }
 
         public static implicit operator CustomerExpression(string expression)
