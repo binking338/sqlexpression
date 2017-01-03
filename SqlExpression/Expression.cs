@@ -1397,13 +1397,13 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("SELECT {1} FROM {6} {0} {2} {3} {4} {5}", Tables?.Join(",", t => t.Expression),
+                return string.Format("SELECT {1} FROM {6}{0} {2} {3} {4} {5}", Tables?.Join(",", t => t.Expression),
                     Items?.Join(",", s => s.Expression),
                     Where?.Expression,
                     GroupBy?.Expression,
                     string.IsNullOrWhiteSpace(GroupBy?.Expression) ? string.Empty : Having?.Expression,
                     OrderBy?.Expression,
-                    Joins?.Join(" ", j => j?.Expression)).TrimEnd();
+                    Joins?.Join("", j => j?.Expression + " ")).TrimEnd();
             }
         }
     }
@@ -1460,7 +1460,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format(" {0} as {1} ", SelectItem?.Expression, AsProperty?.Expression);
+                return string.Format(" {0} AS {1} ", SelectItem?.Expression, AsProperty?.Expression);
             }
         }
     }
