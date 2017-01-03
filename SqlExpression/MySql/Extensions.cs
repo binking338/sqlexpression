@@ -45,12 +45,12 @@ namespace SqlExpression.MySql
         /// <returns></returns>
         public static string Count(this ISelectStatement select)
         {
-            return string.Format("select count(1) from ({0}) as __totalcount__", select.Expression);
+            return string.Format("SELECT COUNT(1) FROM ({0}) AS __totalcount__", select.Expression);
         }
 
         public static string Exists(this ISelectStatement select)
         {
-            return string.Format("select exists({0}) as __exists__", select.Expression);
+            return string.Format("SELECT EXISTS({0}) AS __exists__", select.Expression);
         }
 
     }
