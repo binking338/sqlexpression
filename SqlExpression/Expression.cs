@@ -8,11 +8,6 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
-    public enum ExpressionType
-    {
-        MySql = 1
-    }
-
     /// <summary>
     /// 表达式抽象类
     /// </summary>
@@ -47,6 +42,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 表
+    /// </summary>
     public class TableExpression : ExpressionBase, ITableExpression
     {
         public TableExpression(string name)
@@ -88,6 +86,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 字段
+    /// </summary>
     public class PropertyExpression : ExpressionBase, IPropertyExpression
     {
         public PropertyExpression(string name, ITableExpression table = null)
@@ -277,6 +278,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 字面值
+    /// </summary>
     public class LiteralValueExpression : ExpressionBase, ILiteralValueExpression
     {
         public LiteralValueExpression(object value)
@@ -317,7 +321,7 @@ namespace SqlExpression
             {
                 Expression = " NULL ";
             }
-            else if (valueType == typeof(string))
+            else if (valueType == typeof(string) || valueType == typeof(char))
             {
                 Expression = string.Format("'{0}'", Value);
             }
@@ -375,6 +379,9 @@ namespace SqlExpression
         #endregion
     }
 
+    /// <summary>
+    /// 参数
+    /// </summary>
     public class ParamExpression : ExpressionBase, IParamExpression
     {
         public ParamExpression(string param)
@@ -424,6 +431,9 @@ namespace SqlExpression
         #endregion
     }
 
+    /// <summary>
+    /// 集合（In）
+    /// </summary>
     public class CollectionExpression : ExpressionBase, IValueExpression
     {
         public CollectionExpression(params ILiteralValueExpression[] values)
@@ -469,6 +479,9 @@ namespace SqlExpression
         #endregion
     }
 
+    /// <summary>
+    /// 值范围（Between）
+    /// </summary>
     public class BetweenValueExpression : ExpressionBase, IValueExpression
     {
         public BetweenValueExpression(IValueExpression min, IValueExpression max)
@@ -519,6 +532,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 一元表达式
+    /// </summary>
     public class UnaryExpression : ExpressionBase, IUnaryExpression
     {
         public UnaryExpression(IExpression a, IUnaryOperator op)
@@ -554,6 +570,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 二元表达式
+    /// </summary>
     public class BinaryExpression : ExpressionBase, IBinaryExpression
     {
 
@@ -596,6 +615,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 算术表达式
+    /// </summary>
     public class ArithmeticExpression : BinaryExpression, IArithmeticExpression
     {
         public ArithmeticExpression(IValueExpression a, IArithmeticOperator op, IValueExpression b)
@@ -604,6 +626,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 函数表达式
+    /// </summary>
     public class FunctionExpression : ExpressionBase, IFunctionExpression
     {
         public static AggregateFunctionExpression Count(IValueExpression prop)
@@ -703,6 +728,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 聚合函数表达式
+    /// </summary>
     public class AggregateFunctionExpression : FunctionExpression, IAggregateFunctionExpression
     {
         public AggregateFunctionExpression(string name, IValueExpression value)
@@ -712,6 +740,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 批量Sql语句
+    /// </summary>
     public class BatchSqlStatement : ExpressionBase, IBatchSqlStatement
     {
         public BatchSqlStatement(params ISqlStatement[] sqls)
@@ -772,6 +803,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 合并查询语句
+    /// </summary>
     public class UnionStatement : ExpressionBase, IUnionStatement
     {
         public UnionStatement(ISelectStatement select, IUnionItemExpression[] unionItems, IOrderByClause orderBy)
@@ -855,6 +889,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 合并查询子项
+    /// </summary>
     public class UnionItemExpression : ExpressionBase, IUnionItemExpression
     {
         public UnionItemExpression(IUnionOperator unionOp, ISelectStatement select)
@@ -906,6 +943,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 插入语句
+    /// </summary>
     public class InsertStatement : ExpressionBase, IInsertStatement
     {
         public InsertStatement() { }
@@ -992,6 +1032,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 删除语句
+    /// </summary>
     public class DeleteStatement : ExpressionBase, IDeleteStatement
     {
         public DeleteStatement()
@@ -1056,6 +1099,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 更新语句
+    /// </summary>
     public class UpdateStatement : ExpressionBase, IUpdateStatement
     {
         public UpdateStatement()
@@ -1151,6 +1197,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 更新赋值项
+    /// </summary>
     public class SetItemExpression : ExpressionBase, ISetItemExpression
     {
         public SetItemExpression(IPropertyExpression property, IValueExpression value)
@@ -1209,6 +1258,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 更新赋值子句
+    /// </summary>
     public class SetClause : ExpressionBase, ISetClause
     {
         public SetClause(ISetItemExpression[] sets)
@@ -1245,6 +1297,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 查询语句
+    /// </summary>
     public class SelectStatement : ExpressionBase, ISelectStatement
     {
         public SelectStatement()
@@ -1407,6 +1462,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 查询列别名
+    /// </summary>
     public class AsExpression : ExpressionBase, IAsExpression
     {
         public AsExpression(ISelectItemExpression selectItem, IPropertyExpression asProperty)
@@ -1464,6 +1522,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 所有项 *
+    /// </summary>
     public class AllPropertiesExpression : ExpressionBase, ISelectItemExpression
     {
         public AllPropertiesExpression(ITableExpression table)
@@ -1493,6 +1554,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 查询联接
+    /// </summary>
     public class JoinExpression : ExpressionBase, IJoinExpression
     {
         public JoinExpression(IJoinOperator joinOp, ITableExpression table, IFilterExpression on)
@@ -1559,6 +1623,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 分组子句
+    /// </summary>
     public class GroupByClause : ExpressionBase, IGroupByClause
     {
         public GroupByClause(IPropertyExpression property)
@@ -1595,6 +1662,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 分组条件
+    /// </summary>
     public class HavingClause : ExpressionBase, IHavingClause
     {
         public HavingClause(IFilterExpression filter)
@@ -1632,6 +1702,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 排序项
+    /// </summary>
     public class OrderExpression : ExpressionBase, IOrderExpression
     {
         public OrderExpression(string property, OrderEnum order = OrderEnum.Asc)
@@ -1695,6 +1768,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 排序子句
+    /// </summary>
     public class OrderByClause : ExpressionBase, IOrderByClause
     {
         public OrderByClause(params IOrderExpression[] orders)
@@ -1731,6 +1807,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 筛选条件子句 
+    /// </summary>
     public class WhereClause : ExpressionBase, IWhereClause
     {
         public WhereClause(IFilterExpression filter)
@@ -1768,6 +1847,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 二元比较表达式
+    /// </summary>
     public class ComparisonExpression : BinaryExpression, IComparisonExpression
     {
         public ComparisonExpression(IValueExpression a, IComparisonOperator op, IValueExpression b)
@@ -1786,6 +1868,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 一元比较表达式
+    /// </summary>
     public class UnaryComparisonExpression : UnaryExpression, IUnaryComparisonExpression
     {
         public UnaryComparisonExpression(IValueExpression a, IUnaryComparisonOperator op)
@@ -1804,6 +1889,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 逻辑表达式
+    /// </summary>
     public class LogicExpression : BinaryExpression, ILogicExpression
     {
         public LogicExpression(IFilterExpression a, ILogicOperator op, IFilterExpression b)
@@ -1834,6 +1922,9 @@ namespace SqlExpression
         }
     }
 
+    /// <summary>
+    /// 自定义表达式
+    /// </summary>
     public class CustomerExpression : ExpressionBase, ICustomerExpression
     {
         public CustomerExpression(string expression)

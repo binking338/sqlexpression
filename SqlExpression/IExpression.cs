@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
+    public enum ExpressionType
+    {
+        Common = 0,
+        MySql = 1
+    }
+
     /// <summary>
     /// 排序枚举
     /// </summary>
