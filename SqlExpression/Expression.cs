@@ -102,9 +102,9 @@ namespace SqlExpression
     {
         public LiteralValueExpression(object value)
         {
-            if (value is LiteralValueExpression)
+            if (value is ILiteralValueExpression)
             {
-                Value = (value as LiteralValueExpression).Value;
+                Value = (value as ILiteralValueExpression).Value;
             }
             else if (value is IExpression)
             {
@@ -375,7 +375,7 @@ namespace SqlExpression
             return this.Name?.GetHashCode() ?? 0;
         }
     }
-    
+
     /// <summary>
     /// 参数
     /// </summary>
@@ -576,7 +576,7 @@ namespace SqlExpression
         /// <summary>
         /// 操作符
         /// </summary>
-        public IBinaryOperator Op { get { return _op; } set { _op = value;  } }
+        public IBinaryOperator Op { get { return _op; } set { _op = value; } }
 
         private IExpression _b = null;
         /// <summary>

@@ -15,7 +15,8 @@ namespace SqlExpression.MySql
         private static void InnerInitial()
         {
             TableExpression.Handlers[DBType.MySql] = (ex) => { return string.Format("`{0}`", ex.Name); };
-            PropertyExpression.Handlers[DBType.MySql] = (ex) => {
+            PropertyExpression.Handlers[DBType.MySql] = (ex) =>
+            {
                 return (new string[] {
                             ex.Table?.Expression,
                             string.IsNullOrWhiteSpace(ex.Name) ? string.Empty : string.Format("`{0}`", ex.Name)
@@ -32,7 +33,7 @@ namespace SqlExpression.MySql
         /// <param name="pageindex"></param>
         /// <param name="pagesize"></param>
         /// <returns></returns>
-        public static string Page(this ISelectStatement select, int pageindex, int pagesize )
+        public static string Page(this ISelectStatement select, int pageindex, int pagesize)
         {
             return string.Format("{0} limit {1},{2}", select.Expression, (pageindex - 1) * pagesize, pagesize);
         }
@@ -49,7 +50,7 @@ namespace SqlExpression.MySql
 
         public static string Exists(this ISelectStatement select)
         {
-            return string.Format("select exists ({0}) as __exists__", select.Expression);
+            return string.Format("select exists({0}) as __exists__", select.Expression);
         }
 
     }
