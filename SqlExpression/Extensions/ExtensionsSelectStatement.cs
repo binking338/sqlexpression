@@ -110,7 +110,7 @@ namespace SqlExpression
 
         public static ISelectStatement Get(this ISelectStatement select, ISelectItemExpression item, IPropertyExpression asProperty = null)
         {
-            ISelectItemExpression selectItem = asProperty == null ? asProperty : new AsExpression(item, asProperty) as ISelectItemExpression;
+            ISelectItemExpression selectItem = asProperty == null ? item : new AsExpression(item, asProperty) as ISelectItemExpression;
             var list = (select.Items?.ToList() ?? new List<ISelectItemExpression>());
             list.Add(selectItem);
             select.Items = list.ToArray();
@@ -140,6 +140,24 @@ namespace SqlExpression
         public static ISelectStatement GetVarCustomer(this ISelectStatement select, string item, string asProperty)
         {
             return Get(select, new CustomerExpression(item), asProperty);
+        }
+
+        public static ISelectStatement GetVarCustomer(this ISelectStatement select, string[] items)
+        {
+            return Get(select, items.Select(i => new CustomerExpression(i)));
+        }
+
+        public static ISelectStatement Get(this ISelectStatement select, IEnumerable<ISelectItemExpression> items)
+        {
+            var list = (select.Items?.ToList() ?? new List<ISelectItemExpression>());
+            list.AddRange(items);
+            select.Items = list.ToArray();
+            return select;
+        }
+
+        public static ISelectStatement Get(this ISelectStatement select, IEnumerable<string> items)
+        {
+            return Get(select, items.Select(i => new PropertyExpression(i) as ISelectItemExpression));
         }
 
         public static ISelectStatement Join(this ISelectStatement select, IJoinExpression join)
