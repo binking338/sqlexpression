@@ -11,8 +11,13 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void Select()
         {
-            var sql = TestSchema.Select((t, s) => { return t.Select(s.All()); });
-            Assert.AreEqual("SELECT test.oid,test.oname,test.age,test.isdel FROM test", sql.ToString());
+            ISelectStatement statement;
+            statement = TestSchema.Select((sql, s) => { return sql.Get(s.All()); });
+            Assert.AreEqual("SELECT test.oid,test.oname,test.age,test.isdel FROM test", statement.ToString());
+
+            statement = TestSchema.Select((sql, s) => { return sql.Get(s.oid).Where(s.oid > 1); });
+            Assert.AreEqual("SELECT test.oid FROM test WHERE test.oid>1", statement.ToString());
+            
         }
     }
 }
