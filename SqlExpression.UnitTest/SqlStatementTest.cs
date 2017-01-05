@@ -85,6 +85,13 @@ namespace SqlExpression.UnitTest
 
         #region Delete
 
+        [TestMethod]
+        public void Delete()
+        {
+            statement = FooSchema.Delete((sql, s) => sql.Where(s.oid == 1));
+            Assert.AreEqual("DELETE FROM foo WHERE foo.oid=1", statement.ToString());
+        }
+
         #endregion
     }
 }
