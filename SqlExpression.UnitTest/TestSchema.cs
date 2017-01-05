@@ -87,7 +87,7 @@ namespace SqlExpression.UnitTest
 
         static BarSchema()
         {
-            Table = new TableExpression("foo");
+            Table = new TableExpression("bar");
             _oid = new PropertyExpression("oid") { Type = DBType.MySql, Table = Table };
             _oname = new PropertyExpression("oname") { Type = DBType.MySql, Table = Table };
             _isdel = new PropertyExpression("isdel") { Type = DBType.MySql, Table = Table };
