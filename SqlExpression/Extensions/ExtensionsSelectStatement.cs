@@ -187,7 +187,7 @@ namespace SqlExpression
 
         public static ISelectStatement Join(this ISelectStatement select, IJoinExpression join)
         {
-            var joins = select?.Joins.ToList() ?? new List<IJoinExpression>();
+            var joins = select?.Joins?.ToList() ?? new List<IJoinExpression>();
             joins.Add(join);
             select.Joins = joins.ToArray();
             return select;

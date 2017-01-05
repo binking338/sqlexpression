@@ -82,12 +82,12 @@ namespace SqlExpression
         public static ArithmeticOperator Div = new ArithmeticOperator("/");
         public static ArithmeticOperator Mod = new ArithmeticOperator("%");
 
-        public static UnionOperator Union = new UnionOperator(" UNION ");
-        public static UnionOperator UnionAll = new UnionOperator(" UNION ALL ");
+        public static UnionOperator Union = new UnionOperator("UNION");
+        public static UnionOperator UnionAll = new UnionOperator("UNION ALL");
 
-        public static JoinOperator InnerJoin = new JoinOperator(" JOIN ");
-        public static JoinOperator LeftJoin = new JoinOperator(" LEFT JOIN ");
-        public static JoinOperator RightJoin = new JoinOperator(" RIGHT JOIN ");
+        public static JoinOperator InnerJoin = new JoinOperator("JOIN");
+        public static JoinOperator LeftJoin = new JoinOperator("LEFT JOIN");
+        public static JoinOperator RightJoin = new JoinOperator("RIGHT JOIN");
 
         public Operator(string literal)
         {

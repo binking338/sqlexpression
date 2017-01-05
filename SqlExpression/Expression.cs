@@ -1104,7 +1104,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0}{1}", UnionOp, Select?.Expression);
+                return string.Format("{0} {1}", UnionOp, Select.Expression);
             }
         }
     }
