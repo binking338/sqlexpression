@@ -84,10 +84,11 @@ namespace SqlExpression
 
         public static UnionOperator Union = new UnionOperator("UNION");
         public static UnionOperator UnionAll = new UnionOperator("UNION ALL");
-
-        public static JoinOperator InnerJoin = new JoinOperator("JOIN");
+        
+        public static JoinOperator InnerJoin = new JoinOperator("INNER JOIN");
         public static JoinOperator LeftJoin = new JoinOperator("LEFT JOIN");
         public static JoinOperator RightJoin = new JoinOperator("RIGHT JOIN");
+        public static JoinOperator FullJoin = new JoinOperator("FULL JOIN");
 
         public Operator(string literal)
         {
