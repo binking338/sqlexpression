@@ -48,7 +48,7 @@ namespace SqlExpression.UnitTest
         public void Join()
         {
             statement = TestSchema.Select((sql, s) => sql.Get(s.All()).InnerJoin(FooSchema.Table, FooSchema.Filter((foo) => s.oid == foo.oid)));
-            Assert.AreEqual("SELECT test.oid,test.oname,test.age,test.gender,test.isdel FROM test JOIN foo ON test.oid=foo.oid", statement.ToString());
+            Assert.AreEqual("SELECT test.oid,test.oname,test.age,test.gender,test.isdel FROM test INNER JOIN foo ON test.oid=foo.oid", statement.ToString());
         }
 
         [TestMethod]
