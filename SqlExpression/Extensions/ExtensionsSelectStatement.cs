@@ -32,14 +32,19 @@ namespace SqlExpression
             return SelectVarCustomer(tables, customers);
         }
 
-        public static ISelectStatement GetC(this ISelectStatement select, string item, IPropertyExpression asProperty = null)
+        public static ISelectStatement GetAsC(this ISelectStatement select, string item, IPropertyExpression asProperty)
         {
-            return GetVarCustomer(select, item, asProperty);
+            return GetAsVarCustomer(select, item, asProperty);
         }
 
-        public static ISelectStatement GetC(this ISelectStatement select, string item, string asProperty)
+        public static ISelectStatement GetAsC(this ISelectStatement select, string item, string asProperty)
         {
-            return GetVarCustomer(select, item, asProperty);
+            return GetAsVarCustomer(select, item, asProperty);
+        }
+
+        public static ISelectStatement GetC(this ISelectStatement select, string item)
+        {
+            return GetVarCustomer(select, item);
         }
 
         #endregion
@@ -108,7 +113,7 @@ namespace SqlExpression
             return SelectVarCustomer(tables, customers.AsEnumerable());
         }
 
-        public static ISelectStatement Get(this ISelectStatement select, ISelectItemExpression item, IPropertyExpression asProperty = null)
+        public static ISelectStatement GetAs(this ISelectStatement select, ISelectItemExpression item, IPropertyExpression asProperty)
         {
             ISelectItemExpression selectItem = asProperty == null ? item : new AsExpression(item, asProperty) as ISelectItemExpression;
             var list = (select.Items?.ToList() ?? new List<ISelectItemExpression>());
@@ -117,34 +122,39 @@ namespace SqlExpression
             return select;
         }
 
-        public static ISelectStatement Get(this ISelectStatement select, ISelectItemExpression item, string asProperty)
+        public static ISelectStatement GetAs(this ISelectStatement select, ISelectItemExpression item, string asProperty)
         {
-            return Get(select, item, new PropertyExpression(asProperty));
+            return GetAs(select, item, string.IsNullOrWhiteSpace(asProperty) ? null : new PropertyExpression(asProperty));
         }
 
-        public static ISelectStatement Get(this ISelectStatement select, string item, IPropertyExpression asProperty = null)
+        public static ISelectStatement GetAs(this ISelectStatement select, string item, IPropertyExpression asProperty)
         {
-            return Get(select, new PropertyExpression(item), asProperty);
+            return GetAs(select, new PropertyExpression(item), asProperty);
         }
 
-        public static ISelectStatement Get(this ISelectStatement select, string item, string asProperty)
+        public static ISelectStatement GetAs(this ISelectStatement select, string item, string asProperty)
         {
-            return Get(select, item, new PropertyExpression(asProperty));
+            return GetAs(select, item, new PropertyExpression(asProperty));
         }
 
-        public static ISelectStatement GetVarCustomer(this ISelectStatement select, string item, IPropertyExpression asProperty = null)
+        public static ISelectStatement GetAsVarCustomer(this ISelectStatement select, string item, IPropertyExpression asProperty)
         {
-            return Get(select, new CustomerExpression(item), asProperty);
+            return GetAs(select, new CustomerExpression(item), asProperty);
         }
 
-        public static ISelectStatement GetVarCustomer(this ISelectStatement select, string item, string asProperty)
+        public static ISelectStatement GetAsVarCustomer(this ISelectStatement select, string item, string asProperty)
         {
-            return Get(select, new CustomerExpression(item), asProperty);
+            return GetAs(select, new CustomerExpression(item), asProperty);
         }
 
-        public static ISelectStatement GetVarCustomer(this ISelectStatement select, string[] items)
+        public static ISelectStatement Get(this ISelectStatement select, ISelectItemExpression item)
         {
-            return Get(select, items.Select(i => new CustomerExpression(i)));
+            return GetAs(select, item, null as IPropertyExpression);
+        }
+
+        public static ISelectStatement Get(this ISelectStatement select, string item)
+        {
+            return Get(select, new PropertyExpression(item));
         }
 
         public static ISelectStatement Get(this ISelectStatement select, IEnumerable<ISelectItemExpression> items)
@@ -155,9 +165,24 @@ namespace SqlExpression
             return select;
         }
 
+        public static ISelectStatement Get(this ISelectStatement select, params ISelectItemExpression[] items)
+        {
+            return Get(select, items as IEnumerable<ISelectItemExpression>);
+        }
+
         public static ISelectStatement Get(this ISelectStatement select, IEnumerable<string> items)
         {
             return Get(select, items.Select(i => new PropertyExpression(i) as ISelectItemExpression));
+        }
+
+        public static ISelectStatement GetVarCustomer(this ISelectStatement select, string item)
+        {
+            return Get(select, new CustomerExpression(item));
+        }
+
+        public static ISelectStatement GetVarCustomer(this ISelectStatement select, string[] items)
+        {
+            return Get(select, items.Select(i => new CustomerExpression(i)));
         }
 
         public static ISelectStatement Join(this ISelectStatement select, IJoinExpression join)
