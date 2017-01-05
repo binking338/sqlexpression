@@ -28,6 +28,7 @@ namespace SqlExpression
         {
             var sql = new UpdateStatement();
             sql.Table = Table;
+            sql.Set = new SetClause(null);
             return fun(sql, Instance);
         }
 
