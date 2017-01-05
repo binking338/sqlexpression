@@ -127,12 +127,12 @@ namespace SqlExpression
             return GetAs(select, item, string.IsNullOrWhiteSpace(asProperty) ? null : new PropertyExpression(asProperty));
         }
 
-        public static ISelectStatement GetAs(this ISelectStatement select, string item, IPropertyExpression asProperty)
+        public static ISelectStatement GetAs(this ISelectStatement select, PropertyExpression item, IPropertyExpression asProperty)
         {
-            return GetAs(select, new PropertyExpression(item), asProperty);
+            return GetAs(select, item, asProperty);
         }
 
-        public static ISelectStatement GetAs(this ISelectStatement select, string item, string asProperty)
+        public static ISelectStatement GetAs(this ISelectStatement select, PropertyExpression item, string asProperty)
         {
             return GetAs(select, item, new PropertyExpression(asProperty));
         }
@@ -152,9 +152,9 @@ namespace SqlExpression
             return GetAs(select, item, null as IPropertyExpression);
         }
 
-        public static ISelectStatement Get(this ISelectStatement select, string item)
+        public static ISelectStatement Get(this ISelectStatement select, PropertyExpression item)
         {
-            return Get(select, new PropertyExpression(item));
+            return Get(select, item);
         }
 
         public static ISelectStatement Get(this ISelectStatement select, IEnumerable<ISelectItemExpression> items)
@@ -167,12 +167,17 @@ namespace SqlExpression
 
         public static ISelectStatement Get(this ISelectStatement select, params ISelectItemExpression[] items)
         {
-            return Get(select, items as IEnumerable<ISelectItemExpression>);
+            return Get(select, items.Cast<ISelectItemExpression>());
         }
 
-        public static ISelectStatement Get(this ISelectStatement select, IEnumerable<string> items)
+        public static ISelectStatement Get(this ISelectStatement select, IEnumerable<PropertyExpression> items)
         {
-            return Get(select, items.Select(i => new PropertyExpression(i) as ISelectItemExpression));
+            return Get(select, items.Cast<ISelectItemExpression>());
+        }
+
+        public static ISelectStatement Get(this ISelectStatement select, params PropertyExpression[] items)
+        {
+            return Get(select, items.Cast<ISelectItemExpression>());
         }
 
         public static ISelectStatement GetVarCustomer(this ISelectStatement select, string item)
