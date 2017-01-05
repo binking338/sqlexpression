@@ -74,6 +74,13 @@ namespace SqlExpression.UnitTest
 
         #region Insert
 
+        [TestMethod]
+        public void Insert()
+        {
+            statement = FooSchema.Insert((sql, s) => sql.Set(s.oname, "foo1"));
+            Assert.AreEqual("INSERT INTO foo(foo.oname) VALUES('foo1')", statement.ToString());
+        }
+
         #endregion
 
         #region Delete
