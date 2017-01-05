@@ -606,7 +606,7 @@ namespace SqlExpression
             : base(a, op, b)
         {
         }
-        
+
         #region 比较运算符
 
         public static ComparisonExpression operator ==(ArithmeticExpression exp, ISelectableValueExpression val)
@@ -803,7 +803,7 @@ namespace SqlExpression
                 return string.Format("{0}({1})", Name, Values.Join(",", v => v?.Expression));
             }
         }
-        
+
         #region 比较运算符
 
         public static ComparisonExpression operator ==(FunctionExpression fun, ISelectableValueExpression val)
@@ -1114,7 +1114,11 @@ namespace SqlExpression
     /// </summary>
     public class InsertStatement : ExpressionBase<InsertStatement>, IInsertStatement
     {
-        public InsertStatement() { }
+        public InsertStatement() : this(null) { }
+
+        public InsertStatement(ITableExpression table)
+            : this(table, new IPropertyExpression[0], new IPropertyExpression[0])
+        { }
 
         public InsertStatement(ITableExpression table, IPropertyExpression[] properties, IValueExpression[] values)
         {
@@ -1200,6 +1204,11 @@ namespace SqlExpression
     public class DeleteStatement : ExpressionBase<DeleteStatement>, IDeleteStatement
     {
         public DeleteStatement()
+            : this(null)
+        { }
+
+        public DeleteStatement(ITableExpression table)
+            : this(table, null)
         { }
 
         public DeleteStatement(ITableExpression table, IWhereClause where)
@@ -1264,7 +1273,14 @@ namespace SqlExpression
     public class UpdateStatement : ExpressionBase<UpdateStatement>, IUpdateStatement
     {
         public UpdateStatement()
-        { }
+            : this(null)
+        {
+        }
+
+        public UpdateStatement(ITableExpression table)
+            : this(table, new SetClause(null), null)
+        {
+        }
 
         public UpdateStatement(ITableExpression table, ISetClause set, IWhereClause where)
         {
@@ -1453,9 +1469,14 @@ namespace SqlExpression
     public class SelectStatement : ExpressionBase<SelectStatement>, ISelectStatement
     {
         public SelectStatement()
+            : this(null)
         { }
 
-        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
+        public SelectStatement(params ITableExpression[] tables)
+            : this(tables, new ISelectItemExpression[0], null, null, null, null)
+        { }
+
+        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby)
         {
             _tables = tables;
             _items = items;
@@ -1593,14 +1614,14 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("SELECT {0} FROM {1}", Items?.Join(",", s => s.Expression), 
+                return string.Format("SELECT {0} FROM {1}", Items?.Join(",", s => s.Expression),
                     string.Join(" ", new string[] {
                         Tables?.Join(",", t => t.Expression),
                         Joins?.Join(" ", j => j?.Expression),
                         Where?.Expression,
                         GroupBy?.Expression,
                         string.IsNullOrWhiteSpace(GroupBy?.Expression) ? string.Empty : Having?.Expression,
-                        OrderBy?.Expression} .Where(s=> !string.IsNullOrWhiteSpace(s))))
+                        OrderBy?.Expression}.Where(s => !string.IsNullOrWhiteSpace(s))))
                    .TrimEnd();
             }
         }
