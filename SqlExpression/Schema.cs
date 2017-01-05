@@ -19,30 +19,25 @@ namespace SqlExpression
 
         public static ISelectStatement Select(Func<ISelectStatement, Schema, ISelectStatement> fun)
         {
-            var sql = new SelectStatement();
-            sql.Tables = new ITableExpression[] { Table };
+            var sql = new SelectStatement(Table);
             return fun(sql, Instance);
         }
 
         public static IUpdateStatement Update(Func<IUpdateStatement, Schema, IUpdateStatement> fun)
         {
-            var sql = new UpdateStatement();
-            sql.Table = Table;
-            sql.Set = new SetClause(null);
+            var sql = new UpdateStatement(Table);
             return fun(sql, Instance);
         }
 
         public static IInsertStatement Insert(Func<IInsertStatement, Schema, IInsertStatement> fun)
         {
-            var sql = new InsertStatement();
-            sql.Table = Table;
+            var sql = new InsertStatement(Table);
             return fun(sql, Instance);
         }
 
         public static IDeleteStatement Delete(Func<IDeleteStatement, Schema, IDeleteStatement> fun)
         {
-            var sql = new DeleteStatement();
-            sql.Table = Table;
+            var sql = new DeleteStatement(Table);
             return fun(sql, Instance);
         }
 
