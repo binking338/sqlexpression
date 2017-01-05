@@ -22,11 +22,6 @@ namespace SqlExpression
             return InsertVarParam(table, properties);
         }
 
-        public static InsertStatement InsertP(this ITableExpression table, IEnumerable<PropertyExpression> properties)
-        {
-            return InsertVarParam(table, properties);
-        }
-
         public static InsertStatement InsertP(this ITableExpression table, params PropertyExpression[] properties)
         {
             return InsertVarParam(table, properties);
@@ -71,11 +66,6 @@ namespace SqlExpression
             return Insert(table, columns);
         }
 
-        public static InsertStatement Insert(this ITableExpression table, IEnumerable<PropertyExpression> properties)
-        {
-            return new InsertStatement(table, properties.ToArray(), new IValueExpression[properties.Count()]);
-        }
-
         public static InsertStatement Insert(this ITableExpression table, params PropertyExpression[] properties)
         {
             return new InsertStatement(table, properties, new IValueExpression[properties.Length]);
@@ -94,14 +84,39 @@ namespace SqlExpression
             return InsertVarParam(table, columns);
         }
 
-        public static InsertStatement InsertVarParam(this ITableExpression table, IEnumerable<PropertyExpression> properties)
-        {
-            return InsertVarParam(table, properties.Select(prop => prop as IPropertyExpression));
-        }
-
         public static InsertStatement InsertVarParam(this ITableExpression table, params PropertyExpression[] properties)
         {
             return InsertVarParam(table, properties.AsEnumerable());
+        }
+
+        public static IInsertStatement Into(this IInsertStatement insert, ITableExpression table)
+        {
+            insert.Table = table;
+            return insert;
+        }
+
+        public static IInsertStatement Into(this IInsertStatement insert, TableExpression table)
+        {
+            insert.Table = table;
+            return insert;
+        }
+
+        public static IInsertStatement Columns(this IInsertStatement insert, IEnumerable<IPropertyExpression> columns)
+        {
+            insert.Properties = columns.ToArray();
+            return insert;
+        }
+
+        public static IInsertStatement Columns(this IInsertStatement insert, params IPropertyExpression[] columns)
+        {
+            insert.Properties = columns.ToArray();
+            return insert;
+        }
+
+        public static IInsertStatement Columns(this IInsertStatement insert, params PropertyExpression[] columns)
+        {
+            insert.Properties = columns.ToArray();
+            return insert;
         }
 
         public static IInsertStatement Values(this IInsertStatement insert, IEnumerable<IValueExpression> values)

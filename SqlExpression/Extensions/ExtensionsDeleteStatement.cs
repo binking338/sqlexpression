@@ -19,6 +19,18 @@ namespace SqlExpression
             return new DeleteStatement(table, null);
         }
 
+        public static IDeleteStatement From(this IDeleteStatement delete, ITableExpression table)
+        {
+            delete.Table = table;
+            return delete;
+        }
+
+        public static IDeleteStatement From(this IDeleteStatement delete, TableExpression table)
+        {
+            delete.Table = table;
+            return delete;
+        }
+
         public static IDeleteStatement Where(this IDeleteStatement delete, IFilterExpression filter)
         {
             delete.Where = new WhereClause(filter);

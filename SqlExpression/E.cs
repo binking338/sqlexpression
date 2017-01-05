@@ -54,7 +54,7 @@ namespace SqlExpression
             return Params(_params);
         }
 
-        public static  CollectionExpression Cols(IEnumerable<ILiteralValueExpression> values)
+        public static CollectionExpression Cols(IEnumerable<ILiteralValueExpression> values)
         {
             return Collection(values);
         }
@@ -80,6 +80,46 @@ namespace SqlExpression
         }
 
         #endregion
+
+        public static ISelectStatement Select(IEnumerable<ITableExpression> tables)
+        {
+            return new SelectStatement(tables?.ToArray());
+        }
+
+        public static ISelectStatement Select(params TableExpression[] tables)
+        {
+            return new SelectStatement(tables);
+        }
+
+        public static IInsertStatement Insert(ITableExpression table = null)
+        {
+            return new InsertStatement(table);
+        }
+
+        public static IInsertStatement Insert(TableExpression table)
+        {
+            return new InsertStatement(table);
+        }
+
+        public static IDeleteStatement Delete(ITableExpression table = null)
+        {
+            return new DeleteStatement(table);
+        }
+
+        public static IDeleteStatement Delete(TableExpression table)
+        {
+            return new DeleteStatement(table);
+        }
+
+        public static IUpdateStatement Update(ITableExpression table)
+        {
+            return new UpdateStatement(table);
+        }
+
+        public static IUpdateStatement Update(TableExpression table)
+        {
+            return new UpdateStatement(table);
+        }
 
         public static TableExpression Table(string table)
         {

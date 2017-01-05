@@ -22,11 +22,6 @@ namespace SqlExpression
             return UpdateVarParam(table, properties);
         }
 
-        public static IUpdateStatement UpdateP(this ITableExpression table, IEnumerable<PropertyExpression> properties)
-        {
-            return UpdateVarParam(table, properties);
-        }
-
         public static IUpdateStatement UpdateP(this ITableExpression table, params PropertyExpression[] properties)
         {
             return UpdateVarParam(table, properties);
@@ -141,12 +136,6 @@ namespace SqlExpression
         public static UpdateStatement UpdateVarParam(this ITableExpression table, IEnumerable<string> properties)
         {
             var columns = properties.Select(prop => new PropertyExpression(prop) as IPropertyExpression);
-            return UpdateVarParam(table, columns);
-        }
-
-        public static UpdateStatement UpdateVarParam(this ITableExpression table, IEnumerable<PropertyExpression> properties)
-        {
-            var columns = properties.Select(prop => prop as IPropertyExpression);
             return UpdateVarParam(table, columns);
         }
 

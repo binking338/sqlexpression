@@ -58,11 +58,6 @@ namespace SqlExpression
             return Select(table, items.Cast<ISelectItemExpression>());
         }
 
-        public static SelectStatement Select(this ITableExpression table, IEnumerable<PropertyExpression> items)
-        {
-            return new SelectStatement(new ITableExpression[] { table }, items.ToArray(), null, null);
-        }
-
         public static SelectStatement Select(this ITableExpression table, params PropertyExpression[] items)
         {
             return new SelectStatement(new ITableExpression[] { table }, items, null, null);
@@ -87,11 +82,6 @@ namespace SqlExpression
         public static SelectStatement Select(this IEnumerable<ITableExpression> tables, params ISelectItemExpression[] items)
         {
             return new SelectStatement(tables.ToArray(), items, null, null);
-        }
-
-        public static SelectStatement Select(this IEnumerable<ITableExpression> tables, IEnumerable<PropertyExpression> items)
-        {
-            return new SelectStatement(tables.ToArray(), items.ToArray(), null, null);
         }
 
         public static SelectStatement Select(this IEnumerable<ITableExpression> tables, params PropertyExpression[] items)
@@ -121,17 +111,17 @@ namespace SqlExpression
 
         public static ISelectStatement GetAs(this ISelectStatement select, ISelectItemExpression item, PropertyExpression asProperty)
         {
-            return GetAs(select, item, asProperty);
+            return GetAs(select, item as ISelectItemExpression, asProperty);
         }
 
         public static ISelectStatement GetAs(this ISelectStatement select, PropertyExpression item, IPropertyExpression asProperty)
         {
-            return GetAs(select, item, asProperty);
+            return GetAs(select, item as ISelectItemExpression, asProperty);
         }
 
         public static ISelectStatement GetAs(this ISelectStatement select, PropertyExpression item, PropertyExpression asProperty)
         {
-            return GetAs(select, item, asProperty);
+            return GetAs(select, item as ISelectItemExpression, asProperty);
         }
 
         public static ISelectStatement Get(this ISelectStatement select, ISelectItemExpression item)
@@ -141,7 +131,7 @@ namespace SqlExpression
 
         public static ISelectStatement Get(this ISelectStatement select, PropertyExpression item)
         {
-            return Get(select, item);
+            return Get(select, item as ISelectItemExpression);
         }
 
         public static ISelectStatement Get(this ISelectStatement select, IEnumerable<ISelectItemExpression> items)
@@ -153,11 +143,6 @@ namespace SqlExpression
         }
 
         public static ISelectStatement Get(this ISelectStatement select, params ISelectItemExpression[] items)
-        {
-            return Get(select, items.Cast<ISelectItemExpression>());
-        }
-
-        public static ISelectStatement Get(this ISelectStatement select, IEnumerable<PropertyExpression> items)
         {
             return Get(select, items.Cast<ISelectItemExpression>());
         }
@@ -183,18 +168,6 @@ namespace SqlExpression
         }
 
         public static ISelectStatement From(this ISelectStatement select, IEnumerable<ITableExpression> tables)
-        {
-            select.Tables = tables.ToArray();
-            return select;
-        }
-
-        public static ISelectStatement From(this ISelectStatement select, params ITableExpression[] tables)
-        {
-            select.Tables = tables;
-            return select;
-        }
-
-        public static ISelectStatement From(this ISelectStatement select, IEnumerable<TableExpression> tables)
         {
             select.Tables = tables.ToArray();
             return select;
