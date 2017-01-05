@@ -12,6 +12,12 @@ namespace SqlExpression.UnitTest
 
         #region Filter
 
+        [TestMethod]
+        public void Filter()
+        {
+
+        }
+
         #endregion
 
         #region Select
@@ -41,7 +47,7 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void Join()
         {
-            statement = TestSchema.Select((sql, s) => sql.Get(s.All()).InnerJoin(FooSchema.Table, FooSchema.Filter((j) => s.oid == j.oid)));
+            statement = TestSchema.Select((sql, s) => sql.Get(s.All()).InnerJoin(FooSchema.Table, FooSchema.Filter((foo) => s.oid == foo.oid)));
             Assert.AreEqual("SELECT test.oid,test.oname,test.age,test.gender,test.isdel FROM test JOIN foo ON test.oid=foo.oid", statement.ToString());
         }
 
@@ -56,6 +62,13 @@ namespace SqlExpression.UnitTest
         #endregion
 
         #region Update
+
+        [TestMethod]
+        public void Update()
+        {
+            statement = FooSchema.Update((sql, s) => sql.SetVarParam(s.oname).Where(s.oid == 1));
+            Assert.AreEqual("UPDATE foo SET foo.oname=@oname WHERE foo.oid=1", statement.ToString());
+        }
 
         #endregion
 
