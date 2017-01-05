@@ -606,6 +606,104 @@ namespace SqlExpression
             : base(a, op, b)
         {
         }
+        
+        #region 比较运算符
+
+        public static ComparisonExpression operator ==(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.LtOrEq, val);
+        }
+
+        public static ComparisonExpression operator ==(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(exp, Operator.LtOrEq, val);
+        }
+
+        #endregion
+
+        #region 算术运算符
+        public static ArithmeticExpression operator +(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(ArithmeticExpression exp, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Mod, val);
+        }
+        public static ArithmeticExpression operator +(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(ArithmeticExpression exp, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(exp, Operator.Mod, val);
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -705,6 +803,104 @@ namespace SqlExpression
                 return string.Format("{0}({1})", Name, Values.Join(",", v => v?.Expression));
             }
         }
+        
+        #region 比较运算符
+
+        public static ComparisonExpression operator ==(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.LtOrEq, val);
+        }
+
+        public static ComparisonExpression operator ==(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ComparisonExpression(fun, Operator.LtOrEq, val);
+        }
+
+        #endregion
+
+        #region 算术运算符
+        public static ArithmeticExpression operator +(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(FunctionExpression fun, ISelectableValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Mod, val);
+        }
+        public static ArithmeticExpression operator +(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(FunctionExpression fun, LiteralValueExpression val)
+        {
+            return new ArithmeticExpression(fun, Operator.Mod, val);
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -1397,13 +1593,15 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("SELECT {1} FROM {6}{0} {2} {3} {4} {5}", Tables?.Join(",", t => t.Expression),
-                    Items?.Join(",", s => s.Expression),
-                    Where?.Expression,
-                    GroupBy?.Expression,
-                    string.IsNullOrWhiteSpace(GroupBy?.Expression) ? string.Empty : Having?.Expression,
-                    OrderBy?.Expression,
-                    Joins?.Join("", j => j?.Expression + " ")).TrimEnd();
+                return string.Format("SELECT {0} FROM {1}", Items?.Join(",", s => s.Expression), 
+                    string.Join(" ", new string[] {
+                        Tables?.Join(",", t => t.Expression),
+                        Joins?.Join(" ", j => j?.Expression),
+                        Where?.Expression,
+                        GroupBy?.Expression,
+                        string.IsNullOrWhiteSpace(GroupBy?.Expression) ? string.Empty : Having?.Expression,
+                        OrderBy?.Expression} .Where(s=> !string.IsNullOrWhiteSpace(s))))
+                   .TrimEnd();
             }
         }
     }
