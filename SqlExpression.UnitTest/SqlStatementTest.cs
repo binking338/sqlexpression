@@ -37,7 +37,7 @@ namespace SqlExpression.UnitTest
             statement = TestSchema.Select((sql, s) => sql.Get(s.gender, s.age.Avg()).GroupBy(s.gender).Having(s.age.Avg() < 40));
             Assert.AreEqual("SELECT test.gender,AVG(test.age) FROM test GROUP BY test.gender HAVING AVG(test.age)<40", statement.ToString());
 
-            statement = TestSchema.Select((sql, s) =>sql.Get(s.All()).Where(s.oid > 1).OrderBy(s.age.Desc()));
+            statement = TestSchema.Select((sql, s) => sql.Get(s.All()).Where(s.oid > 1).OrderBy(s.age.Desc()));
             Assert.AreEqual("SELECT test.oid,test.oname,test.age,test.gender,test.isdel FROM test WHERE test.oid>1 ORDER BY test.age DESC", statement.ToString());
 
             statement = TestSchema.Select((sql, s) => sql.Get(s.age.Avg()).Where(s.oid > 1).GroupBy(s.gender).Having(s.age.Avg() > 18).OrderBy(s.age.Desc()));
@@ -66,8 +66,8 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void Update()
         {
-            statement = FooSchema.Update((sql, s) => sql.SetVarParam(s.oname).Where(s.oid == 1));
-            Assert.AreEqual("UPDATE foo SET foo.oname=@oname WHERE foo.oid=1", statement.ToString());
+            statement = FooSchema.Update((sql, s) => sql.Set(s.oname, "foo2").Where(s.oid == 1));
+            Assert.AreEqual("UPDATE foo SET foo.oname='foo2' WHERE foo.oid=1", statement.ToString());
         }
 
         #endregion
@@ -77,8 +77,8 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void Insert()
         {
-            statement = FooSchema.Insert((sql, s) => sql.Set(s.oname, "foo1"));
-            Assert.AreEqual("INSERT INTO foo(foo.oname) VALUES('foo1')", statement.ToString());
+            statement = FooSchema.Insert((sql, s) => sql.Set(s.oid, 1).Set(s.oname, "foo1"));
+            Assert.AreEqual("INSERT INTO foo(foo.oid,foo.oname) VALUES(1,'foo1')", statement.ToString());
         }
 
         #endregion
