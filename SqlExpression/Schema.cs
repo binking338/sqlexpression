@@ -44,5 +44,10 @@ namespace SqlExpression
             sql.Table = Table;
             return fun(sql, Instance);
         }
+
+        public static IFilterExpression Filter(Func<Schema, IFilterExpression> fun)
+        {
+            return fun(Instance);
+        }
     }
 }
