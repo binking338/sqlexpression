@@ -32,19 +32,18 @@ namespace SqlExpression
             return SelectVarCustomer(tables, customers);
         }
 
-        public static ISelectStatement GetAsC(this ISelectStatement select, string item, IPropertyExpression asProperty)
-        {
-            return GetAsVarCustomer(select, item, asProperty);
-        }
-
-        public static ISelectStatement GetAsC(this ISelectStatement select, string item, string asProperty)
-        {
-            return GetAsVarCustomer(select, item, asProperty);
-        }
-
         public static ISelectStatement GetC(this ISelectStatement select, string item)
         {
             return GetVarCustomer(select, item);
+        }
+        public static ISelectStatement GetC(this ISelectStatement select, IEnumerable<string> items)
+        {
+            return GetVarCustomer(select, items);
+        }
+
+        public static ISelectStatement GetC(this ISelectStatement select, params string[] items)
+        {
+            return GetVarCustomer(select, items);
         }
 
         #endregion
@@ -54,10 +53,9 @@ namespace SqlExpression
             return new SelectStatement(new ITableExpression[] { table }, items.ToArray(), null, null);
         }
 
-        public static SelectStatement Select(this ITableExpression table, IEnumerable<string> properties)
+        public static SelectStatement Select(this ITableExpression table, params ISelectItemExpression[] items)
         {
-            var items = properties.Select(prop => new PropertyExpression(prop) as ISelectItemExpression);
-            return Select(table, items.ToArray());
+            return Select(table, items.Cast<ISelectItemExpression>());
         }
 
         public static SelectStatement Select(this ITableExpression table, IEnumerable<PropertyExpression> items)
@@ -86,10 +84,9 @@ namespace SqlExpression
             return new SelectStatement(tables.ToArray(), items.ToArray(), null, null);
         }
 
-        public static SelectStatement Select(this IEnumerable<ITableExpression> tables, IEnumerable<string> properties)
+        public static SelectStatement Select(this IEnumerable<ITableExpression> tables, params ISelectItemExpression[] items)
         {
-            var items = properties.Select(prop => new PropertyExpression(prop));
-            return new SelectStatement(tables.ToArray(), items.ToArray(), null, null);
+            return new SelectStatement(tables.ToArray(), items, null, null);
         }
 
         public static SelectStatement Select(this IEnumerable<ITableExpression> tables, IEnumerable<PropertyExpression> items)
@@ -122,9 +119,9 @@ namespace SqlExpression
             return select;
         }
 
-        public static ISelectStatement GetAs(this ISelectStatement select, ISelectItemExpression item, string asProperty)
+        public static ISelectStatement GetAs(this ISelectStatement select, ISelectItemExpression item, PropertyExpression asProperty)
         {
-            return GetAs(select, item, string.IsNullOrWhiteSpace(asProperty) ? null : new PropertyExpression(asProperty));
+            return GetAs(select, item, asProperty);
         }
 
         public static ISelectStatement GetAs(this ISelectStatement select, PropertyExpression item, IPropertyExpression asProperty)
@@ -132,19 +129,9 @@ namespace SqlExpression
             return GetAs(select, item, asProperty);
         }
 
-        public static ISelectStatement GetAs(this ISelectStatement select, PropertyExpression item, string asProperty)
+        public static ISelectStatement GetAs(this ISelectStatement select, PropertyExpression item, PropertyExpression asProperty)
         {
-            return GetAs(select, item, new PropertyExpression(asProperty));
-        }
-
-        public static ISelectStatement GetAsVarCustomer(this ISelectStatement select, string item, IPropertyExpression asProperty)
-        {
-            return GetAs(select, new CustomerExpression(item), asProperty);
-        }
-
-        public static ISelectStatement GetAsVarCustomer(this ISelectStatement select, string item, string asProperty)
-        {
-            return GetAs(select, new CustomerExpression(item), asProperty);
+            return GetAs(select, item, asProperty);
         }
 
         public static ISelectStatement Get(this ISelectStatement select, ISelectItemExpression item)
@@ -185,9 +172,38 @@ namespace SqlExpression
             return Get(select, new CustomerExpression(item));
         }
 
-        public static ISelectStatement GetVarCustomer(this ISelectStatement select, string[] items)
+        public static ISelectStatement GetVarCustomer(this ISelectStatement select, IEnumerable<string> items)
         {
             return Get(select, items.Select(i => new CustomerExpression(i)));
+        }
+
+        public static ISelectStatement GetVarCustomer(this ISelectStatement select, params string[] items)
+        {
+            return Get(select, items.Select(i => new CustomerExpression(i)));
+        }
+
+        public static ISelectStatement From(this ISelectStatement select, IEnumerable<ITableExpression> tables)
+        {
+            select.Tables = tables.ToArray();
+            return select;
+        }
+
+        public static ISelectStatement From(this ISelectStatement select, params ITableExpression[] tables)
+        {
+            select.Tables = tables;
+            return select;
+        }
+
+        public static ISelectStatement From(this ISelectStatement select, IEnumerable<TableExpression> tables)
+        {
+            select.Tables = tables.ToArray();
+            return select;
+        }
+
+        public static ISelectStatement From(this ISelectStatement select, params TableExpression[] tables)
+        {
+            select.Tables = tables;
+            return select;
         }
 
         public static ISelectStatement Join(this ISelectStatement select, IJoinExpression join)
@@ -196,6 +212,12 @@ namespace SqlExpression
             joins.Add(join);
             select.Joins = joins.ToArray();
             return select;
+        }
+
+        public static ISelectStatement Join(this ISelectStatement select, ITableExpression table, IFilterExpression on, IJoinOperator joinOperator)
+        {
+            IJoinExpression join = new JoinExpression(joinOperator, table, on);
+            return Join(select, join);
         }
 
         public static ISelectStatement InnerJoin(this ISelectStatement select, ITableExpression table, IFilterExpression on)
@@ -213,6 +235,12 @@ namespace SqlExpression
         public static ISelectStatement RightJoin(this ISelectStatement select, ITableExpression table, IFilterExpression on)
         {
             IJoinExpression join = new JoinExpression(Operator.RightJoin, table, on);
+            return Join(select, join);
+        }
+
+        public static ISelectStatement FullJoin(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        {
+            IJoinExpression join = new JoinExpression(Operator.FullJoin, table, on);
             return Join(select, join);
         }
 
