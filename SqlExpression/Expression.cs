@@ -95,6 +95,7 @@ namespace SqlExpression
             return new TableExpression(name);
         }
     }
+
     /// <summary>
     /// 字面值
     /// </summary>
@@ -303,7 +304,7 @@ namespace SqlExpression
         {
             return new ComparisonExpression(prop, Operator.LtOrEq, val);
         }
-        
+
         public static ComparisonExpression operator ==(LiteralValueExpression val, PropertyExpression prop)
         {
             return new ComparisonExpression(val, Operator.Eq, prop);
@@ -742,7 +743,14 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0}{1}", A?.Expression, Op);
+                if (A is IBinaryExpression || A is IUnaryExpression)
+                {
+                    return string.Format("({0}){1}", A?.Expression, Op);
+                }
+                else
+                {
+                    return string.Format("{0}{1}", A?.Expression, Op);
+                }
             }
         }
     }
@@ -786,7 +794,9 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0}{1}{2}", A?.Expression, Op, B?.Expression);
+                var fA = (A is IBinaryExpression || A is IUnaryExpression);
+                var fB = (B is IBinaryExpression || B is IUnaryExpression);
+                return string.Format("{0}{1}{2}", fA ? "(" + A?.Expression + ")": A?.Expression, Op, fB ? "(" + B?.Expression + ")" : B?.Expression);
             }
         }
     }
