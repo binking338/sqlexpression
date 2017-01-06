@@ -27,6 +27,16 @@ namespace SqlExpression
             return InsertVarParam(table, properties);
         }
 
+        public static IInsertStatement ValuesC(this IInsertStatement insert, IEnumerable<string> values)
+        {
+            return ValuesVarCustomer(insert, values);
+        }
+
+        public static IInsertStatement ValuesC(this IInsertStatement insert, params string[] values)
+        {
+            return ValuesVarCustomer(insert, values);
+        }
+
         public static IInsertStatement ValuesP(this IInsertStatement insert)
         {
             return ValuesVarParam(insert);
@@ -53,6 +63,7 @@ namespace SqlExpression
         }
 
         #endregion
+
         public static InsertStatement Insert(this ITableExpression table)
         {
             return new InsertStatement(table);
@@ -143,9 +154,8 @@ namespace SqlExpression
                 {
                     vals.AddRange(new IValueExpression[props.Count - vals.Count]);
                 }
-                for (int i = 0, j = 0; i < props.Count && j < values.Count();)
+                for (int i = 0, j = 0; i < props.Count && j < values.Count(); i++)
                 {
-                    var prop = props[i++];
                     // 避免覆盖
                     if (vals[i] == null) vals[i] = values.ElementAt(j++);
                 }
@@ -158,6 +168,16 @@ namespace SqlExpression
         {
             var setableValues = values.Select(val => val is IValueExpression ? val as IValueExpression : new LiteralValueExpression(val));
             return Values(insert, setableValues);
+        }
+
+        public static IInsertStatement ValuesVarCustomer(this IInsertStatement insert, IEnumerable<string> values)
+        {
+            return Values(insert, values.Select(v=>new CustomerExpression(v)));
+        }
+
+        public static IInsertStatement ValuesVarCustomer(this IInsertStatement insert, params string[] values)
+        {
+            return Values(insert, values.Select(v => new CustomerExpression(v)));
         }
 
         public static IInsertStatement ValuesVarParam(this IInsertStatement insert)
