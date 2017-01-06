@@ -53,6 +53,10 @@ namespace SqlExpression
         }
 
         #endregion
+        public static InsertStatement Insert(this ITableExpression table)
+        {
+            return new InsertStatement(table);
+        }
 
         public static InsertStatement Insert(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
         {

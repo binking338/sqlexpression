@@ -104,6 +104,11 @@ namespace SqlExpression
 
         #endregion
 
+        public static UpdateStatement Update(this ITableExpression table)
+        {
+            return new UpdateStatement(table);
+        }
+
         public static UpdateStatement Update(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
         {
             var set = new SetClause(properties.Select(c => new SetItemExpression(c, null) as ISetItemExpression).ToArray());
