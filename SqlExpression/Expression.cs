@@ -1676,7 +1676,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format(" {0} AS {1} ", SelectItem?.Expression, AsProperty?.Expression);
+                return string.Format("{0} AS {1}", SelectItem?.Expression, AsProperty?.Expression);
             }
         }
     }
