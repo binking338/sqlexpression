@@ -65,7 +65,7 @@ namespace SqlExpression
 
         public static SelectStatement Select(this ITableExpression table, params PropertyExpression[] items)
         {
-            return new SelectStatement(new ITableExpression[] { table }, items, null, null);
+            return Select(table, items.Cast<ISelectItemExpression>());
         }
 
         public static SelectStatement SelectVarCustomer(this ITableExpression table, IEnumerable<string> customers)
@@ -90,12 +90,12 @@ namespace SqlExpression
 
         public static SelectStatement Select(this IEnumerable<ITableExpression> tables, params ISelectItemExpression[] items)
         {
-            return new SelectStatement(tables.ToArray(), items, null, null);
+            return Select(tables, items.Cast<ISelectItemExpression>());
         }
 
         public static SelectStatement Select(this IEnumerable<ITableExpression> tables, params PropertyExpression[] items)
         {
-            return new SelectStatement(tables.ToArray(), items, null, null);
+            return Select(tables, items.Cast<ISelectItemExpression>());
         }
 
         public static SelectStatement SelectVarCustomer(this IEnumerable<ITableExpression> tables, IEnumerable<string> customers)
@@ -120,7 +120,7 @@ namespace SqlExpression
 
         public static ISelectStatement GetAs(this ISelectStatement select, ISelectItemExpression item, PropertyExpression asProperty)
         {
-            return GetAs(select, item as ISelectItemExpression, asProperty);
+            return GetAs(select, item as ISelectItemExpression, asProperty as IPropertyExpression);
         }
 
         public static ISelectStatement GetAs(this ISelectStatement select, PropertyExpression item, IPropertyExpression asProperty)
@@ -130,7 +130,7 @@ namespace SqlExpression
 
         public static ISelectStatement GetAs(this ISelectStatement select, PropertyExpression item, PropertyExpression asProperty)
         {
-            return GetAs(select, item as ISelectItemExpression, asProperty);
+            return GetAs(select, item as ISelectItemExpression, asProperty as IPropertyExpression);
         }
 
         public static ISelectStatement Get(this ISelectStatement select, ISelectItemExpression item)
@@ -322,8 +322,7 @@ namespace SqlExpression
         }
 
         #endregion
-
-
+        
         #endregion
     }
 }
