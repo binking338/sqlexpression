@@ -135,7 +135,7 @@ namespace SqlExpression
             var valueType = Value?.GetType();
             if (Value == null || Value is DBNull)
             {
-                return " NULL ";
+                return "NULL";
             }
             else if (valueType == typeof(string) || valueType == typeof(char))
             {
