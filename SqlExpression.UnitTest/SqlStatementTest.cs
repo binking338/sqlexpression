@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlExpression;
 using SqlExpression.MySql;
@@ -16,6 +19,41 @@ namespace SqlExpression.UnitTest
         public void Filter()
         {
 
+        }
+
+        #endregion
+
+        #region Params
+
+        [TestMethod]
+        public void Params()
+        {
+            statement = FooSchema.Insert((sql, s) => sql.Set(s.oid, 1).Set(s.oname, "foo1"));
+            Assert.AreEqual(SortedJoin(statement.Params), "");
+            statement = FooSchema.Table.Insert().SetP(FooSchema.Instance.oid).SetVarParam(FooSchema.Instance.oname);
+            Assert.AreEqual(SortedJoin(statement.Params), "oid,oname");
+            statement = FooSchema.Table.Insert().SetP(FooSchema.Instance.oid).SetVarParam(FooSchema.Instance.oname);
+            Assert.AreEqual(SortedJoin(statement.Params), "oid,oname");
+
+            statement = FooSchema.Delete((sql, s) => sql);
+            Assert.AreEqual(SortedJoin(statement.Params), "");
+            statement = FooSchema.Delete((sql, s) => sql.Where(s.oid.EqVarParam()));
+            Assert.AreEqual(SortedJoin(statement.Params), "oid");
+
+            statement = FooSchema.Update((sql, s) => sql.Set(s.oname, "foo2"));
+            Assert.AreEqual(SortedJoin(statement.Params), "");
+            statement = FooSchema.Table.Update().SetVarParam(FooSchema.Instance.oname).SetP(FooSchema.Instance.isdel).Where(FooSchema.Instance.oid.EqVarParam());
+            Assert.AreEqual(SortedJoin(statement.Params), "isdel,oid,oname");
+            
+            statement = TestSchema.Select((sql, s) => sql.Get(s.age.Avg()).Where(s.oid.GtVarParam()).GroupBy(s.gender).Having(s.age.Avg() > 18).OrderBy(s.age.Desc()));
+            Assert.AreEqual(SortedJoin(statement.Params), "oid");
+        }
+
+        private string SortedJoin(IEnumerable<string> strs, string splitter = ",")
+        {
+            var list = strs.ToList();
+            list.Sort();
+            return list.Join(splitter);
         }
 
         #endregion
@@ -98,7 +136,7 @@ namespace SqlExpression.UnitTest
 
             statement = FooSchema.Table.Update().SetVarCustomer(FooSchema.Instance.oname, "@oname").SetC(FooSchema.Instance.isdel, "1").Where(FooSchema.Instance.oid == 1);
             Assert.AreEqual("UPDATE foo SET foo.oname=@oname,foo.isdel=1 WHERE foo.oid=1", statement.ToString());
-
+               　
             statement = FooSchema.Table.Update().SetVarParam(FooSchema.Instance.oname).SetP(FooSchema.Instance.isdel).Where(FooSchema.Instance.oid == 1);
             Assert.AreEqual("UPDATE foo SET foo.oname=@oname,foo.isdel=@isdel WHERE foo.oid=1", statement.ToString());
         }
