@@ -232,173 +232,206 @@ namespace SqlExpression
         #endregion
 
         #region ComparisonExpression
-        public static UnaryComparisonExpression IsNull(this IPropertyExpression prop)
+
+        public static UnaryComparisonExpression IsNull(this IValueExpression prop)
         {
             return new UnaryComparisonExpression(prop, Operator.IsNull);
             //return new ComparisonExpression(prop, Operator.Is, new LiteralValueExpression(null));
         }
 
-        public static UnaryComparisonExpression IsNotNull(this IPropertyExpression prop)
+        public static UnaryComparisonExpression IsNotNull(this IValueExpression prop)
         {
             return new UnaryComparisonExpression(prop, Operator.IsNotNull);
             //return new ComparisonExpression(prop, Operator.IsNot, new LiteralValueExpression(null));
         }
 
-        public static ComparisonExpression Eq(this IPropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression Eq(this IValueExpression prop, IValueExpression val)
         {
             return new ComparisonExpression(prop, Operator.Eq, val);
         }
 
-        public static ComparisonExpression Neq(this IPropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression Neq(this IValueExpression prop, IValueExpression val)
         {
             return new ComparisonExpression(prop, Operator.Neq, val);
         }
 
-        public static ComparisonExpression Gt(this IPropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression Gt(this IValueExpression prop, IValueExpression val)
         {
             return new ComparisonExpression(prop, Operator.Gt, val);
         }
 
-        public static ComparisonExpression GtOrEq(this IPropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression GtOrEq(this IValueExpression prop, IValueExpression val)
         {
             return new ComparisonExpression(prop, Operator.GtOrEq, val);
         }
 
-        public static ComparisonExpression Lt(this IPropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression Lt(this IValueExpression prop, IValueExpression val)
         {
             return new ComparisonExpression(prop, Operator.Lt, val);
         }
 
-        public static ComparisonExpression LtOrEq(this IPropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression LtOrEq(this IValueExpression prop, IValueExpression val)
         {
             return new ComparisonExpression(prop, Operator.LtOrEq, val);
         }
 
-        public static ComparisonExpression Like(this IPropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression Like(this IValueExpression prop, IValueExpression val)
         {
             return new ComparisonExpression(prop, Operator.Like, val);
         }
 
-        public static ComparisonExpression NotLike(this IPropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression NotLike(this IValueExpression prop, IValueExpression val)
         {
             return new ComparisonExpression(prop, Operator.NotLike, val);
         }
 
-        public static ComparisonExpression Eq(this IPropertyExpression prop, object val)
+        public static ComparisonExpression Eq(this IValueExpression prop, object val)
         {
             return prop.Eq(new LiteralValueExpression(val));
         }
 
-        public static ComparisonExpression Neq(this IPropertyExpression prop, object val)
+        public static ComparisonExpression Neq(this IValueExpression prop, object val)
         {
             return prop.Neq(new LiteralValueExpression(val));
         }
 
-        public static ComparisonExpression Gt(this IPropertyExpression prop, object val)
+        public static ComparisonExpression Gt(this IValueExpression prop, object val)
         {
             return prop.Gt(new LiteralValueExpression(val));
         }
 
-        public static ComparisonExpression GtOrEq(this IPropertyExpression prop, object val)
+        public static ComparisonExpression GtOrEq(this IValueExpression prop, object val)
         {
             return prop.GtOrEq(new LiteralValueExpression(val));
         }
 
-        public static ComparisonExpression Lt(this IPropertyExpression prop, object val)
+        public static ComparisonExpression Lt(this IValueExpression prop, object val)
         {
             return prop.Lt(new LiteralValueExpression(val));
         }
 
-        public static ComparisonExpression LtOrEq(this IPropertyExpression prop, object val)
+        public static ComparisonExpression LtOrEq(this IValueExpression prop, object val)
         {
             return prop.LtOrEq(new LiteralValueExpression(val));
         }
 
-        public static ComparisonExpression Like(this IPropertyExpression prop, object val)
+        public static ComparisonExpression Like(this IValueExpression prop, object val)
         {
             return prop.Like(new LiteralValueExpression(val));
         }
 
-        public static ComparisonExpression NotLike(this IPropertyExpression prop, object val)
+        public static ComparisonExpression NotLike(this IValueExpression prop, object val)
         {
             return prop.NotLike(new LiteralValueExpression(val));
         }
 
-        public static ComparisonExpression Between(this IPropertyExpression prop, object a, object b)
+        public static ComparisonExpression Between(this IValueExpression prop, object a, object b)
         {
             return new ComparisonExpression(prop, Operator.Between, new BetweenValueExpression(new LiteralValueExpression(a), new LiteralValueExpression(b)));
         }
 
-        public static ComparisonExpression NotBetween(this IPropertyExpression prop, object a, object b)
+        public static ComparisonExpression NotBetween(this IValueExpression prop, object a, object b)
         {
             return new ComparisonExpression(prop, Operator.NotBetween, new BetweenValueExpression(new LiteralValueExpression(a), new LiteralValueExpression(b)));
         }
 
-        public static ComparisonExpression In(this IPropertyExpression prop, params object[] values)
+        public static ComparisonExpression In(this IValueExpression prop, params object[] values)
         {
             return new ComparisonExpression(prop, Operator.In, new CollectionExpression(values.Select(val => new LiteralValueExpression(val)).ToArray()));
         }
 
-        public static ComparisonExpression NotIn(this IPropertyExpression prop, params object[] values)
+        public static ComparisonExpression NotIn(this IValueExpression prop, params object[] values)
         {
             return new ComparisonExpression(prop, Operator.NotIn, new CollectionExpression(values.Select(val => new LiteralValueExpression(val)).ToArray()));
         }
 
-        public  static ComparisonExpression In(this IPropertyExpression prop, ISelectStatement select)
+        public static ComparisonExpression In(this IValueExpression prop, ISelectStatement select)
         {
             return new ComparisonExpression(prop, Operator.In, select);
         }
 
-        public static ComparisonExpression NotIn(this IPropertyExpression prop, ISelectStatement select)
+        public static ComparisonExpression NotIn(this IValueExpression prop, ISelectStatement select)
         {
             return new ComparisonExpression(prop, Operator.NotIn, select);
         }
 
-        public static ComparisonExpression EqVarParam(this IPropertyExpression prop, string param = null)
+        public static ComparisonExpression EqVarParam(this IValueExpression prop, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = prop.Name;
+            if (string.IsNullOrWhiteSpace(param))
+            {
+                if (prop is IPropertyExpression) param = (prop as IPropertyExpression).Name;
+                else throw new ArgumentNullException("param");
+            }
             return prop.Eq(new ParamExpression(param));
         }
 
-        public static ComparisonExpression NeqVarParam(this IPropertyExpression prop, string param = null)
+        public static ComparisonExpression NeqVarParam(this IValueExpression prop, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = prop.Name;
+            if (string.IsNullOrWhiteSpace(param))
+            {
+                if (prop is IPropertyExpression) param = (prop as IPropertyExpression).Name;
+                else throw new ArgumentNullException("param");
+            }
             return prop.Neq(new ParamExpression(param));
         }
 
-        public static ComparisonExpression GtVarParam(this IPropertyExpression prop, string param = null)
+        public static ComparisonExpression GtVarParam(this IValueExpression prop, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = prop.Name;
+            if (string.IsNullOrWhiteSpace(param))
+            {
+                if (prop is IPropertyExpression) param = (prop as IPropertyExpression).Name;
+                else throw new ArgumentNullException("param");
+            }
             return prop.Gt(new ParamExpression(param));
         }
 
-        public static ComparisonExpression GtOrEqVarParam(this IPropertyExpression prop, string param = null)
+        public static ComparisonExpression GtOrEqVarParam(this IValueExpression prop, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = prop.Name;
+            if (string.IsNullOrWhiteSpace(param))
+            {
+                if (prop is IPropertyExpression) param = (prop as IPropertyExpression).Name;
+                else throw new ArgumentNullException("param");
+            }
             return prop.GtOrEq(new ParamExpression(param));
         }
 
-        public static ComparisonExpression LtVarParam(this IPropertyExpression prop, string param = null)
+        public static ComparisonExpression LtVarParam(this IValueExpression prop, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = prop.Name;
+            if (string.IsNullOrWhiteSpace(param))
+            {
+                if (prop is IPropertyExpression) param = (prop as IPropertyExpression).Name;
+                else throw new ArgumentNullException("param");
+            }
             return prop.Lt(new ParamExpression(param));
         }
 
-        public static ComparisonExpression LtOrEqVarParam(this IPropertyExpression prop, string param = null)
+        public static ComparisonExpression LtOrEqVarParam(this IValueExpression prop, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = prop.Name;
+            if (string.IsNullOrWhiteSpace(param))
+            {
+                if (prop is IPropertyExpression) param = (prop as IPropertyExpression).Name;
+                else throw new ArgumentNullException("param");
+            }
             return prop.LtOrEq(new ParamExpression(param));
         }
 
-        public static ComparisonExpression LikeVarParam(this IPropertyExpression prop, string param = null)
+        public static ComparisonExpression LikeVarParam(this IValueExpression prop, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = prop.Name;
+            if (string.IsNullOrWhiteSpace(param))
+            {
+                if (prop is IPropertyExpression) param = (prop as IPropertyExpression).Name;
+                else throw new ArgumentNullException("param");
+            }
             return prop.Like(new ParamExpression(param));
         }
 
-        public static ComparisonExpression NotLikeVarParam(this IPropertyExpression prop, string param = null)
+        public static ComparisonExpression NotLikeVarParam(this IValueExpression prop, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = prop.Name;
+            if (string.IsNullOrWhiteSpace(param))
+            {
+                if (prop is IPropertyExpression) param = (prop as IPropertyExpression).Name;
+                else throw new ArgumentNullException("param");
+            }
             return prop.NotLike(new ParamExpression(param));
         }
 
@@ -409,9 +442,19 @@ namespace SqlExpression
         /// <param name="parammin"></param>
         /// <param name="parammax"></param>
         /// <returns>Expression:{prop.Expression} BETWEEN @{prop.Name}1 AND @{prop.Name}2</returns>
-        public static ComparisonExpression BetweenVarParam(this IPropertyExpression prop, string parammin = null, string parammax = null)
+        public static ComparisonExpression BetweenVarParam(this IValueExpression prop, string parammin = null, string parammax = null)
         {
-            return new ComparisonExpression(prop, Operator.Between, new BetweenValueExpression(new ParamExpression(parammin ?? string.Format("{0}1", prop.Name)), new ParamExpression(parammax ?? string.Format("{0}2", prop.Name))));
+            if (string.IsNullOrWhiteSpace(parammin))
+            {
+                if (prop is IPropertyExpression) parammin = (prop as IPropertyExpression).Name + "1";
+                else throw new ArgumentNullException("param");
+            }
+            if (string.IsNullOrWhiteSpace(parammax))
+            {
+                if (prop is IPropertyExpression) parammax = (prop as IPropertyExpression).Name + "2";
+                else throw new ArgumentNullException("parammax");
+            }
+            return new ComparisonExpression(prop, Operator.Between, new BetweenValueExpression(new ParamExpression(parammin), new ParamExpression(parammax)));
         }
 
         /// <summary>
@@ -421,27 +464,37 @@ namespace SqlExpression
         /// <param name="parammin"></param>
         /// <param name="parammax"></param>
         /// <returns>Expression:{prop.Expression} NOT BETWEEN @{prop.Name}1 AND @{prop.Name}2</returns>
-        public static ComparisonExpression NotBetweenVarParam(this IPropertyExpression prop, string parammin = null, string parammax = null)
+        public static ComparisonExpression NotBetweenVarParam(this IValueExpression prop, string parammin = null, string parammax = null)
         {
-            return new ComparisonExpression(prop, Operator.NotBetween, new BetweenValueExpression(new ParamExpression(parammin ?? string.Format("{0}1", prop.Name)), new ParamExpression(parammax ?? string.Format("{0}2", prop.Name))));
+            if (string.IsNullOrWhiteSpace(parammin))
+            {
+                if (prop is IPropertyExpression) parammin = (prop as IPropertyExpression).Name + "1";
+                else throw new ArgumentNullException("param");
+            }
+            if (string.IsNullOrWhiteSpace(parammax))
+            {
+                if (prop is IPropertyExpression) parammax = (prop as IPropertyExpression).Name + "2";
+                else throw new ArgumentNullException("parammax");
+            }
+            return new ComparisonExpression(prop, Operator.NotBetween, new BetweenValueExpression(new ParamExpression(parammin), new ParamExpression(parammax)));
         }
 
-        public static ComparisonExpression BetweenVarCustomer(this IPropertyExpression prop, string customer)
+        public static ComparisonExpression BetweenVarCustomer(this IValueExpression prop, string customer)
         {
             return new ComparisonExpression(prop, Operator.Between, new CustomerExpression(customer));
         }
 
-        public static ComparisonExpression NotBetweenVarCustomer(this IPropertyExpression prop, string customer)
+        public static ComparisonExpression NotBetweenVarCustomer(this IValueExpression prop, string customer)
         {
             return new ComparisonExpression(prop, Operator.NotBetween, new CustomerExpression(customer));
         }
 
-        public static ComparisonExpression InVarCustomer(this IPropertyExpression prop, string customer)
+        public static ComparisonExpression InVarCustomer(this IValueExpression prop, string customer)
         {
             return new ComparisonExpression(prop, Operator.In, new CustomerExpression(customer));
         }
 
-        public static ComparisonExpression NotInVarCustomer(this IPropertyExpression prop, string customer)
+        public static ComparisonExpression NotInVarCustomer(this IValueExpression prop, string customer)
         {
             return new ComparisonExpression(prop, Operator.NotIn, new CustomerExpression(customer));
         }
