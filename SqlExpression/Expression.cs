@@ -1250,7 +1250,9 @@ namespace SqlExpression
         {
             get
             {
-                return Where?.Filter.Params();
+                List<string> list = new List<string>();
+                if (Where != null) list.AddRange(Where.Filter.Params());
+                return list;
             }
         }
 
@@ -1347,7 +1349,7 @@ namespace SqlExpression
                         list.Add((item.Value as IParamExpression).Name);
                     }
                 }
-                list.AddRange(Where?.Filter.Params());
+                if (Where != null) list.AddRange(Where.Filter.Params());
                 return list.Distinct();
             }
         }
@@ -1593,11 +1595,14 @@ namespace SqlExpression
             get
             {
                 var list = new List<string>();
-                list.AddRange(Having?.Filter.Params());
-                list.AddRange(Where?.Filter.Params());
-                foreach (var join in Joins)
+                if (Having != null) list.AddRange(Having.Filter.Params());
+                if (Where != null) list.AddRange(Where.Filter.Params());
+                if (Joins != null)
                 {
-                    list.AddRange(join?.On.Params());
+                    foreach (var join in Joins)
+                    {
+                        if (join?.On != null) list.AddRange(join.On.Params());
+                    }
                 }
                 return list.Distinct();
             }
@@ -2085,7 +2090,7 @@ namespace SqlExpression
                 {
                     list.Add(match.Value);
                 }
-                return list;
+                return list.Distinct();
             }
         }
 
