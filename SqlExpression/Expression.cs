@@ -1473,10 +1473,18 @@ namespace SqlExpression
         { }
 
         public SelectStatement(params ITableExpression[] tables)
-            : this(tables, new ISelectItemExpression[0], null, null, null, null)
+            : this(tables, new ISelectItemExpression[0], null)
         { }
 
-        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby)
+        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IWhereClause where, IOrderByClause orderby = null)
+            : this(tables, items, where, null, null, orderby)
+        { }
+
+        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
+            : this(tables, items, null, where, groupby, having, orderby)
+        { }
+
+        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
         {
             _tables = tables;
             _items = items;
@@ -1485,17 +1493,6 @@ namespace SqlExpression
             _groupby = groupby;
             _having = having;
             _orderby = orderby;
-        }
-
-        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
-            : this(tables, items, null, where, groupby, having, orderby)
-        {
-        }
-
-        public SelectStatement(ITableExpression[] tables, ISelectItemExpression[] items, IWhereClause where, IOrderByClause orderby = null)
-            : this(tables, items, where, null, null, orderby)
-        {
-
         }
 
         private ITableExpression[] _tables = null;

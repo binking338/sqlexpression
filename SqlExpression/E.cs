@@ -81,6 +81,11 @@ namespace SqlExpression
 
         #endregion
 
+        public static ISelectStatement Select()
+        {
+            return new SelectStatement();
+        }
+
         public static ISelectStatement Select(IEnumerable<ITableExpression> tables)
         {
             return new SelectStatement(tables?.ToArray());
@@ -89,6 +94,21 @@ namespace SqlExpression
         public static ISelectStatement Select(params TableExpression[] tables)
         {
             return new SelectStatement(tables);
+        }
+
+        public static ISelectStatement Select(IEnumerable<ISelectItemExpression> items)
+        {
+            return new SelectStatement(null, items.ToArray(), null);
+        }
+
+        public static ISelectStatement Select(params ISelectItemExpression[] items)
+        {
+            return Select(items.AsEnumerable());
+        }
+
+        public static ISelectStatement Select(params PropertyExpression[] items)
+        {
+            return Select(items.AsEnumerable());
         }
 
         public static IInsertStatement Insert(ITableExpression table = null)

@@ -17,7 +17,7 @@ namespace SqlExpression
             return InsertVarParam(table, properties);
         }
 
-        public static InsertStatement InsertP(this ITableExpression table, IEnumerable<string> properties)
+        public static InsertStatement InsertP(this ITableExpression table, params IPropertyExpression[] properties)
         {
             return InsertVarParam(table, properties);
         }
@@ -59,16 +59,14 @@ namespace SqlExpression
             return new InsertStatement(table, properties.ToArray(), new IValueExpression[properties.Count()]);
         }
 
-        public static InsertStatement Insert(this ITableExpression table, IEnumerable<string> properties)
+        public static InsertStatement Insert(this ITableExpression table, params IPropertyExpression[] properties)
         {
-            var columns = properties.Select(prop => new PropertyExpression(prop) as IPropertyExpression);
-
-            return Insert(table, columns);
+            return Insert(table, properties.AsEnumerable());
         }
 
         public static InsertStatement Insert(this ITableExpression table, params PropertyExpression[] properties)
         {
-            return new InsertStatement(table, properties, new IValueExpression[properties.Length]);
+            return Insert(table, properties.AsEnumerable());
         }
 
         public static InsertStatement InsertVarParam(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
@@ -77,11 +75,9 @@ namespace SqlExpression
             return new InsertStatement(table, properties.ToArray(), _params.ToArray());
         }
 
-        public static InsertStatement InsertVarParam(this ITableExpression table, IEnumerable<string> properties)
+        public static InsertStatement InsertVarParam(this ITableExpression table, params IPropertyExpression[] properties)
         {
-            var columns = properties.Select(prop => new PropertyExpression(prop) as IPropertyExpression);
-
-            return InsertVarParam(table, columns);
+            return InsertVarParam(table, properties.AsEnumerable());
         }
 
         public static InsertStatement InsertVarParam(this ITableExpression table, params PropertyExpression[] properties)

@@ -12,12 +12,12 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static IUpdateStatement UpdateP(this ITableExpression table, IEnumerable<string> properties)
+        public static IUpdateStatement UpdateP(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
         {
             return UpdateVarParam(table, properties);
         }
 
-        public static IUpdateStatement UpdateP(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
+        public static IUpdateStatement UpdateP(this ITableExpression table, params IPropertyExpression[] properties)
         {
             return UpdateVarParam(table, properties);
         }
@@ -110,16 +110,9 @@ namespace SqlExpression
             return new UpdateStatement(table, set, null);
         }
 
-        public static UpdateStatement Update(this ITableExpression table, IEnumerable<string> properties)
+        public static UpdateStatement Update(this ITableExpression table, params IPropertyExpression[] properties)
         {
-            var columns = properties.Select(prop => new PropertyExpression(prop) as IPropertyExpression);
-            return Update(table, columns);
-        }
-
-        public static UpdateStatement Update(this ITableExpression table, IEnumerable<PropertyExpression> properties)
-        {
-            var columns = properties.Select(prop => prop as IPropertyExpression);
-            return Update(table, columns);
+            return Update(table, properties.AsEnumerable());
         }
 
         public static UpdateStatement Update(this ITableExpression table, params PropertyExpression[] properties)
@@ -133,10 +126,9 @@ namespace SqlExpression
             return new UpdateStatement(table, set, null);
         }
 
-        public static UpdateStatement UpdateVarParam(this ITableExpression table, IEnumerable<string> properties)
+        public static UpdateStatement UpdateVarParam(this ITableExpression table, params IPropertyExpression[] properties)
         {
-            var columns = properties.Select(prop => new PropertyExpression(prop) as IPropertyExpression);
-            return UpdateVarParam(table, columns);
+            return UpdateVarParam(table, properties.AsEnumerable());
         }
 
         public static UpdateStatement UpdateVarParam(this ITableExpression table, params PropertyExpression[] properties)
