@@ -45,7 +45,7 @@ namespace SqlExpression.UnitTest
             statement = FooSchema.Table.Update().SetVarParam(FooSchema.Instance.oname).SetP(FooSchema.Instance.isdel).Where(FooSchema.Instance.oid.EqVarParam());
             Assert.AreEqual(SortedJoin(statement.Params), "isdel,oid,oname");
             
-            statement = TestSchema.Select((sql, s) => sql.Get(s.age.Avg()).Where(s.oid.GtVarParam()).GroupBy(s.gender).Having(s.age.Avg() > 18).OrderBy(s.age.Desc()));
+            statement = TestSchema.Select((sql, s) => sql.Get(s.age.Avg()).Where(s.oid.GtVarParam()).GroupBy(s.gender).Having(18 < s.age.Avg()).OrderBy(s.age.Desc()));
             Assert.AreEqual(SortedJoin(statement.Params), "oid");
         }
 
