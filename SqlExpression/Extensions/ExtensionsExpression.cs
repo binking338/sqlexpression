@@ -69,6 +69,11 @@ namespace SqlExpression
             return new AsExpression(property, new PropertyExpression(asName));
         }
 
+        public static IAsExpression As(this ISelectableValueExpression val, string asName)
+        {
+            return new AsExpression(val, new PropertyExpression(asName));
+        }
+
         public static IOrderExpression Desc(this IPropertyExpression prop)
         {
             return new OrderExpression(prop, OrderEnum.Desc);
