@@ -818,6 +818,12 @@ namespace SqlExpression
         /// </summary>
         public IExpression B { get { return _b; } set { _b = value; } }
 
+        private bool _withBracket = false;
+        /// <summary>
+        /// 是否括号括起来
+        /// </summary>
+        public bool WithBracket { get { return _withBracket; } set { _withBracket = value; } }
+
         protected override string GenExpression()
         {
             if (A == null || B == null || Op == null)
@@ -826,9 +832,7 @@ namespace SqlExpression
             }
             else
             {
-                var fA = (A is IBinaryExpression || A is IUnaryExpression);
-                var fB = (B is IBinaryExpression || B is IUnaryExpression);
-                return string.Format("{0}{1}{2}", fA ? "(" + A?.Expression + ")" : A?.Expression, Op, fB ? "(" + B?.Expression + ")" : B?.Expression);
+                return string.Format(WithBracket ? "({0}{1}{2})" : "{0}{1}{2}", A?.Expression, Op, B?.Expression);
             }
         }
     }
@@ -2409,20 +2413,6 @@ namespace SqlExpression
         public LogicExpression(IFilterExpression a, ILogicOperator op, IFilterExpression b)
             : base(a, op, b)
         {
-        }
-
-        protected override string GenExpression()
-        {
-            if (A == null || B == null || Op == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                var fA = A is ILogicExpression;
-                var fB = B is ILogicExpression;
-                return string.Format("{0}{1}{2}", fA ? "(" + A?.Expression + ")" : A?.Expression, Op, fB ? "(" + B?.Expression + ")" : B?.Expression);
-            }
         }
 
         public static LogicExpression operator &(LogicExpression exp1, IFilterExpression exp2)
