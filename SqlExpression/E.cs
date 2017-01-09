@@ -54,6 +54,26 @@ namespace SqlExpression
             return Params(_params);
         }
 
+        public static GroupByClause GB(IColumnExpression column)
+        {
+            return GroupBy(column);
+        }
+
+        public static OrderByClause OB(IEnumerable<IOrderExpression> orders)
+        {
+            return OrderBy(orders);
+        }
+
+        public static OrderByClause OB(params IOrderExpression[] orders)
+        {
+            return OrderBy(orders);
+        }
+
+        public static CustomerExpression Cus(string expression)
+        {
+            return Customer(expression);
+        }
+
         public static CustomerExpression C(string expression)
         {
             return Customer(expression);
