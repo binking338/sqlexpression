@@ -57,7 +57,7 @@ namespace SqlExpression
     /// <summary>
     /// 属性（字段）
     /// </summary>
-    public interface IPropertyExpression : ISelectableValueExpression
+    public interface IColumnExpression : ISelectableValueExpression
     {
         /// <summary>
         /// 属性（字段）名称
@@ -205,7 +205,7 @@ namespace SqlExpression
         /// <summary>
         /// 插入字段
         /// </summary>
-        IPropertyExpression[] Properties { get; set; }
+        IColumnExpression[] Columns { get; set; }
 
         /// <summary>
         /// 插入值
@@ -269,7 +269,7 @@ namespace SqlExpression
         /// <summary>
         /// 更新字段
         /// </summary>
-        IPropertyExpression Property { get; set; }
+        IColumnExpression Column { get; set; }
         /// <summary>
         /// 更新值
         /// </summary>
@@ -377,7 +377,7 @@ namespace SqlExpression
         /// <summary>
         /// 别名
         /// </summary>
-        IPropertyExpression AsProperty { get; set; }
+        IColumnExpression AsName { get; set; }
     }
 
     /// <summary>
@@ -388,7 +388,7 @@ namespace SqlExpression
         /// <summary>
         /// 去重字段
         /// </summary>
-        IPropertyExpression[] Properties { get; set; }
+        IColumnExpression[] Columns { get; set; }
     }
 
     /// <summary>
@@ -425,7 +425,7 @@ namespace SqlExpression
         /// <summary>
         /// 分组字段
         /// </summary>
-        IPropertyExpression Property { get; set; }
+        IColumnExpression Column { get; set; }
     }
 
     /// <summary>
@@ -447,7 +447,7 @@ namespace SqlExpression
         /// <summary>
         /// 字段
         /// </summary>
-        ISelectableValueExpression Property { get; set; }
+        ISelectableValueExpression Column { get; set; }
         /// <summary>
         /// 升序|降序
         /// </summary>

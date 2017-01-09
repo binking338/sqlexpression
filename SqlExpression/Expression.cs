@@ -215,9 +215,9 @@ namespace SqlExpression
     /// <summary>
     /// 字段
     /// </summary>
-    public class PropertyExpression : ExpressionBase<PropertyExpression>, IPropertyExpression
+    public class ColumnExpression : ExpressionBase<ColumnExpression>, IColumnExpression
     {
-        public PropertyExpression(string name, ITableExpression table = null)
+        public ColumnExpression(string name, ITableExpression table = null)
         {
             _name = name;
             _table = table;
@@ -269,164 +269,164 @@ namespace SqlExpression
 
         #region 比较运算符
 
-        public static ComparisonExpression operator ==(PropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression operator ==(ColumnExpression col, IValueExpression val)
         {
-            return new ComparisonExpression(prop, Operator.Eq, val);
+            return new ComparisonExpression(col, Operator.Eq, val);
         }
-        public static ComparisonExpression operator !=(PropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression operator !=(ColumnExpression col, IValueExpression val)
         {
-            return new ComparisonExpression(prop, Operator.Neq, val);
+            return new ComparisonExpression(col, Operator.Neq, val);
         }
-        public static ComparisonExpression operator >(PropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression operator >(ColumnExpression col, IValueExpression val)
         {
-            return new ComparisonExpression(prop, Operator.Gt, val);
+            return new ComparisonExpression(col, Operator.Gt, val);
         }
-        public static ComparisonExpression operator <(PropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression operator <(ColumnExpression col, IValueExpression val)
         {
-            return new ComparisonExpression(prop, Operator.Lt, val);
+            return new ComparisonExpression(col, Operator.Lt, val);
         }
-        public static ComparisonExpression operator >=(PropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression operator >=(ColumnExpression col, IValueExpression val)
         {
-            return new ComparisonExpression(prop, Operator.GtOrEq, val);
+            return new ComparisonExpression(col, Operator.GtOrEq, val);
         }
-        public static ComparisonExpression operator <=(PropertyExpression prop, IValueExpression val)
+        public static ComparisonExpression operator <=(ColumnExpression col, IValueExpression val)
         {
-            return new ComparisonExpression(prop, Operator.LtOrEq, val);
-        }
-
-        public static ComparisonExpression operator ==(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ComparisonExpression(prop, Operator.Eq, val);
-        }
-        public static ComparisonExpression operator !=(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ComparisonExpression(prop, Operator.Neq, val);
-        }
-        public static ComparisonExpression operator >(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ComparisonExpression(prop, Operator.Gt, val);
-        }
-        public static ComparisonExpression operator <(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ComparisonExpression(prop, Operator.Lt, val);
-        }
-        public static ComparisonExpression operator >=(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ComparisonExpression(prop, Operator.GtOrEq, val);
-        }
-        public static ComparisonExpression operator <=(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ComparisonExpression(prop, Operator.LtOrEq, val);
+            return new ComparisonExpression(col, Operator.LtOrEq, val);
         }
 
-        public static ComparisonExpression operator ==(LiteralValueExpression val, PropertyExpression prop)
+        public static ComparisonExpression operator ==(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ComparisonExpression(val, Operator.Eq, prop);
+            return new ComparisonExpression(col, Operator.Eq, val);
         }
-        public static ComparisonExpression operator !=(LiteralValueExpression val, PropertyExpression prop)
+        public static ComparisonExpression operator !=(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ComparisonExpression(val, Operator.Neq, prop);
+            return new ComparisonExpression(col, Operator.Neq, val);
         }
-        public static ComparisonExpression operator >(LiteralValueExpression val, PropertyExpression prop)
+        public static ComparisonExpression operator >(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ComparisonExpression(val, Operator.Gt, prop);
+            return new ComparisonExpression(col, Operator.Gt, val);
         }
-        public static ComparisonExpression operator <(LiteralValueExpression val, PropertyExpression prop)
+        public static ComparisonExpression operator <(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ComparisonExpression(val, Operator.Lt, prop);
+            return new ComparisonExpression(col, Operator.Lt, val);
         }
-        public static ComparisonExpression operator >=(LiteralValueExpression val, PropertyExpression prop)
+        public static ComparisonExpression operator >=(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ComparisonExpression(val, Operator.GtOrEq, prop);
+            return new ComparisonExpression(col, Operator.GtOrEq, val);
         }
-        public static ComparisonExpression operator <=(LiteralValueExpression val, PropertyExpression prop)
+        public static ComparisonExpression operator <=(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ComparisonExpression(val, Operator.LtOrEq, prop);
+            return new ComparisonExpression(col, Operator.LtOrEq, val);
+        }
+
+        public static ComparisonExpression operator ==(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ComparisonExpression(val, Operator.Eq, col);
+        }
+        public static ComparisonExpression operator !=(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ComparisonExpression(val, Operator.Neq, col);
+        }
+        public static ComparisonExpression operator >(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ComparisonExpression(val, Operator.Gt, col);
+        }
+        public static ComparisonExpression operator <(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ComparisonExpression(val, Operator.Lt, col);
+        }
+        public static ComparisonExpression operator >=(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ComparisonExpression(val, Operator.GtOrEq, col);
+        }
+        public static ComparisonExpression operator <=(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ComparisonExpression(val, Operator.LtOrEq, col);
         }
 
         #endregion
 
         #region 算术运算符
 
-        public static ArithmeticExpression operator +(PropertyExpression prop, IValueExpression val)
+        public static ArithmeticExpression operator +(ColumnExpression col, IValueExpression val)
         {
-            return new ArithmeticExpression(prop, Operator.Add, val);
+            return new ArithmeticExpression(col, Operator.Add, val);
         }
-        public static ArithmeticExpression operator -(PropertyExpression prop, IValueExpression val)
+        public static ArithmeticExpression operator -(ColumnExpression col, IValueExpression val)
         {
-            return new ArithmeticExpression(prop, Operator.Sub, val);
+            return new ArithmeticExpression(col, Operator.Sub, val);
         }
-        public static ArithmeticExpression operator *(PropertyExpression prop, IValueExpression val)
+        public static ArithmeticExpression operator *(ColumnExpression col, IValueExpression val)
         {
-            return new ArithmeticExpression(prop, Operator.Mul, val);
+            return new ArithmeticExpression(col, Operator.Mul, val);
         }
-        public static ArithmeticExpression operator /(PropertyExpression prop, IValueExpression val)
+        public static ArithmeticExpression operator /(ColumnExpression col, IValueExpression val)
         {
-            return new ArithmeticExpression(prop, Operator.Div, val);
+            return new ArithmeticExpression(col, Operator.Div, val);
         }
-        public static ArithmeticExpression operator %(PropertyExpression prop, IValueExpression val)
+        public static ArithmeticExpression operator %(ColumnExpression col, IValueExpression val)
         {
-            return new ArithmeticExpression(prop, Operator.Mod, val);
-        }
-
-        public static ArithmeticExpression operator +(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ArithmeticExpression(prop, Operator.Add, val);
-        }
-        public static ArithmeticExpression operator -(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ArithmeticExpression(prop, Operator.Sub, val);
-        }
-        public static ArithmeticExpression operator *(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ArithmeticExpression(prop, Operator.Mul, val);
-        }
-        public static ArithmeticExpression operator /(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ArithmeticExpression(prop, Operator.Div, val);
-        }
-        public static ArithmeticExpression operator %(PropertyExpression prop, LiteralValueExpression val)
-        {
-            return new ArithmeticExpression(prop, Operator.Mod, val);
+            return new ArithmeticExpression(col, Operator.Mod, val);
         }
 
-        public static ArithmeticExpression operator +(LiteralValueExpression val, PropertyExpression prop)
+        public static ArithmeticExpression operator +(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ArithmeticExpression(val, Operator.Add, prop);
+            return new ArithmeticExpression(col, Operator.Add, val);
         }
-        public static ArithmeticExpression operator -(LiteralValueExpression val, PropertyExpression prop)
+        public static ArithmeticExpression operator -(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ArithmeticExpression(val, Operator.Sub, prop);
+            return new ArithmeticExpression(col, Operator.Sub, val);
         }
-        public static ArithmeticExpression operator *(LiteralValueExpression val, PropertyExpression prop)
+        public static ArithmeticExpression operator *(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ArithmeticExpression(val, Operator.Mul, prop);
+            return new ArithmeticExpression(col, Operator.Mul, val);
         }
-        public static ArithmeticExpression operator /(LiteralValueExpression val, PropertyExpression prop)
+        public static ArithmeticExpression operator /(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ArithmeticExpression(val, Operator.Div, prop);
+            return new ArithmeticExpression(col, Operator.Div, val);
         }
-        public static ArithmeticExpression operator %(LiteralValueExpression val, PropertyExpression prop)
+        public static ArithmeticExpression operator %(ColumnExpression col, LiteralValueExpression val)
         {
-            return new ArithmeticExpression(val, Operator.Mod, prop);
+            return new ArithmeticExpression(col, Operator.Mod, val);
+        }
+
+        public static ArithmeticExpression operator +(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ArithmeticExpression(val, Operator.Add, col);
+        }
+        public static ArithmeticExpression operator -(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ArithmeticExpression(val, Operator.Sub, col);
+        }
+        public static ArithmeticExpression operator *(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ArithmeticExpression(val, Operator.Mul, col);
+        }
+        public static ArithmeticExpression operator /(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ArithmeticExpression(val, Operator.Div, col);
+        }
+        public static ArithmeticExpression operator %(LiteralValueExpression val, ColumnExpression col)
+        {
+            return new ArithmeticExpression(val, Operator.Mod, col);
         }
 
         #endregion
 
         #region 隐式转换
 
-        public static implicit operator PropertyExpression(string prop)
+        public static implicit operator ColumnExpression(string col)
         {
-            return new PropertyExpression(prop);
+            return new ColumnExpression(col);
         }
 
         #endregion
 
         public override bool Equals(object obj)
         {
-            if (obj is PropertyExpression)
+            if (obj is ColumnExpression)
             {
-                return (obj as PropertyExpression).Name == this.Name;
+                return (obj as ColumnExpression).Name == this.Name;
             }
             else
             {
@@ -620,9 +620,9 @@ namespace SqlExpression
             return new ParamExpression(param);
         }
 
-        public static implicit operator ParamExpression(PropertyExpression prop)
+        public static implicit operator ParamExpression(ColumnExpression col)
         {
-            return new ParamExpression(prop.Name);
+            return new ParamExpression(col.Name);
         }
 
         #endregion
@@ -1013,29 +1013,29 @@ namespace SqlExpression
     /// </summary>
     public class FunctionExpression : ExpressionBase<FunctionExpression>, IFunctionExpression
     {
-        public static AggregateFunctionExpression Count(IValueExpression prop)
+        public static AggregateFunctionExpression Count(IValueExpression col)
         {
-            return new AggregateFunctionExpression("COUNT", prop);
+            return new AggregateFunctionExpression("COUNT", col);
         }
 
-        public static AggregateFunctionExpression Sum(IValueExpression prop)
+        public static AggregateFunctionExpression Sum(IValueExpression col)
         {
-            return new AggregateFunctionExpression("SUM", prop);
+            return new AggregateFunctionExpression("SUM", col);
         }
 
-        public static AggregateFunctionExpression Avg(IValueExpression prop)
+        public static AggregateFunctionExpression Avg(IValueExpression col)
         {
-            return new AggregateFunctionExpression("AVG", prop);
+            return new AggregateFunctionExpression("AVG", col);
         }
 
-        public static AggregateFunctionExpression Max(IValueExpression prop)
+        public static AggregateFunctionExpression Max(IValueExpression col)
         {
-            return new AggregateFunctionExpression("MAX", prop);
+            return new AggregateFunctionExpression("MAX", col);
         }
 
-        public static AggregateFunctionExpression Min(IValueExpression prop)
+        public static AggregateFunctionExpression Min(IValueExpression col)
         {
-            return new AggregateFunctionExpression("MIN", prop);
+            return new AggregateFunctionExpression("MIN", col);
         }
 
         public static FunctionExpression Exists(ISelectStatement sql)
@@ -1484,18 +1484,18 @@ namespace SqlExpression
         public InsertStatement() : this(null) { }
 
         public InsertStatement(ITableExpression table)
-            : this(table, new IPropertyExpression[0], new IPropertyExpression[0])
+            : this(table, new IColumnExpression[0], new IColumnExpression[0])
         { }
 
-        public InsertStatement(ITableExpression table, IPropertyExpression[] properties, IValueExpression[] values)
+        public InsertStatement(ITableExpression table, IColumnExpression[] columns, IValueExpression[] values)
         {
             _table = table;
-            _properties = properties;
+            _properties = columns;
             _values = values;
         }
 
         private ITableExpression _table = null;
-        private IPropertyExpression[] _properties = null;
+        private IColumnExpression[] _properties = null;
         private IValueExpression[] _values = null;
 
 
@@ -1512,7 +1512,7 @@ namespace SqlExpression
             }
         }
 
-        public IPropertyExpression[] Properties
+        public IColumnExpression[] Columns
         {
             get
             {
@@ -1554,13 +1554,13 @@ namespace SqlExpression
 
         protected override string GenExpression()
         {
-            if (Table == null || Properties == null || Values == null)
+            if (Table == null || Columns == null || Values == null)
             {
                 return string.Empty;
             }
             else
             {
-                return string.Format("INSERT INTO {0}({1}) VALUES({2})", Table?.Expression, Properties?.Join(",", p => p.Expression), Values?.Join(",", v => v?.Expression));
+                return string.Format("INSERT INTO {0}({1}) VALUES({2})", Table?.Expression, Columns?.Join(",", p => p.Expression), Values?.Join(",", v => v?.Expression));
             }
         }
     }
@@ -1742,21 +1742,21 @@ namespace SqlExpression
     /// </summary>
     public class SetItemExpression : ExpressionBase<SetItemExpression>, ISetItemExpression
     {
-        public SetItemExpression(IPropertyExpression property, IValueExpression value)
+        public SetItemExpression(IColumnExpression column, IValueExpression value)
         {
-            _property = property;
+            _property = column;
             _value = value;
         }
 
-        public SetItemExpression(IPropertyExpression property)
-            : this(property, new ParamExpression(property.Name))
+        public SetItemExpression(IColumnExpression column)
+            : this(column, new ParamExpression(column.Name))
         {
         }
 
-        private IPropertyExpression _property = null;
+        private IColumnExpression _property = null;
         private IValueExpression _value = null;
 
-        public IPropertyExpression Property
+        public IColumnExpression Column
         {
             get
             {
@@ -1784,13 +1784,13 @@ namespace SqlExpression
 
         protected override string GenExpression()
         {
-            if (Property == null || Value == null)
+            if (Column == null || Value == null)
             {
                 return string.Empty;
             }
             else
             {
-                return string.Format("{0}={1}", Property?.Expression, Value?.Expression);
+                return string.Format("{0}={1}", Column?.Expression, Value?.Expression);
             }
         }
     }
@@ -2001,7 +2001,7 @@ namespace SqlExpression
     /// </summary>
     public class AsExpression : ExpressionBase<AsExpression>, IAsExpression
     {
-        public AsExpression(ISelectItemExpression selectItem, IPropertyExpression asProperty)
+        public AsExpression(ISelectItemExpression selectItem, IColumnExpression asProperty)
         {
             if (selectItem is IAsExpression)
             {
@@ -2012,7 +2012,7 @@ namespace SqlExpression
         }
 
         private ISelectItemExpression _selectItem = null;
-        private IPropertyExpression _asProperty = null;
+        private IColumnExpression _asProperty = null;
 
         public ISelectItemExpression SelectItem
         {
@@ -2027,7 +2027,7 @@ namespace SqlExpression
             }
         }
 
-        public IPropertyExpression AsProperty
+        public IColumnExpression AsName
         {
             get
             {
@@ -2042,13 +2042,13 @@ namespace SqlExpression
 
         protected override string GenExpression()
         {
-            if (SelectItem == null || AsProperty == null)
+            if (SelectItem == null || AsName == null)
             {
                 return string.Empty;
             }
             else
             {
-                return string.Format("{0} AS {1}", SelectItem?.Expression, AsProperty?.Expression);
+                return string.Format("{0} AS {1}", SelectItem?.Expression, AsName?.Expression);
             }
         }
     }
@@ -2154,14 +2154,14 @@ namespace SqlExpression
     /// </summary>
     public class GroupByClause : ExpressionBase<GroupByClause>, IGroupByClause
     {
-        public GroupByClause(IPropertyExpression property)
+        public GroupByClause(IColumnExpression column)
         {
-            _property = property;
+            _property = column;
         }
 
-        private IPropertyExpression _property;
+        private IColumnExpression _property;
 
-        public IPropertyExpression Property
+        public IColumnExpression Column
         {
             get
             {
@@ -2176,13 +2176,13 @@ namespace SqlExpression
 
         protected override string GenExpression()
         {
-            if (Property == null)
+            if (Column == null)
             {
                 return string.Empty;
             }
             else
             {
-                return string.Format("GROUP BY {0}", Property?.Expression);
+                return string.Format("GROUP BY {0}", Column?.Expression);
             }
         }
     }
@@ -2230,25 +2230,25 @@ namespace SqlExpression
     /// </summary>
     public class OrderExpression : ExpressionBase<OrderExpression>, IOrderExpression
     {
-        public OrderExpression(string property, OrderEnum order = OrderEnum.Asc)
+        public OrderExpression(string column, OrderEnum order = OrderEnum.Asc)
         {
-            this.property = new PropertyExpression(property);
+            this.column = new ColumnExpression(column);
             this.order = order;
         }
-        public OrderExpression(IPropertyExpression property, OrderEnum order = OrderEnum.Asc)
+        public OrderExpression(IColumnExpression column, OrderEnum order = OrderEnum.Asc)
         {
-            this.property = property;
+            this.column = column;
             this.order = order;
         }
 
         public OrderExpression(IAggregateFunctionExpression fun, OrderEnum order = OrderEnum.Asc)
         {
-            this.property = fun;
+            this.column = fun;
             this.order = order;
         }
 
         private OrderEnum order = OrderEnum.Asc;
-        private ISelectableValueExpression property = null;
+        private ISelectableValueExpression column = null;
         public OrderEnum Order
         {
             get
@@ -2261,27 +2261,27 @@ namespace SqlExpression
             }
         }
 
-        public ISelectableValueExpression Property
+        public ISelectableValueExpression Column
         {
             get
             {
-                return property;
+                return column;
             }
             set
             {
-                property = value;
+                column = value;
             }
         }
 
         protected override string GenExpression()
         {
-            if (Property == null)
+            if (Column == null)
             {
                 return string.Empty;
             }
             else
             {
-                return string.Format("{0} {1}", Property?.Expression, Order == OrderEnum.Asc ? "ASC" : "DESC");
+                return string.Format("{0} {1}", Column?.Expression, Order == OrderEnum.Asc ? "ASC" : "DESC");
             }
         }
     }

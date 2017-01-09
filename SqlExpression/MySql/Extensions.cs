@@ -18,7 +18,7 @@ namespace SqlExpression.MySql
             {
                 return string.Format("`{0}`", ex.Name);
             };
-            PropertyExpression.Handlers[DBType.MySql] = (ex) =>
+            ColumnExpression.Handlers[DBType.MySql] = (ex) =>
             {
                 return string.Format("{1}`{0}`", ex.Name, string.IsNullOrEmpty(ex.Table?.Expression) ? string.Empty : ex.Table.Expression + ".");
             };

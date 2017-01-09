@@ -12,19 +12,19 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static InsertStatement InsertP(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
+        public static InsertStatement InsertP(this ITableExpression table, IEnumerable<IColumnExpression> columns)
         {
-            return InsertVarParam(table, properties);
+            return InsertVarParam(table, columns);
         }
 
-        public static InsertStatement InsertP(this ITableExpression table, params IPropertyExpression[] properties)
+        public static InsertStatement InsertP(this ITableExpression table, params IColumnExpression[] columns)
         {
-            return InsertVarParam(table, properties);
+            return InsertVarParam(table, columns);
         }
 
-        public static InsertStatement InsertP(this ITableExpression table, params PropertyExpression[] properties)
+        public static InsertStatement InsertP(this ITableExpression table, params ColumnExpression[] columns)
         {
-            return InsertVarParam(table, properties);
+            return InsertVarParam(table, columns);
         }
 
         public static IInsertStatement ValuesC(this IInsertStatement insert, IEnumerable<string> values)
@@ -42,24 +42,24 @@ namespace SqlExpression
             return ValuesVarParam(insert);
         }
 
-        public static IInsertStatement SetP(this IInsertStatement insert, IPropertyExpression property, string param = null)
+        public static IInsertStatement SetP(this IInsertStatement insert, IColumnExpression column, string param = null)
         {
-            return SetVarParam(insert, property, param);
+            return SetVarParam(insert, column, param);
         }
 
-        public static IInsertStatement SetC(this IInsertStatement insert, IPropertyExpression property, string customer)
+        public static IInsertStatement SetC(this IInsertStatement insert, IColumnExpression column, string customer)
         {
-            return SetVarCustomer(insert, property, customer);
+            return SetVarCustomer(insert, column, customer);
         }
 
-        public static IInsertStatement SetP(this IInsertStatement insert, PropertyExpression property, string param = null)
+        public static IInsertStatement SetP(this IInsertStatement insert, ColumnExpression column, string param = null)
         {
-            return SetVarParam(insert, property, param);
+            return SetVarParam(insert, column, param);
         }
 
-        public static IInsertStatement SetC(this IInsertStatement insert, PropertyExpression property, string customer)
+        public static IInsertStatement SetC(this IInsertStatement insert, ColumnExpression column, string customer)
         {
-            return SetVarCustomer(insert, property, customer);
+            return SetVarCustomer(insert, column, customer);
         }
 
         #endregion
@@ -69,35 +69,35 @@ namespace SqlExpression
             return new InsertStatement(table);
         }
 
-        public static InsertStatement Insert(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
+        public static InsertStatement Insert(this ITableExpression table, IEnumerable<IColumnExpression> columns)
         {
-            return new InsertStatement(table, properties.ToArray(), new IValueExpression[properties.Count()]);
+            return new InsertStatement(table, columns.ToArray(), new IValueExpression[columns.Count()]);
         }
 
-        public static InsertStatement Insert(this ITableExpression table, params IPropertyExpression[] properties)
+        public static InsertStatement Insert(this ITableExpression table, params IColumnExpression[] columns)
         {
-            return Insert(table, properties.AsEnumerable());
+            return Insert(table, columns.AsEnumerable());
         }
 
-        public static InsertStatement Insert(this ITableExpression table, params PropertyExpression[] properties)
+        public static InsertStatement Insert(this ITableExpression table, params ColumnExpression[] columns)
         {
-            return Insert(table, properties.AsEnumerable());
+            return Insert(table, columns.AsEnumerable());
         }
 
-        public static InsertStatement InsertVarParam(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
+        public static InsertStatement InsertVarParam(this ITableExpression table, IEnumerable<IColumnExpression> columns)
         {
-            var _params = properties.Select(prop => prop.ToParam());
-            return new InsertStatement(table, properties.ToArray(), _params.ToArray());
+            var _params = columns.Select(col => col.ToParam());
+            return new InsertStatement(table, columns.ToArray(), _params.ToArray());
         }
 
-        public static InsertStatement InsertVarParam(this ITableExpression table, params IPropertyExpression[] properties)
+        public static InsertStatement InsertVarParam(this ITableExpression table, params IColumnExpression[] columns)
         {
-            return InsertVarParam(table, properties.AsEnumerable());
+            return InsertVarParam(table, columns.AsEnumerable());
         }
 
-        public static InsertStatement InsertVarParam(this ITableExpression table, params PropertyExpression[] properties)
+        public static InsertStatement InsertVarParam(this ITableExpression table, params ColumnExpression[] columns)
         {
-            return InsertVarParam(table, properties.AsEnumerable());
+            return InsertVarParam(table, columns.AsEnumerable());
         }
 
         public static IInsertStatement Into(this IInsertStatement insert, ITableExpression table)
@@ -112,49 +112,49 @@ namespace SqlExpression
             return insert;
         }
 
-        public static IInsertStatement Columns(this IInsertStatement insert, IEnumerable<IPropertyExpression> columns)
+        public static IInsertStatement Columns(this IInsertStatement insert, IEnumerable<IColumnExpression> columns)
         {
-            insert.Properties = columns.ToArray();
+            insert.Columns = columns.ToArray();
             return insert;
         }
 
-        public static IInsertStatement Columns(this IInsertStatement insert, params IPropertyExpression[] columns)
+        public static IInsertStatement Columns(this IInsertStatement insert, params IColumnExpression[] columns)
         {
-            insert.Properties = columns.ToArray();
+            insert.Columns = columns.ToArray();
             return insert;
         }
 
-        public static IInsertStatement Columns(this IInsertStatement insert, params PropertyExpression[] columns)
+        public static IInsertStatement Columns(this IInsertStatement insert, params ColumnExpression[] columns)
         {
-            insert.Properties = columns.ToArray();
+            insert.Columns = columns.ToArray();
             return insert;
         }
 
         public static IInsertStatement Values(this IInsertStatement insert, IEnumerable<IValueExpression> values)
         {
-            if (insert.Properties == null)
+            if (insert.Columns == null)
             {
                 return insert;
             }
             else if (insert.Values == null)
             {
-                insert.Values = values.Count() > insert.Properties.Length
-                    ? values.Take(insert.Properties.Length).ToArray()
-                    : values.Concat(new IValueExpression[insert.Properties.Length - values.Count()]).ToArray();
+                insert.Values = values.Count() > insert.Columns.Length
+                    ? values.Take(insert.Columns.Length).ToArray()
+                    : values.Concat(new IValueExpression[insert.Columns.Length - values.Count()]).ToArray();
             }
             else
             {
                 var vals = insert.Values.ToList();
-                var props = insert.Properties.ToList();
-                if (vals.Count > props.Count)
+                var cols = insert.Columns.ToList();
+                if (vals.Count > cols.Count)
                 {
-                    vals.RemoveRange(props.Count, vals.Count - props.Count);
+                    vals.RemoveRange(cols.Count, vals.Count - cols.Count);
                 }
-                else if (vals.Count < props.Count)
+                else if (vals.Count < cols.Count)
                 {
-                    vals.AddRange(new IValueExpression[props.Count - vals.Count]);
+                    vals.AddRange(new IValueExpression[cols.Count - vals.Count]);
                 }
-                for (int i = 0, j = 0; i < props.Count && j < values.Count(); i++)
+                for (int i = 0, j = 0; i < cols.Count && j < values.Count(); i++)
                 {
                     // 避免覆盖
                     if (vals[i] == null) vals[i] = values.ElementAt(j++);
@@ -182,8 +182,8 @@ namespace SqlExpression
 
         public static IInsertStatement ValuesVarParam(this IInsertStatement insert)
         {
-            if (insert.Properties == null) return insert;
-            var vals = insert.Properties.Select(prop => new ParamExpression(prop.Name) as IValueExpression).ToArray();
+            if (insert.Columns == null) return insert;
+            var vals = insert.Columns.Select(col => new ParamExpression(col.Name) as IValueExpression).ToArray();
             if (insert.Values != null)
             {
                 for (var i = 0; i < vals.Length && i < insert.Values.Length; i++)
@@ -197,8 +197,8 @@ namespace SqlExpression
 
         public static IInsertStatement ValuesFillNull(this IInsertStatement insert)
         {
-            if (insert.Properties == null) return insert;
-            var vals = insert.Properties.Select(prop => new LiteralValueExpression(null) as IValueExpression).ToArray();
+            if (insert.Columns == null) return insert;
+            var vals = insert.Columns.Select(col => new LiteralValueExpression(null) as IValueExpression).ToArray();
             if (insert.Values != null)
             {
                 for (var i = 0; i < vals.Length && i < insert.Values.Length; i++)
@@ -210,44 +210,44 @@ namespace SqlExpression
             return insert;
         }
 
-        public static IInsertStatement Set(this IInsertStatement insert, IPropertyExpression property, IValueExpression value)
+        public static IInsertStatement Set(this IInsertStatement insert, IColumnExpression column, IValueExpression value)
         {
-            var props = insert.Properties.ToList();
+            var cols = insert.Columns.ToList();
             var vals = insert.Values.ToList();
-            props.Add(property);
+            cols.Add(column);
             vals.Add(value);
-            insert.Properties = props.ToArray();
+            insert.Columns = cols.ToArray();
             insert.Values = vals.ToArray();
             return insert;
         }
-        public static IInsertStatement Set(this IInsertStatement insert, IPropertyExpression property, object value)
+        public static IInsertStatement Set(this IInsertStatement insert, IColumnExpression column, object value)
         {
-            return Set(insert, property, value is IValueExpression ? value as IValueExpression : new LiteralValueExpression(value));
+            return Set(insert, column, value is IValueExpression ? value as IValueExpression : new LiteralValueExpression(value));
         }
-        public static IInsertStatement SetVarParam(this IInsertStatement insert, IPropertyExpression property, string param = null)
+        public static IInsertStatement SetVarParam(this IInsertStatement insert, IColumnExpression column, string param = null)
         {
-            return Set(insert, property, property.ToParam(param));
+            return Set(insert, column, column.ToParam(param));
         }
-        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, IPropertyExpression property, string customer)
+        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, IColumnExpression column, string customer)
         {
-            return Set(insert, property, new CustomerExpression(customer));
+            return Set(insert, column, new CustomerExpression(customer));
         }
 
-        public static IInsertStatement Set(this IInsertStatement insert, PropertyExpression property, IValueExpression value)
+        public static IInsertStatement Set(this IInsertStatement insert, ColumnExpression column, IValueExpression value)
         {
-            return Set(insert, property as IPropertyExpression, value);
+            return Set(insert, column as IColumnExpression, value);
         }
-        public static IInsertStatement Set(this IInsertStatement insert, PropertyExpression property, object value)
+        public static IInsertStatement Set(this IInsertStatement insert, ColumnExpression column, object value)
         {
-            return Set(insert, property as IPropertyExpression, value);
+            return Set(insert, column as IColumnExpression, value);
         }
-        public static IInsertStatement SetVarParam(this IInsertStatement insert, PropertyExpression property, string param = null)
+        public static IInsertStatement SetVarParam(this IInsertStatement insert, ColumnExpression column, string param = null)
         {
-            return SetVarParam(insert, property as IPropertyExpression, param);
+            return SetVarParam(insert, column as IColumnExpression, param);
         }
-        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, PropertyExpression property, string customer)
+        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, ColumnExpression column, string customer)
         {
-            return SetVarCustomer(insert, property as IPropertyExpression, customer);
+            return SetVarCustomer(insert, column as IColumnExpression, customer);
         }
 
         #endregion

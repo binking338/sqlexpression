@@ -29,9 +29,9 @@ namespace SqlExpression
             return Tables(tables);
         }
 
-        public static PropertyExpression Prop(string property, string table = null)
+        public static ColumnExpression Col(string column, string table = null)
         {
-            return Property(property, table);
+            return Column(column, table);
         }
 
         public static LiteralValueExpression Val(object value)
@@ -52,26 +52,6 @@ namespace SqlExpression
         public static IEnumerable<ParamExpression> Ps(params string[] _params)
         {
             return Params(_params);
-        }
-
-        public static CollectionExpression Cols(IEnumerable<ILiteralValueExpression> values)
-        {
-            return Collection(values);
-        }
-
-        public static CollectionExpression Cols(IEnumerable<object> values)
-        {
-            return Collection(values);
-        }
-
-        public static CollectionExpression Cols(params ILiteralValueExpression[] values)
-        {
-            return Collection(values);
-        }
-
-        public static CollectionExpression Cols(params object[] values)
-        {
-            return Collection(values);
         }
 
         public static CustomerExpression C(string expression)
@@ -106,7 +86,7 @@ namespace SqlExpression
             return Select(items.AsEnumerable());
         }
 
-        public static ISelectStatement Select(params PropertyExpression[] items)
+        public static ISelectStatement Select(params ColumnExpression[] items)
         {
             return Select(items.AsEnumerable());
         }
@@ -156,9 +136,9 @@ namespace SqlExpression
             return tables.Select(t => new TableExpression(t));
         }
 
-        public static PropertyExpression Property(string property, string table = null)
+        public static ColumnExpression Column(string column, string table = null)
         {
-            return new PropertyExpression(property, string.IsNullOrWhiteSpace(table) ? null : Table(table));
+            return new ColumnExpression(column, string.IsNullOrWhiteSpace(table) ? null : Table(table));
         }
 
         public static LiteralValueExpression Value(object value)
@@ -238,9 +218,9 @@ namespace SqlExpression
             return Or(filters.AsEnumerable());
         }
 
-        public static GroupByClause GroupBy(IPropertyExpression property)
+        public static GroupByClause GroupBy(IColumnExpression column)
         {
-            return new GroupByClause(property);
+            return new GroupByClause(column);
         }
 
         public static OrderByClause OrderBy(IEnumerable<IOrderExpression> orders)
@@ -253,24 +233,24 @@ namespace SqlExpression
             return new OrderByClause(orders);
         }
 
-        public static OrderExpression Desc(IPropertyExpression property)
+        public static OrderExpression Desc(IColumnExpression column)
         {
-            return new OrderExpression(property, OrderEnum.Desc);
+            return new OrderExpression(column, OrderEnum.Desc);
         }
 
-        public static OrderExpression Desc(PropertyExpression property)
+        public static OrderExpression Desc(ColumnExpression column)
         {
-            return new OrderExpression(property, OrderEnum.Desc);
+            return new OrderExpression(column, OrderEnum.Desc);
         }
 
-        public static OrderExpression Asc(IPropertyExpression property)
+        public static OrderExpression Asc(IColumnExpression column)
         {
-            return new OrderExpression(property);
+            return new OrderExpression(column);
         }
 
-        public static OrderExpression Asc(PropertyExpression property)
+        public static OrderExpression Asc(ColumnExpression column)
         {
-            return new OrderExpression(property);
+            return new OrderExpression(column);
         }
 
         public static UnionStatement Union(IEnumerable<ISelectStatement> sqls)

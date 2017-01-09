@@ -12,19 +12,19 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static IUpdateStatement UpdateP(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
+        public static IUpdateStatement UpdateP(this ITableExpression table, IEnumerable<IColumnExpression> columns)
         {
-            return UpdateVarParam(table, properties);
+            return UpdateVarParam(table, columns);
         }
 
-        public static IUpdateStatement UpdateP(this ITableExpression table, params IPropertyExpression[] properties)
+        public static IUpdateStatement UpdateP(this ITableExpression table, params IColumnExpression[] columns)
         {
-            return UpdateVarParam(table, properties);
+            return UpdateVarParam(table, columns);
         }
 
-        public static IUpdateStatement UpdateP(this ITableExpression table, params PropertyExpression[] properties)
+        public static IUpdateStatement UpdateP(this ITableExpression table, params ColumnExpression[] columns)
         {
-            return UpdateVarParam(table, properties);
+            return UpdateVarParam(table, columns);
         }
 
         public static IUpdateStatement ValuesP(this IUpdateStatement update)
@@ -37,24 +37,24 @@ namespace SqlExpression
             return ValuesVarCustomer(update, customers);
         }
 
-        public static IUpdateStatement SetP(this IUpdateStatement update, IPropertyExpression property, string param = null)
+        public static IUpdateStatement SetP(this IUpdateStatement update, IColumnExpression column, string param = null)
         {
-            return SetVarParam(update, property, param);
+            return SetVarParam(update, column, param);
         }
 
-        public static IUpdateStatement SetC(this IUpdateStatement update, IPropertyExpression property, string customer)
+        public static IUpdateStatement SetC(this IUpdateStatement update, IColumnExpression column, string customer)
         {
-            return SetVarCustomer(update, property, customer);
+            return SetVarCustomer(update, column, customer);
         }
 
-        public static IUpdateStatement SetP(this IUpdateStatement update, PropertyExpression property, string param = null)
+        public static IUpdateStatement SetP(this IUpdateStatement update, ColumnExpression column, string param = null)
         {
-            return SetVarParam(update, property, param);
+            return SetVarParam(update, column, param);
         }
 
-        public static IUpdateStatement SetC(this IUpdateStatement update, PropertyExpression property, string customer)
+        public static IUpdateStatement SetC(this IUpdateStatement update, ColumnExpression column, string customer)
         {
-            return SetVarCustomer(update, property, customer);
+            return SetVarCustomer(update, column, customer);
         }
 
         public static ISetClause ValuesP(this ISetClause set)
@@ -67,24 +67,24 @@ namespace SqlExpression
             return ValuesVarCustomer(set, customers);
         }
 
-        public static ISetClause SetP(this ISetClause set, IPropertyExpression property, string param = null)
+        public static ISetClause SetP(this ISetClause set, IColumnExpression column, string param = null)
         {
-            return SetItemVarParam(set, property, param);
+            return SetItemVarParam(set, column, param);
         }
 
-        public static ISetClause SetC(this ISetClause set, IPropertyExpression property, string customer)
+        public static ISetClause SetC(this ISetClause set, IColumnExpression column, string customer)
         {
-            return SetItemVarCustomer(set, property, customer);
+            return SetItemVarCustomer(set, column, customer);
         }
 
-        public static ISetClause SetP(this ISetClause set, PropertyExpression property, string param = null)
+        public static ISetClause SetP(this ISetClause set, ColumnExpression column, string param = null)
         {
-            return SetItemVarParam(set, property, param);
+            return SetItemVarParam(set, column, param);
         }
 
-        public static ISetClause SetC(this ISetClause set, PropertyExpression property, string customer)
+        public static ISetClause SetC(this ISetClause set, ColumnExpression column, string customer)
         {
-            return SetItemVarCustomer(set, property, customer);
+            return SetItemVarCustomer(set, column, customer);
         }
 
         public static ISetItemExpression ValueObj(this ISetItemExpression setItem, object value)
@@ -109,36 +109,36 @@ namespace SqlExpression
             return new UpdateStatement(table);
         }
 
-        public static UpdateStatement Update(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
+        public static UpdateStatement Update(this ITableExpression table, IEnumerable<IColumnExpression> columns)
         {
-            var set = new SetClause(properties.Select(c => new SetItemExpression(c, null) as ISetItemExpression).ToArray());
+            var set = new SetClause(columns.Select(c => new SetItemExpression(c, null) as ISetItemExpression).ToArray());
             return new UpdateStatement(table, set, null);
         }
 
-        public static UpdateStatement Update(this ITableExpression table, params IPropertyExpression[] properties)
+        public static UpdateStatement Update(this ITableExpression table, params IColumnExpression[] columns)
         {
-            return Update(table, properties.AsEnumerable());
+            return Update(table, columns.AsEnumerable());
         }
 
-        public static UpdateStatement Update(this ITableExpression table, params PropertyExpression[] properties)
+        public static UpdateStatement Update(this ITableExpression table, params ColumnExpression[] columns)
         {
-            return Update(table, properties.AsEnumerable());
+            return Update(table, columns.AsEnumerable());
         }
 
-        public static UpdateStatement UpdateVarParam(this ITableExpression table, IEnumerable<IPropertyExpression> properties)
+        public static UpdateStatement UpdateVarParam(this ITableExpression table, IEnumerable<IColumnExpression> columns)
         {
-            var set = new SetClause(properties.Select(prop => prop.SetVarParam() as ISetItemExpression).ToArray());
+            var set = new SetClause(columns.Select(col => col.SetVarParam() as ISetItemExpression).ToArray());
             return new UpdateStatement(table, set, null);
         }
 
-        public static UpdateStatement UpdateVarParam(this ITableExpression table, params IPropertyExpression[] properties)
+        public static UpdateStatement UpdateVarParam(this ITableExpression table, params IColumnExpression[] columns)
         {
-            return UpdateVarParam(table, properties.AsEnumerable());
+            return UpdateVarParam(table, columns.AsEnumerable());
         }
 
-        public static UpdateStatement UpdateVarParam(this ITableExpression table, params PropertyExpression[] properties)
+        public static UpdateStatement UpdateVarParam(this ITableExpression table, params ColumnExpression[] columns)
         {
-            return UpdateVarParam(table, properties.AsEnumerable());
+            return UpdateVarParam(table, columns.AsEnumerable());
         }
 
         public static IUpdateStatement Values(this IUpdateStatement update, params object[] values)
@@ -165,51 +165,51 @@ namespace SqlExpression
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, IPropertyExpression property, IValueExpression value)
+        public static IUpdateStatement Set(this IUpdateStatement update, IColumnExpression column, IValueExpression value)
         {
-            update.Set = update.Set.SetItem(property, value);
+            update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, IPropertyExpression property, object value)
+        public static IUpdateStatement Set(this IUpdateStatement update, IColumnExpression column, object value)
         {
-            update.Set = update.Set.SetItem(property, value);
+            update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
-        public static IUpdateStatement SetVarParam(this IUpdateStatement update, IPropertyExpression property, string param = null)
+        public static IUpdateStatement SetVarParam(this IUpdateStatement update, IColumnExpression column, string param = null)
         {
-            update.Set = update.Set.SetItemVarParam(property, param);
+            update.Set = update.Set.SetItemVarParam(column, param);
             return update;
         }
 
-        public static IUpdateStatement SetVarCustomer(this IUpdateStatement update, IPropertyExpression property, string customer)
+        public static IUpdateStatement SetVarCustomer(this IUpdateStatement update, IColumnExpression column, string customer)
         {
-            update.Set = update.Set.SetItemVarCustomer(property, customer);
+            update.Set = update.Set.SetItemVarCustomer(column, customer);
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, PropertyExpression property, IValueExpression value)
+        public static IUpdateStatement Set(this IUpdateStatement update, ColumnExpression column, IValueExpression value)
         {
-            update.Set = update.Set.SetItem(property, value);
+            update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, PropertyExpression property, object value)
+        public static IUpdateStatement Set(this IUpdateStatement update, ColumnExpression column, object value)
         {
-            update.Set = update.Set.SetItem(property, value);
+            update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
-        public static IUpdateStatement SetVarParam(this IUpdateStatement update, PropertyExpression property, string param = null)
+        public static IUpdateStatement SetVarParam(this IUpdateStatement update, ColumnExpression column, string param = null)
         {
-            update.Set = update.Set.SetItemVarParam(property, param);
+            update.Set = update.Set.SetItemVarParam(column, param);
             return update;
         }
 
-        public static IUpdateStatement SetVarCustomer(this IUpdateStatement update, PropertyExpression property, string customer)
+        public static IUpdateStatement SetVarCustomer(this IUpdateStatement update, ColumnExpression column, string customer)
         {
-            update.Set = update.Set.SetItemVarCustomer(property, customer);
+            update.Set = update.Set.SetItemVarCustomer(column, customer);
             return update;
         }
 
@@ -241,7 +241,7 @@ namespace SqlExpression
 
         public static ISetClause ValuesVarParam(this ISetClause set)
         {
-            return Values(set, set.Sets.ToList().FindAll(s => s.Value == null).Select(s => s.Property.ToParam()));
+            return Values(set, set.Sets.ToList().FindAll(s => s.Value == null).Select(s => s.Column.ToParam()));
         }
 
         public static ISetClause ValuesVarCustomer(this ISetClause set, params string[] customrs)
@@ -252,50 +252,50 @@ namespace SqlExpression
         public static ISetClause SetItem(this ISetClause set, ISetItemExpression setItem)
         {
             var list = (set.Sets?.ToList() ?? new List<ISetItemExpression>());
-            list.RemoveAll(s => s.Property.Name == setItem.Property.Name);
+            list.RemoveAll(s => s.Column.Name == setItem.Column.Name);
             list.Add(setItem);
             set.Sets = list.ToArray();
             return set;
         }
 
-        public static ISetClause SetItem(this ISetClause set, IPropertyExpression property, IValueExpression value)
+        public static ISetClause SetItem(this ISetClause set, IColumnExpression column, IValueExpression value)
         {
-            return SetItem(set, property.Set(value));
+            return SetItem(set, column.Set(value));
         }
 
-        public static ISetClause SetItem(this ISetClause set, IPropertyExpression property, object value)
+        public static ISetClause SetItem(this ISetClause set, IColumnExpression column, object value)
         {
-            return SetItem(set, property.Set(value));
+            return SetItem(set, column.Set(value));
         }
 
-        public static ISetClause SetItemVarParam(this ISetClause set, IPropertyExpression property, string param = null)
+        public static ISetClause SetItemVarParam(this ISetClause set, IColumnExpression column, string param = null)
         {
-            return SetItem(set, property.SetVarParam(param));
+            return SetItem(set, column.SetVarParam(param));
         }
 
-        public static ISetClause SetItemVarCustomer(this ISetClause set, IPropertyExpression property, string customer)
+        public static ISetClause SetItemVarCustomer(this ISetClause set, IColumnExpression column, string customer)
         {
-            return SetItem(set, property.SetVarCustomer(customer));
+            return SetItem(set, column.SetVarCustomer(customer));
         }
 
-        public static ISetClause SetItem(this ISetClause set, PropertyExpression property, IValueExpression value)
+        public static ISetClause SetItem(this ISetClause set, ColumnExpression column, IValueExpression value)
         {
-            return SetItem(set, property.Set(value));
+            return SetItem(set, column.Set(value));
         }
 
-        public static ISetClause SetItem(this ISetClause set, PropertyExpression property, object value)
+        public static ISetClause SetItem(this ISetClause set, ColumnExpression column, object value)
         {
-            return SetItem(set, property.Set(value));
+            return SetItem(set, column.Set(value));
         }
 
-        public static ISetClause SetItemVarParam(this ISetClause set, PropertyExpression property, string param = null)
+        public static ISetClause SetItemVarParam(this ISetClause set, ColumnExpression column, string param = null)
         {
-            return SetItem(set, property.SetVarParam(param));
+            return SetItem(set, column.SetVarParam(param));
         }
 
-        public static ISetClause SetItemVarCustomer(this ISetClause set, PropertyExpression property, string customer)
+        public static ISetClause SetItemVarCustomer(this ISetClause set, ColumnExpression column, string customer)
         {
-            return SetItem(set, property.SetVarCustomer(customer));
+            return SetItem(set, column.SetVarCustomer(customer));
         }
 
         #endregion
@@ -310,7 +310,7 @@ namespace SqlExpression
 
         public static ISetItemExpression ValueVarParam(this ISetItemExpression setItem, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = setItem.Property.Name;
+            if (string.IsNullOrWhiteSpace(param)) param = setItem.Column.Name;
             setItem.Value = new ParamExpression(param);
             return setItem;
         }
