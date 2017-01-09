@@ -6,9 +6,18 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
+    /// <summary>
+    /// 数据库类型
+    /// </summary>
     public enum DBType
     {
+        /// <summary>
+        /// 通用
+        /// </summary>
         Common = 0,
+        /// <summary>
+        /// mysql
+        /// </summary>
         MySql = 1
     }
 
