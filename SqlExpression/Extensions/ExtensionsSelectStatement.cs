@@ -100,7 +100,7 @@ namespace SqlExpression
         #region Get
 
         #region Shortcut
-        
+
         public static ISelectStatement GetC(this ISelectStatement select, string item)
         {
             return GetVarCustomer(select, item);
@@ -187,18 +187,6 @@ namespace SqlExpression
         #endregion
 
         #region From
-
-        #region Shortcut
-        public static ISelectStatement F(this ISelectStatement select, IEnumerable<ITableExpression> tables)
-        {
-            return From(select, tables);
-        }
-
-        public static ISelectStatement F(this ISelectStatement select, params TableExpression[] tables)
-        {
-            return From(select, tables);
-        }
-        #endregion
 
         public static ISelectStatement From(this ISelectStatement select, IEnumerable<ITableExpression> tables)
         {
@@ -294,11 +282,6 @@ namespace SqlExpression
 
         #region Where
 
-        public static ISelectStatement W(this ISelectStatement select, IFilterExpression filter)
-        {
-            return Where(select, filter);
-        }
-
         public static ISelectStatement Where(this ISelectStatement select, IFilterExpression filter)
         {
             select.Where = new WhereClause(filter);
@@ -310,7 +293,6 @@ namespace SqlExpression
         #region Union
 
         #region Shortcut
-
         public static UnionStatement U(this ISelectStatement select, IEnumerable<ISelectStatement> otherselects)
         {
             return Union(select, otherselects);
@@ -368,12 +350,10 @@ namespace SqlExpression
         {
             return GroupBy(select, column);
         }
-
         public static ISelectStatement GB(this ISelectStatement select, IColumnExpression column)
         {
             return GroupBy(select, column);
         }
-
         public static ISelectStatement H(this ISelectStatement select, IFilterExpression filter)
         {
             return Having(select, filter);

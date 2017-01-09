@@ -8,24 +8,6 @@ namespace SqlExpression
 {
     public static class ExtensionsDeleteExpression
     {
-        #region Shortcut
-
-        public static IDeleteStatement F(this IDeleteStatement delete, ITableExpression table)
-        {
-            return From(delete, table);
-        }
-        public static IDeleteStatement F(this IDeleteStatement delete, TableExpression table)
-        {
-            return From(delete, table);
-        }
-
-        public static IDeleteStatement W(this IDeleteStatement delete, IFilterExpression filter)
-        {
-            return Where(delete, filter);
-        }
-
-        #endregion
-
         public static DeleteStatement Delete(this ITableExpression table)
         {
             return new DeleteStatement(table, null);

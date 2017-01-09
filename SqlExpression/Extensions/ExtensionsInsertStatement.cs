@@ -166,6 +166,11 @@ namespace SqlExpression
             return ValuesVarParam(insert);
         }
 
+        public static IInsertStatement ValuesNull(this IInsertStatement insert)
+        {
+            return ValuesFillNull(insert);
+        }
+
         #endregion
 
         public static IInsertStatement Values(this IInsertStatement insert, IEnumerable<IValueExpression> values)

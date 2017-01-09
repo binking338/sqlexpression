@@ -200,12 +200,7 @@ namespace SqlExpression
         #endregion
 
         #region Where
-
-        public static IUpdateStatement W(this IUpdateStatement update, IFilterExpression filter)
-        {
-            return Where(update, filter);
-        }
-
+        
         public static IUpdateStatement Where(this IUpdateStatement update, IFilterExpression filter)
         {
             update.Where = new WhereClause(filter);
