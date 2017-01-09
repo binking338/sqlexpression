@@ -27,41 +27,6 @@ namespace SqlExpression
             return InsertVarParam(table, columns);
         }
 
-        public static IInsertStatement ValuesC(this IInsertStatement insert, IEnumerable<string> values)
-        {
-            return ValuesVarCustomer(insert, values);
-        }
-
-        public static IInsertStatement ValuesC(this IInsertStatement insert, params string[] values)
-        {
-            return ValuesVarCustomer(insert, values);
-        }
-
-        public static IInsertStatement ValuesP(this IInsertStatement insert)
-        {
-            return ValuesVarParam(insert);
-        }
-
-        public static IInsertStatement SetP(this IInsertStatement insert, IColumnExpression column, string param = null)
-        {
-            return SetVarParam(insert, column, param);
-        }
-
-        public static IInsertStatement SetC(this IInsertStatement insert, IColumnExpression column, string customer)
-        {
-            return SetVarCustomer(insert, column, customer);
-        }
-
-        public static IInsertStatement SetP(this IInsertStatement insert, ColumnExpression column, string param = null)
-        {
-            return SetVarParam(insert, column, param);
-        }
-
-        public static IInsertStatement SetC(this IInsertStatement insert, ColumnExpression column, string customer)
-        {
-            return SetVarCustomer(insert, column, customer);
-        }
-
         #endregion
 
         public static InsertStatement Insert(this ITableExpression table)
@@ -100,6 +65,10 @@ namespace SqlExpression
             return InsertVarParam(table, columns.AsEnumerable());
         }
 
+        #endregion
+
+        #region Into
+
         public static IInsertStatement Into(this IInsertStatement insert, ITableExpression table)
         {
             insert.Table = table;
@@ -111,6 +80,27 @@ namespace SqlExpression
             insert.Table = table;
             return insert;
         }
+
+        #endregion
+
+        #region Columns
+
+        #region ShortCut
+
+        public static IInsertStatement Cols(this IInsertStatement insert, IEnumerable<IColumnExpression> columns)
+        {
+            return Columns(insert, columns);
+        }
+        public static IInsertStatement Cols(this IInsertStatement insert, params IColumnExpression[] columns)
+        {
+            return Columns(insert, columns);
+        }
+        public static IInsertStatement Cols(this IInsertStatement insert, params ColumnExpression[] columns)
+        {
+            return Columns(insert, columns);
+        }
+
+        #endregion
 
         public static IInsertStatement Columns(this IInsertStatement insert, IEnumerable<IColumnExpression> columns)
         {
@@ -129,6 +119,54 @@ namespace SqlExpression
             insert.Columns = columns.ToArray();
             return insert;
         }
+
+        #endregion
+
+        #region Values
+
+        #region Shortcut
+
+        public static IInsertStatement Vals(this IInsertStatement insert, IEnumerable<IValueExpression> values)
+        {
+            return Values(insert, values);
+        }
+        public static IInsertStatement Vals(this IInsertStatement insert, params object[] values)
+        {
+            return Values(insert, values);
+        }
+        public static IInsertStatement ValsC(this IInsertStatement insert, IEnumerable<string> values)
+        {
+            return ValuesVarCustomer(insert, values);
+        }
+        public static IInsertStatement ValsC(this IInsertStatement insert, params string[] values)
+        {
+            return ValuesVarCustomer(insert, values);
+        }
+        public static IInsertStatement ValsP(this IInsertStatement insert)
+        {
+            return ValuesVarParam(insert);
+        }
+        public static IInsertStatement ValsNull(this IInsertStatement insert)
+        {
+            return ValuesFillNull(insert);
+        }
+
+        public static IInsertStatement ValuesC(this IInsertStatement insert, IEnumerable<string> values)
+        {
+            return ValuesVarCustomer(insert, values);
+        }
+
+        public static IInsertStatement ValuesC(this IInsertStatement insert, params string[] values)
+        {
+            return ValuesVarCustomer(insert, values);
+        }
+
+        public static IInsertStatement ValuesP(this IInsertStatement insert)
+        {
+            return ValuesVarParam(insert);
+        }
+
+        #endregion
 
         public static IInsertStatement Values(this IInsertStatement insert, IEnumerable<IValueExpression> values)
         {
@@ -209,6 +247,34 @@ namespace SqlExpression
             insert.Values = vals.ToArray();
             return insert;
         }
+
+        #endregion
+
+        #region Set
+
+        #region Shortcut
+
+        public static IInsertStatement SetP(this IInsertStatement insert, IColumnExpression column, string param = null)
+        {
+            return SetVarParam(insert, column, param);
+        }
+
+        public static IInsertStatement SetC(this IInsertStatement insert, IColumnExpression column, string customer)
+        {
+            return SetVarCustomer(insert, column, customer);
+        }
+
+        public static IInsertStatement SetP(this IInsertStatement insert, ColumnExpression column, string param = null)
+        {
+            return SetVarParam(insert, column, param);
+        }
+
+        public static IInsertStatement SetC(this IInsertStatement insert, ColumnExpression column, string customer)
+        {
+            return SetVarCustomer(insert, column, customer);
+        }
+
+        #endregion
 
         public static IInsertStatement Set(this IInsertStatement insert, IColumnExpression column, IValueExpression value)
         {

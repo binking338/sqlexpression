@@ -8,9 +8,21 @@ namespace SqlExpression
 {
     public static class ExtensionsDeleteExpression
     {
-        #region Delete
+        #region Shortcut
 
-        #region ShortCut
+        public static IDeleteStatement F(this IDeleteStatement delete, ITableExpression table)
+        {
+            return From(delete, table);
+        }
+        public static IDeleteStatement F(this IDeleteStatement delete, TableExpression table)
+        {
+            return From(delete, table);
+        }
+
+        public static IDeleteStatement W(this IDeleteStatement delete, IFilterExpression filter)
+        {
+            return Where(delete, filter);
+        }
 
         #endregion
 
@@ -36,7 +48,5 @@ namespace SqlExpression
             delete.Where = new WhereClause(filter);
             return delete;
         }
-
-        #endregion
     }
 }

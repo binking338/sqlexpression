@@ -32,20 +32,6 @@ namespace SqlExpression
             return SelectVarCustomer(tables, customers);
         }
 
-        public static ISelectStatement GetC(this ISelectStatement select, string item)
-        {
-            return GetVarCustomer(select, item);
-        }
-        public static ISelectStatement GetC(this ISelectStatement select, IEnumerable<string> items)
-        {
-            return GetVarCustomer(select, items);
-        }
-
-        public static ISelectStatement GetC(this ISelectStatement select, params string[] items)
-        {
-            return GetVarCustomer(select, items);
-        }
-
         #endregion
 
         public static SelectStatement Select(this ITableExpression table)
@@ -108,6 +94,28 @@ namespace SqlExpression
         {
             return SelectVarCustomer(tables, customers.AsEnumerable());
         }
+
+        #endregion
+
+        #region Get
+
+        #region Shortcut
+        
+        public static ISelectStatement GetC(this ISelectStatement select, string item)
+        {
+            return GetVarCustomer(select, item);
+        }
+        public static ISelectStatement GetC(this ISelectStatement select, IEnumerable<string> items)
+        {
+            return GetVarCustomer(select, items);
+        }
+
+        public static ISelectStatement GetC(this ISelectStatement select, params string[] items)
+        {
+            return GetVarCustomer(select, items);
+        }
+
+        #endregion
 
         public static ISelectStatement GetAs(this ISelectStatement select, ISelectItemExpression item, IColumnExpression asProperty)
         {
