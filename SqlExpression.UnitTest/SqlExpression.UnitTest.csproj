@@ -53,6 +53,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="FilterExpressionTest.cs" />
+    <Compile Include="ParamsTest.cs" />
     <Compile Include="TestSchema.cs" />
     <Compile Include="SqlStatementTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
