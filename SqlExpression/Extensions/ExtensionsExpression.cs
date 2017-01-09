@@ -8,12 +8,25 @@ namespace SqlExpression
 {
     public static class ExtensionsExpression
     {
-        public static IBatchSqlStatement Concat(this ISqlStatement sql, params ISqlStatement[] otherSqls)
+        public static BatchSqlStatement Concat(this ISqlStatement sql, params ISqlStatement[] otherSqls)
         {
             List<ISqlStatement> sqls = new List<ISqlStatement>();
             sqls.Add(sql);
             sqls.AddRange(otherSqls);
             return new BatchSqlStatement(sqls.ToArray());
+        }
+        
+        public static T B<T>(this T exp)
+            where T : IBinaryExpression
+        {
+            return Bracket(exp);
+        }
+
+        public static T Bracket<T>(this T exp)
+            where T : IBinaryExpression
+        {
+            exp.WithBracket = true;
+            return exp;
         }
 
         #region Column
@@ -139,97 +152,124 @@ namespace SqlExpression
 
         #endregion
 
-        public static T B<T>(this T exp)
-            where T : IBinaryExpression
-        {
-            return Bracket(exp);
-        }
-
-        public static T Bracket<T>(this T exp)
-            where T : IBinaryExpression
-        {
-            exp.WithBracket = true;
-            return exp;
-        }
-
         #region 过滤表达式 FilterExpression
 
         #region LogicExpresssion
 
-        public static IFilterExpression AllEq(this IEnumerable<IColumnExpression> cols, IEnumerable<IValueExpression> values)
+        public static LogicExpression AllEq(this IEnumerable<IColumnExpression> cols, IEnumerable<IValueExpression> values)
         {
             IFilterExpression filter = null;
+            LogicExpression logic = null;
             var em = values.GetEnumerator();
             foreach (var col in cols)
             {
                 em.MoveNext();
-                filter = filter == null ? col.Eq(em.Current) as IFilterExpression : filter.And(col.Eq(em.Current));
+                if(filter == null)
+                {
+                    filter = col.Eq(em.Current);
+                }
+                else
+                {
+                    logic = filter.And(col.Eq(em.Current));
+                    filter = logic;
+                }
+                //filter = filter == null ? col.Eq(em.Current) as IFilterExpression : filter.And(col.Eq(em.Current));
             }
-            return filter;
+            return logic;
         }
 
-        public static IFilterExpression AllEq(this IEnumerable<IColumnExpression> cols, IEnumerable<object> values)
+        public static LogicExpression AllEq(this IEnumerable<IColumnExpression> cols, IEnumerable<object> values)
         {
             var vals = values.Select(val => val is IValueExpression ? val as IValueExpression : new LiteralValueExpression(val));
             return AllEq(cols, vals);
         }
 
-        public static IFilterExpression AllEq(this IEnumerable<IColumnExpression> cols, params IValueExpression[] values)
+        public static LogicExpression AllEq(this IEnumerable<IColumnExpression> cols, params IValueExpression[] values)
         {
             return AllEq(cols, values.AsEnumerable());
         }
 
-        public static IFilterExpression AllEq(this IEnumerable<IColumnExpression> cols, params object[] values)
+        public static LogicExpression AllEq(this IEnumerable<IColumnExpression> cols, params object[] values)
         {
             return AllEq(cols, values.AsEnumerable());
         }
 
-        public static IFilterExpression AllEqVarParam(this IEnumerable<IColumnExpression> cols)
+        public static LogicExpression AllEqVarParam(this IEnumerable<IColumnExpression> cols)
         {
             IFilterExpression filter = null;
+            LogicExpression logic = null;
             foreach (var col in cols)
             {
-                filter = filter == null ? col.EqVarParam() as IFilterExpression : filter.And(col.EqVarParam());
+                if (filter == null)
+                {
+                    filter = col.EqVarParam();
+                }
+                else
+                {
+                    logic = filter.And(col.EqVarParam());
+                    filter = logic;
+                }
+                //filter = filter == null ? col.EqVarParam() as IFilterExpression : filter.And(col.EqVarParam());
             }
-            return filter;
+            return logic;
         }
 
-        public static IFilterExpression AnyEq(this IEnumerable<IColumnExpression> cols, IEnumerable<IValueExpression> values)
+        public static LogicExpression AnyEq(this IEnumerable<IColumnExpression> cols, IEnumerable<IValueExpression> values)
         {
             IFilterExpression filter = null;
+            LogicExpression logic = null;
             var em = values.GetEnumerator();
             foreach (var col in cols)
             {
                 em.MoveNext();
-                filter = filter == null ? col.Eq(em.Current) as IFilterExpression : filter.Or(col.Eq(em.Current));
+                if (filter == null)
+                {
+                    filter = col.Eq(em.Current);
+                }
+                else
+                {
+                    logic = filter.Or(col.Eq(em.Current));
+                    filter = logic;
+                }
+                //filter = filter == null ? col.Eq(em.Current) as IFilterExpression : filter.Or(col.Eq(em.Current));
             }
-            return filter;
+            return logic;
         }
 
-        public static IFilterExpression AnyEq(this IEnumerable<IColumnExpression> cols, IEnumerable<object> values)
+        public static LogicExpression AnyEq(this IEnumerable<IColumnExpression> cols, IEnumerable<object> values)
         {
             var vals = values.Select(val => val is IValueExpression ? val as IValueExpression : new LiteralValueExpression(val));
             return AnyEq(cols, vals);
         }
 
-        public static IFilterExpression AnyEq(this IEnumerable<IColumnExpression> cols, params IValueExpression[] values)
+        public static LogicExpression AnyEq(this IEnumerable<IColumnExpression> cols, params IValueExpression[] values)
         {
             return AnyEq(cols, values.AsEnumerable());
         }
 
-        public static IFilterExpression AnyEq(this IEnumerable<IColumnExpression> cols, params object[] values)
+        public static LogicExpression AnyEq(this IEnumerable<IColumnExpression> cols, params object[] values)
         {
             return AnyEq(cols, values.AsEnumerable());
         }
 
-        public static IFilterExpression AnyEqVarParam(this IEnumerable<IColumnExpression> cols)
+        public static LogicExpression AnyEqVarParam(this IEnumerable<IColumnExpression> cols)
         {
             IFilterExpression filter = null;
+            LogicExpression logic = null;
             foreach (var col in cols)
             {
-                filter = filter == null ? col.EqVarParam() as IFilterExpression : filter.Or(col.EqVarParam());
+                if (filter == null)
+                {
+                    filter = col.EqVarParam();
+                }
+                else
+                {
+                    logic = filter.Or(col.EqVarParam());
+                    filter = logic;
+                }
+                //filter = filter == null ? col.EqVarParam() as IFilterExpression : filter.Or(col.EqVarParam());
             }
-            return filter;
+            return logic;
         }
 
         public static LogicExpression And(this IFilterExpression a, IFilterExpression b)
