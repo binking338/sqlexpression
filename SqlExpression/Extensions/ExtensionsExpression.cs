@@ -139,6 +139,19 @@ namespace SqlExpression
 
         #endregion
 
+        public static T B<T>(this T exp)
+            where T : IBinaryExpression
+        {
+            return Bracket(exp);
+        }
+
+        public static T Bracket<T>(this T exp)
+            where T : IBinaryExpression
+        {
+            exp.WithBracket = true;
+            return exp;
+        }
+
         #region 过滤表达式 FilterExpression
 
         #region LogicExpresssion
@@ -221,11 +234,27 @@ namespace SqlExpression
 
         public static LogicExpression And(this IFilterExpression a, IFilterExpression b)
         {
+            if(a is ILogicExpression)
+            {
+                (a as ILogicExpression).WithBracket = true;
+            }
+            if (b is ILogicExpression)
+            {
+                (b as ILogicExpression).WithBracket = true;
+            }
             return new LogicExpression(a, LogicOperator.And, b);
         }
 
         public static LogicExpression Or(this IFilterExpression a, IFilterExpression b)
         {
+            if (a is ILogicExpression)
+            {
+                (a as ILogicExpression).WithBracket = true;
+            }
+            if (b is ILogicExpression)
+            {
+                (b as ILogicExpression).WithBracket = true;
+            }
             return new LogicExpression(a, LogicOperator.Or, b);
         }
 
