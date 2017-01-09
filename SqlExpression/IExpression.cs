@@ -43,6 +43,9 @@ namespace SqlExpression
     /// </summary>
     public interface ITableExpression : IExpression
     {
+        /// <summary>
+        /// 表名
+        /// </summary>
         string Name { get; set; }
     }
 
@@ -129,6 +132,11 @@ namespace SqlExpression
         /// 操作符
         /// </summary>
         IBinaryOperator Op { get; set; }
+
+        /// <summary>
+        /// 是否括号括起来
+        /// </summary>
+        bool WithBracket { get; set; }
     }
 
     /// <summary>
