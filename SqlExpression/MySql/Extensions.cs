@@ -39,7 +39,7 @@ namespace SqlExpression.MySql
         }
 
         /// <summary>
-        /// 
+        /// 返回计数sql语句
         /// </summary>
         /// <param name="select"></param>
         /// <returns></returns>
@@ -48,6 +48,11 @@ namespace SqlExpression.MySql
             return string.Format("SELECT COUNT(1) FROM ({0}) AS __totalcount__", select.Expression);
         }
 
+        /// <summary>
+        /// 判断是否存在sql语句
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
         public static string Exists(this ISelectStatement select)
         {
             return string.Format("SELECT EXISTS({0}) AS __exists__", select.Expression);
