@@ -123,17 +123,45 @@ namespace SqlExpression.UnitTest
             var t = TestSchema.Instance;
             IExpression e;
 
-            e = (t.oid > 1) & (t.oid < 100);
+            e = t.oid > 1 & t.oid < 100;
             Assert.AreEqual(e.Expression, "test.oid>1 AND test.oid<100");
 
             e = (t.oid > 1).And(t.oid < 100);
             Assert.AreEqual(e.Expression, "test.oid>1 AND test.oid<100");
 
-            e = (t.oid > 1) | (t.oid < 100);
+            e = t.oid > 1 | t.oid < 100;
             Assert.AreEqual(e.Expression, "test.oid>1 OR test.oid<100");
 
             e = (t.oid > 1).Or(t.oid < 100);
             Assert.AreEqual(e.Expression, "test.oid>1 OR test.oid<100");
+
+            e = t.oid > 1 & t.oid < 100 | t.oname.Like("%");
+            Assert.AreEqual(e.Expression, "test.oid>1 AND test.oid<100 OR test.oname LIKE '%'");
+
+            e = t.oname.Like("%") | t.oid > 1 & t.oid < 100;
+            Assert.AreEqual(e.Expression, "test.oname LIKE '%' OR test.oid>1 AND test.oid<100");
+
+
+            // 扩展方法会自动加括号 加括号的规则会有C#语法约束
+            e = (t.oid > 1).And(t.oid < 100).Or(t.oname.Like("%"));
+            Assert.AreEqual(e.Expression, "(test.oid>1 AND test.oid<100) OR test.oname LIKE '%'");
+
+            e = t.oname.Like("%").Or((t.oid > 1).And(t.oid < 100));
+            Assert.AreEqual(e.Expression, "test.oname LIKE '%' OR (test.oid>1 AND test.oid<100)");
+
+            e = t.oname.Like("%").Or(t.oid > 1).And(t.oid < 100);
+            Assert.AreEqual(e.Expression, "(test.oname LIKE '%' OR test.oid>1) AND test.oid<100");
+
+
+            // 运算符表达式不会自动加括号 需要自行决定
+            e = (t.oid > 1 | t.oid < 100).Bracket() & t.oname.Like("%");
+            Assert.AreEqual(e.Expression, "(test.oid>1 OR test.oid<100) AND test.oname LIKE '%'");
+
+            e = t.oid > 1 | (t.oid < 100 & t.oname.Like("%")).Bracket();
+            Assert.AreEqual(e.Expression, "test.oid>1 OR (test.oid<100 AND test.oname LIKE '%')");
+
+            e = (t.oname.Like("%") | t.oid > 1).Bracket() & t.oid < 100;
+            Assert.AreEqual(e.Expression, "(test.oname LIKE '%' OR test.oid>1) AND test.oid<100");
         }
 
         #endregion
