@@ -176,6 +176,22 @@ namespace SqlExpression
             return Get(select, items.Select(i => new CustomerExpression(i)));
         }
 
+        #endregion
+
+        #region From
+
+        #region Shortcut
+        public static ISelectStatement F(this ISelectStatement select, IEnumerable<ITableExpression> tables)
+        {
+            return From(select, tables);
+        }
+
+        public static ISelectStatement F(this ISelectStatement select, params TableExpression[] tables)
+        {
+            return From(select, tables);
+        }
+        #endregion
+
         public static ISelectStatement From(this ISelectStatement select, IEnumerable<ITableExpression> tables)
         {
             select.Tables = tables.ToArray();
@@ -187,6 +203,41 @@ namespace SqlExpression
             select.Tables = tables;
             return select;
         }
+
+        #endregion
+
+        #region Join
+
+        #region Shortcut
+        public static ISelectStatement J(this ISelectStatement select, IJoinExpression join)
+        {
+            return Join(select, join);
+        }
+        public static ISelectStatement J(this ISelectStatement select, ITableExpression table, IFilterExpression on, IJoinOperator joinOperator)
+        {
+            return Join(select, table, on, joinOperator);
+        }
+        public static ISelectStatement J(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        {
+            return Join(select, table, on);
+        }
+        public static ISelectStatement IJ(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        {
+            return IJ(select, table, on);
+        }
+        public static ISelectStatement LJ(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        {
+            return LeftJoin(select, table, on);
+        }
+        public static ISelectStatement RJ(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        {
+            return RightJoin(select, table, on);
+        }
+        public static ISelectStatement FJ(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        {
+            return FullJoin(select, table, on);
+        }
+        #endregion
 
         public static ISelectStatement Join(this ISelectStatement select, IJoinExpression join)
         {
@@ -200,6 +251,11 @@ namespace SqlExpression
         {
             IJoinExpression join = new JoinExpression(joinOperator, table, on);
             return Join(select, join);
+        }
+
+        public static ISelectStatement Join(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        {
+            return Join(select, table, on, Operator.InnerJoin);
         }
 
         public static ISelectStatement InnerJoin(this ISelectStatement select, ITableExpression table, IFilterExpression on)
@@ -226,11 +282,44 @@ namespace SqlExpression
             return Join(select, join);
         }
 
+        #endregion
+
+        #region Where
+
+        public static ISelectStatement W(this ISelectStatement select, IFilterExpression filter)
+        {
+            return Where(select, filter);
+        }
+
         public static ISelectStatement Where(this ISelectStatement select, IFilterExpression filter)
         {
             select.Where = new WhereClause(filter);
             return select;
         }
+
+        #endregion
+
+        #region Union
+
+        #region Shortcut
+
+        public static UnionStatement U(this ISelectStatement select, IEnumerable<ISelectStatement> otherselects)
+        {
+            return Union(select, otherselects);
+        }
+        public static UnionStatement U(this ISelectStatement select, params ISelectStatement[] otherselects)
+        {
+            return Union(select, otherselects);
+        }
+        public static UnionStatement UA(this ISelectStatement select, IEnumerable<ISelectStatement> otherselects)
+        {
+            return UnionAll(select, otherselects);
+        }
+        public static UnionStatement UA(this ISelectStatement select, params ISelectStatement[] otherselects)
+        {
+            return UnionAll(select, otherselects);
+        }
+        #endregion
 
         public static UnionStatement Union(this ISelectStatement select, IEnumerable<ISelectStatement> otherselects)
         {
@@ -262,7 +351,26 @@ namespace SqlExpression
             return UnionAll(select, otherselects.AsEnumerable());
         }
 
+        #endregion
+
         #region GroupBy
+
+        #region Shortcut
+        public static ISelectStatement GB(this ISelectStatement select, string column)
+        {
+            return GroupBy(select, column);
+        }
+
+        public static ISelectStatement GB(this ISelectStatement select, IColumnExpression column)
+        {
+            return GroupBy(select, column);
+        }
+
+        public static ISelectStatement H(this ISelectStatement select, IFilterExpression filter)
+        {
+            return Having(select, filter);
+        }
+        #endregion
 
         public static ISelectStatement GroupBy(this ISelectStatement select, string column)
         {
@@ -284,6 +392,34 @@ namespace SqlExpression
         #endregion
 
         #region OrderBy
+
+        #region Shortcut
+        public static ISelectStatement OB(this ISelectStatement select, IEnumerable<IOrderExpression> orders)
+        {
+            return OrderBy(select, orders);
+        }
+        public static ISelectStatement OB(this ISelectStatement select, params IOrderExpression[] orders)
+        {
+            return OrderBy(select, orders);
+        }
+        public static ISelectStatement OB(this ISelectStatement select, IOrderByClause orderby)
+        {
+            return OrderBy(select, orderby);
+        }
+        public static IUnionStatement OB(this IUnionStatement union, IEnumerable<IOrderExpression> orders)
+        {
+            return OrderBy(union, orders);
+        }
+        public static IUnionStatement OB(this IUnionStatement union, params IOrderExpression[] orders)
+        {
+            return OrderBy(union, orders);
+        }
+        public static IUnionStatement OB(this IUnionStatement union, IOrderByClause orderby)
+        {
+            return OrderBy(union, orderby);
+        }
+        #endregion
+
 
         public static ISelectStatement OrderBy(this ISelectStatement select, IEnumerable<IOrderExpression> orders)
         {
@@ -321,8 +457,6 @@ namespace SqlExpression
             return union;
         }
 
-        #endregion
-        
         #endregion
     }
 }
