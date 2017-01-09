@@ -12,17 +12,17 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static IUpdateStatement UpdateP(this ITableExpression table, IEnumerable<IColumnExpression> columns)
+        public static UpdateStatement UpdateP(this ITableExpression table, IEnumerable<IColumnExpression> columns)
         {
             return UpdateVarParam(table, columns);
         }
 
-        public static IUpdateStatement UpdateP(this ITableExpression table, params IColumnExpression[] columns)
+        public static UpdateStatement UpdateP(this ITableExpression table, params IColumnExpression[] columns)
         {
             return UpdateVarParam(table, columns);
         }
 
-        public static IUpdateStatement UpdateP(this ITableExpression table, params ColumnExpression[] columns)
+        public static UpdateStatement UpdateP(this ITableExpression table, params ColumnExpression[] columns)
         {
             return UpdateVarParam(table, columns);
         }
