@@ -64,11 +64,6 @@ namespace SqlExpression
             return new SetItemExpression(property, value);
         }
 
-        public static IAsExpression As(this IPropertyExpression property, string asName)
-        {
-            return new AsExpression(property, new PropertyExpression(asName));
-        }
-
         public static IAsExpression As(this ISelectableValueExpression val, string asName)
         {
             return new AsExpression(val, new PropertyExpression(asName));
