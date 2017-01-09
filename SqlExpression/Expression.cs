@@ -59,6 +59,22 @@ namespace SqlExpression
         {
             return Expression;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is IExpression)
+            {
+                return (obj as IExpression).Expression == this.Expression;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public override int GetHashCode()
+        {
+            return this.Expression?.GetHashCode() ?? 0;
+        }
     }
 
     /// <summary>
@@ -612,6 +628,22 @@ namespace SqlExpression
         }
 
         #endregion
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ParamExpression)
+            {
+                return (obj as ParamExpression).Name == this.Name;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public override int GetHashCode()
+        {
+            return this.Name?.GetHashCode() ?? 0;
+        }
     }
 
     /// <summary>
@@ -796,7 +828,7 @@ namespace SqlExpression
             {
                 var fA = (A is IBinaryExpression || A is IUnaryExpression);
                 var fB = (B is IBinaryExpression || B is IUnaryExpression);
-                return string.Format("{0}{1}{2}", fA ? "(" + A?.Expression + ")": A?.Expression, Op, fB ? "(" + B?.Expression + ")" : B?.Expression);
+                return string.Format("{0}{1}{2}", fA ? "(" + A?.Expression + ")" : A?.Expression, Op, fB ? "(" + B?.Expression + ")" : B?.Expression);
             }
         }
     }
@@ -956,6 +988,22 @@ namespace SqlExpression
         }
 
         #endregion
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ArithmeticExpression)
+            {
+                return (obj as ArithmeticExpression).Expression == this.Expression;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public override int GetHashCode()
+        {
+            return this.Expression?.GetHashCode() ?? 0;
+        }
     }
 
     /// <summary>
@@ -1201,6 +1249,23 @@ namespace SqlExpression
         }
 
         #endregion
+
+
+        public override bool Equals(object obj)
+        {
+            if (obj is FunctionExpression)
+            {
+                return (obj as FunctionExpression).Expression == this.Expression;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public override int GetHashCode()
+        {
+            return this.Expression?.GetHashCode() ?? 0;
+        }
     }
 
     /// <summary>
@@ -2354,7 +2419,9 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("({0}){1}({2})", A?.Expression, Op, B?.Expression);
+                var fA = A is ILogicExpression;
+                var fB = B is ILogicExpression;
+                return string.Format("{0}{1}{2}", fA ? "(" + A?.Expression + ")" : A?.Expression, Op, fB ? "(" + B?.Expression + ")" : B?.Expression);
             }
         }
 
