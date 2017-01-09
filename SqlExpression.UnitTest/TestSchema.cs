@@ -17,7 +17,7 @@ namespace SqlExpression.UnitTest
 
         static TestSchema()
         {
-            Table = new TableExpression("test");
+            Table = new TableExpression("test") { Type = DBType.MySql };
             _oid = new ColumnExpression("oid") { Type = DBType.MySql, Table = Table };
             _oname = new ColumnExpression("oname") { Type = DBType.MySql, Table = Table };
             _age = new ColumnExpression("age") { Type = DBType.MySql, Table = Table };
@@ -54,7 +54,7 @@ namespace SqlExpression.UnitTest
 
         static FooSchema()
         {
-            Table = new TableExpression("foo");
+            Table = new TableExpression("foo") { Type = DBType.MySql };
             _oid = new ColumnExpression("oid") { Type = DBType.MySql, Table = Table };
             _oname = new ColumnExpression("oname") { Type = DBType.MySql, Table = Table };
             _isdel = new ColumnExpression("isdel") { Type = DBType.MySql, Table = Table };
@@ -87,7 +87,7 @@ namespace SqlExpression.UnitTest
 
         static BarSchema()
         {
-            Table = new TableExpression("bar");
+            Table = new TableExpression("bar") { Type = DBType.MySql };
             _oid = new ColumnExpression("oid") { Type = DBType.MySql, Table = Table };
             _oname = new ColumnExpression("oname") { Type = DBType.MySql, Table = Table };
             _isdel = new ColumnExpression("isdel") { Type = DBType.MySql, Table = Table };
