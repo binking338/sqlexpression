@@ -262,10 +262,8 @@ namespace SqlExpression
             }
             else
             {
-                return (new string[] {
-                            Table?.Expression,
-                            string.IsNullOrWhiteSpace(Name) ? string.Empty : Name
-                        }).Where(s => !string.IsNullOrWhiteSpace(s)).Join(".");
+
+                return string.Format("{1}{0}", Name, string.IsNullOrEmpty(Table?.Expression) ? string.Empty : Table.Expression + ".");
             }
         }
 
