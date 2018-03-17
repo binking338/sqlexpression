@@ -59,14 +59,19 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 值
+    /// 值表达式
     /// </summary>
-    public interface IValueExpression : IExpression { }
+    public interface IValueExpression : IExpression, IFilterExpression { }
+
+    /// <summary>
+    /// 布尔值表达式
+    /// </summary>
+    public interface IBoolValueExpression : IValueExpression, ISelectItemExpression { }
 
     /// <summary>
     /// 属性（字段）
     /// </summary>
-    public interface IColumnExpression : ISelectableValueExpression
+    public interface IColumnExpression : IValueExpression, ISelectItemExpression
     {
         /// <summary>
         /// 属性（字段）名称
@@ -82,7 +87,7 @@ namespace SqlExpression
     /// <summary>
     /// 字面值
     /// </summary>
-    public interface ILiteralValueExpression : ISelectableValueExpression
+    public interface ILiteralValueExpression : IValueExpression, ISelectItemExpression
     {
         /// <summary>
         /// 值
@@ -102,31 +107,41 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 自定义值
+    /// 自定义值表达式
     /// </summary>
-    public interface ICustomerValueExpression : ISelectableValueExpression { }
+    public interface ICustomerValueExpression : IValueExpression, IBoolValueExpression { }
 
     /// <summary>
     /// 一元表达式
     /// </summary>
-    public interface IUnaryExpression : ISelectableValueExpression
+    public interface IUnaryExpression : IValueExpression
     {
+        /// <summary>
+        /// 运算符
+        /// </summary>
+        IUnaryOperator Op { get; set; }
+
         /// <summary>
         /// 操作数
         /// </summary>
         IExpression A { get; set; }
 
         /// <summary>
-        /// 运算符
+        /// 是否括号括起来
         /// </summary>
-        IUnaryOperator Op { get; set; }
+        bool WithBracket { get; set; }
     }
 
     /// <summary>
     /// 二元表达式
     /// </summary>
-    public interface IBinaryExpression : ISelectableValueExpression
+    public interface IBinaryExpression : IValueExpression
     {
+        /// <summary>
+        /// 操作符
+        /// </summary>
+        IBinaryOperator Op { get; set; }
+
         /// <summary>
         /// 操作数
         /// </summary>
@@ -138,25 +153,121 @@ namespace SqlExpression
         IExpression B { get; set; }
 
         /// <summary>
-        /// 操作符
-        /// </summary>
-        IBinaryOperator Op { get; set; }
-
-        /// <summary>
         /// 是否括号括起来
         /// </summary>
         bool WithBracket { get; set; }
     }
 
     /// <summary>
+    /// 逻辑表达式
+    /// </summary>
+    public interface ILogicExpression : IBinaryExpression, IBoolValueExpression { }
+
+    /// <summary>
+    /// 二元比较表达式
+    /// </summary>
+    public interface IComparisonExpression : IBinaryExpression { }
+
+    /// <summary>
+    /// 一元比较表达式
+    /// </summary>
+    public interface IUnaryComparisonExpression : IUnaryExpression { }
+
+    /// <summary>
+    /// 子查询结果集数量大于0
+    /// </summary>
+    public interface IExistsExpression : IBoolValueExpression
+    {
+        /// <summary>
+        /// 子查询
+        /// </summary>
+        ISubQueryExpression SubQuery { get; set; }
+    }
+
+    /// <summary>
+    /// 子查询结果集数量等于0
+    /// </summary>
+    public interface INotExistsExpression : IBoolValueExpression
+    {
+        /// <summary>
+        /// 子查询
+        /// </summary>
+        ISubQueryExpression SubQuery { get; set; }
+    }
+
+    /// <summary>
+    /// Between表达式
+    /// </summary>
+    public interface IBetweenExpression : IBoolValueExpression
+    {
+        /// <summary>
+        /// 下限
+        /// </summary>
+        IValueExpression Lower { get; set; }
+
+        /// <summary>
+        /// 上限
+        /// </summary>
+        IValueExpression Upper { get; set; }
+    }
+
+    /// <summary>
+    /// In表达式
+    /// </summary>
+    public interface IInExpression : IBoolValueExpression
+    {
+
+    }
+
+    /// <summary>
+    /// Not In表达式
+    /// </summary>
+    public interface INotInExpression : IBoolValueExpression
+    {
+
+    }
+
+    /// <summary>
+    /// (NOT) IN 运算符的集合表达式
+    /// </summary>
+    public interface ICollectionExpression { }
+
+    /// <summary>
+    /// Not Between表达式
+    /// </summary>
+    public interface INotBetweenExpression : IBoolValueExpression
+    {
+        /// <summary>
+        /// 下限
+        /// </summary>
+        IValueExpression Lower { get; set; }
+
+        /// <summary>
+        /// 上限
+        /// </summary>
+        IValueExpression Upper { get; set; }
+    }
+
+    /// <summary>
+    /// 子查询
+    /// </summary>
+    public interface ISubQueryExpression : IValueExpression, ICollectionExpression, ISelectItemExpression
+    {
+        /// <summary>
+        /// 子查询语句，返回单列
+        /// </summary>
+        ISelectStatement Query { get; set; }
+    }
+
+    /// <summary>
     /// 算术表达式
     /// </summary>
-    public interface IArithmeticExpression : IBinaryExpression, ISelectableValueExpression { }
+    public interface IArithmeticExpression : IBinaryExpression, ISelectItemExpression { }
 
     /// <summary>
     /// 函数表达式
     /// </summary>
-    public interface IFunctionExpression : ISelectableValueExpression
+    public interface IFunctionExpression : IValueExpression, ISelectItemExpression
     {
         /// <summary>
         /// 函数名
@@ -217,7 +328,7 @@ namespace SqlExpression
         IColumnExpression[] Columns { get; set; }
 
         /// <summary>
-        /// 插入值
+        /// 插入值 todo 理清
         /// </summary>
         IValueExpression[] Values { get; set; }
     }
@@ -288,7 +399,7 @@ namespace SqlExpression
     /// <summary>
     /// select语句
     /// </summary>
-    public interface ISelectStatement : ISqlStatement, ISelectableValueExpression
+    public interface ISelectStatement : ISqlStatement
     {
         /// <summary>
         /// 表
@@ -364,14 +475,9 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// select的查询项
+    /// select语句的返回项
     /// </summary>
     public interface ISelectItemExpression : IExpression { }
-
-    /// <summary>
-    /// 可作为查询项的值
-    /// </summary>
-    public interface ISelectableValueExpression : IValueExpression, ISelectItemExpression { }
 
     /// <summary>
     /// 查询项别名
@@ -432,7 +538,7 @@ namespace SqlExpression
     public interface IGroupByClause : IExpression
     {
         /// <summary>
-        /// 分组字段
+        /// 分组字段 todo 理清
         /// </summary>
         IColumnExpression Column { get; set; }
     }
@@ -456,7 +562,7 @@ namespace SqlExpression
         /// <summary>
         /// 字段
         /// </summary>
-        ISelectableValueExpression Column { get; set; }
+        ISelectItemExpression Column { get; set; }
         /// <summary>
         /// 升序|降序
         /// </summary>
@@ -488,22 +594,7 @@ namespace SqlExpression
     /// <summary>
     /// 过滤条件表达式
     /// </summary>
-    public interface IFilterExpression : ISelectableValueExpression { }
-
-    /// <summary>
-    /// 逻辑表达式
-    /// </summary>
-    public interface ILogicExpression : IBinaryExpression, IFilterExpression { }
-
-    /// <summary>
-    /// 二元比较表达式
-    /// </summary>
-    public interface IComparisonExpression : IBinaryExpression, IFilterExpression { }
-
-    /// <summary>
-    /// 一元比较表达式
-    /// </summary>
-    public interface IUnaryComparisonExpression : IUnaryExpression, IFilterExpression { }
+    public interface IFilterExpression : IExpression { }
 
     /// <summary>
     /// 自定义过滤条件表达式

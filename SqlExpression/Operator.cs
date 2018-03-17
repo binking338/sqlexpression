@@ -22,14 +22,14 @@ namespace SqlExpression
     public interface IBinaryOperator : IOperator { }
 
     /// <summary>
-    /// 判断运算符
-    /// </summary>
-    public interface IComparisonOperator : IBinaryOperator { }
-
-    /// <summary>
-    /// 一元判断运算符
+    /// 一元比较运算符
     /// </summary>
     public interface IUnaryComparisonOperator : IUnaryOperator { }
+
+    /// <summary>
+    /// 比较运算符
+    /// </summary>
+    public interface IComparisonOperator : IBinaryOperator { }
 
     /// <summary>
     /// 逻辑运算符

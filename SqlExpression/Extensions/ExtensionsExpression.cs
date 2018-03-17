@@ -77,7 +77,7 @@ namespace SqlExpression
             return new SetItemExpression(column, value);
         }
 
-        public static IAsExpression As(this ISelectableValueExpression val, string asName)
+        public static IAsExpression As(this ISelectItemExpression val, string asName)
         {
             return new AsExpression(val, new ColumnExpression(asName));
         }

@@ -2248,7 +2248,6 @@ namespace SqlExpression
         }
 
         private OrderEnum order = OrderEnum.Asc;
-        private ISelectableValueExpression column = null;
         public OrderEnum Order
         {
             get
@@ -2261,7 +2260,8 @@ namespace SqlExpression
             }
         }
 
-        public ISelectableValueExpression Column
+        private ISelectItemExpression column = null;
+        public ISelectItemExpression Column
         {
             get
             {
