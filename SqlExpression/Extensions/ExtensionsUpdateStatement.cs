@@ -12,56 +12,56 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static UpdateStatement UpdateP(this ITableExpression table, IEnumerable<IColumnExpression> columns)
+        public static UpdateStatement UpdateP(this ITable table, IEnumerable<IColumn> columns)
         {
             return UpdateVarParam(table, columns);
         }
 
-        public static UpdateStatement UpdateP(this ITableExpression table, params IColumnExpression[] columns)
+        public static UpdateStatement UpdateP(this ITable table, params IColumn[] columns)
         {
             return UpdateVarParam(table, columns);
         }
 
-        public static UpdateStatement UpdateP(this ITableExpression table, params ColumnExpression[] columns)
+        public static UpdateStatement UpdateP(this ITable table, params Column[] columns)
         {
             return UpdateVarParam(table, columns);
         }
 
         #endregion
 
-        public static UpdateStatement Update(this ITableExpression table)
+        public static UpdateStatement Update(this ITable table)
         {
             return new UpdateStatement(table);
         }
 
-        public static UpdateStatement Update(this ITableExpression table, IEnumerable<IColumnExpression> columns)
+        public static UpdateStatement Update(this ITable table, IEnumerable<IColumn> columns)
         {
-            var set = new SetClause(columns.Select(c => new SetItemExpression(c, null) as ISetItemExpression).ToArray());
+            var set = new SetClause(columns.Select(c => new SetFieldExpression(c, null) as ISetFieldExpression).ToArray());
             return new UpdateStatement(table, set, null);
         }
 
-        public static UpdateStatement Update(this ITableExpression table, params IColumnExpression[] columns)
+        public static UpdateStatement Update(this ITable table, params IColumn[] columns)
         {
             return Update(table, columns.AsEnumerable());
         }
 
-        public static UpdateStatement Update(this ITableExpression table, params ColumnExpression[] columns)
+        public static UpdateStatement Update(this ITable table, params Column[] columns)
         {
             return Update(table, columns.AsEnumerable());
         }
 
-        public static UpdateStatement UpdateVarParam(this ITableExpression table, IEnumerable<IColumnExpression> columns)
+        public static UpdateStatement UpdateVarParam(this ITable table, IEnumerable<IColumn> columns)
         {
-            var set = new SetClause(columns.Select(col => col.SetVarParam() as ISetItemExpression).ToArray());
+            var set = new SetClause(columns.Select(col => col.SetVarParam() as ISetFieldExpression).ToArray());
             return new UpdateStatement(table, set, null);
         }
 
-        public static UpdateStatement UpdateVarParam(this ITableExpression table, params IColumnExpression[] columns)
+        public static UpdateStatement UpdateVarParam(this ITable table, params IColumn[] columns)
         {
             return UpdateVarParam(table, columns.AsEnumerable());
         }
 
-        public static UpdateStatement UpdateVarParam(this ITableExpression table, params ColumnExpression[] columns)
+        public static UpdateStatement UpdateVarParam(this ITable table, params Column[] columns)
         {
             return UpdateVarParam(table, columns.AsEnumerable());
         }
@@ -121,77 +121,77 @@ namespace SqlExpression
 
         #region Shortcut
 
-        public static IUpdateStatement SetP(this IUpdateStatement update, IColumnExpression column, string param = null)
+        public static IUpdateStatement SetP(this IUpdateStatement update, IColumn column, string param = null)
         {
             return SetVarParam(update, column, param);
         }
 
-        public static IUpdateStatement SetC(this IUpdateStatement update, IColumnExpression column, string customer)
+        public static IUpdateStatement SetC(this IUpdateStatement update, IColumn column, string customer)
         {
             return SetVarCustomer(update, column, customer);
         }
 
-        public static IUpdateStatement SetP(this IUpdateStatement update, ColumnExpression column, string param = null)
+        public static IUpdateStatement SetP(this IUpdateStatement update, Column column, string param = null)
         {
             return SetVarParam(update, column, param);
         }
 
-        public static IUpdateStatement SetC(this IUpdateStatement update, ColumnExpression column, string customer)
+        public static IUpdateStatement SetC(this IUpdateStatement update, Column column, string customer)
         {
             return SetVarCustomer(update, column, customer);
         }
 
         #endregion
 
-        public static IUpdateStatement Set(this IUpdateStatement update, ISetItemExpression setItem)
+        public static IUpdateStatement Set(this IUpdateStatement update, ISetFieldExpression setItem)
         {
             update.Set = update.Set.SetItem(setItem);
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, IColumnExpression column, IValueExpression value)
+        public static IUpdateStatement Set(this IUpdateStatement update, IColumn column, IValue value)
         {
             update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, IColumnExpression column, object value)
+        public static IUpdateStatement Set(this IUpdateStatement update, IColumn column, object value)
         {
             update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
-        public static IUpdateStatement SetVarParam(this IUpdateStatement update, IColumnExpression column, string param = null)
+        public static IUpdateStatement SetVarParam(this IUpdateStatement update, IColumn column, string param = null)
         {
             update.Set = update.Set.SetItemVarParam(column, param);
             return update;
         }
 
-        public static IUpdateStatement SetVarCustomer(this IUpdateStatement update, IColumnExpression column, string customer)
+        public static IUpdateStatement SetVarCustomer(this IUpdateStatement update, IColumn column, string customer)
         {
             update.Set = update.Set.SetItemVarCustomer(column, customer);
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, ColumnExpression column, IValueExpression value)
+        public static IUpdateStatement Set(this IUpdateStatement update, Column column, IValue value)
         {
             update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, ColumnExpression column, object value)
+        public static IUpdateStatement Set(this IUpdateStatement update, Column column, object value)
         {
             update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
-        public static IUpdateStatement SetVarParam(this IUpdateStatement update, ColumnExpression column, string param = null)
+        public static IUpdateStatement SetVarParam(this IUpdateStatement update, Column column, string param = null)
         {
             update.Set = update.Set.SetItemVarParam(column, param);
             return update;
         }
 
-        public static IUpdateStatement SetVarCustomer(this IUpdateStatement update, ColumnExpression column, string customer)
+        public static IUpdateStatement SetVarCustomer(this IUpdateStatement update, Column column, string customer)
         {
             update.Set = update.Set.SetItemVarCustomer(column, customer);
             return update;
@@ -212,7 +212,7 @@ namespace SqlExpression
         #region ISetClause
 
         #region Shortcut
-        public static ISetClause Vals(this ISetClause set, IEnumerable<IValueExpression> values)
+        public static ISetClause Vals(this ISetClause set, IEnumerable<IValue> values)
         {
             return Values(set, values);
         }
@@ -239,49 +239,49 @@ namespace SqlExpression
             return ValuesVarCustomer(set, customers);
         }
 
-        public static ISetClause SetP(this ISetClause set, IColumnExpression column, string param = null)
+        public static ISetClause SetP(this ISetClause set, IColumn column, string param = null)
         {
             return SetItemVarParam(set, column, param);
         }
 
-        public static ISetClause SetC(this ISetClause set, IColumnExpression column, string customer)
+        public static ISetClause SetC(this ISetClause set, IColumn column, string customer)
         {
             return SetItemVarCustomer(set, column, customer);
         }
 
-        public static ISetClause SetP(this ISetClause set, ColumnExpression column, string param = null)
+        public static ISetClause SetP(this ISetClause set, Column column, string param = null)
         {
             return SetItemVarParam(set, column, param);
         }
 
-        public static ISetClause SetC(this ISetClause set, ColumnExpression column, string customer)
+        public static ISetClause SetC(this ISetClause set, Column column, string customer)
         {
             return SetItemVarCustomer(set, column, customer);
         }
 
         #endregion
 
-        public static ISetClause Values(this ISetClause set, IEnumerable<IValueExpression> values)
+        public static ISetClause Values(this ISetClause set, IEnumerable<IValue> values)
         {
             var list = values.ToList();
-            for (int i = 0, j = 0; i < set.Sets.Length && j < list.Count;)
+            for (int i = 0, j = 0; i < set.SetFields.Length && j < list.Count;)
             {
-                var setitem = set.Sets[i++];
+                var setitem = set.SetFields[i++];
                 // 避免覆盖
                 if (setitem.Value == null) setitem.Value = list[j++];
             }
-            set.Sets = set.Sets;
+            set.SetFields = set.SetFields;
             return set;
         }
 
         public static ISetClause Values(this ISetClause set, params object[] values)
         {
-            return Values(set, values.Select(val => val is IValueExpression ? val as IValueExpression : new LiteralValueExpression(val)));
+            return Values(set, values.Select(val => val is IValue ? val as IValue : new LiteralValue(val)));
         }
 
         public static ISetClause ValuesVarParam(this ISetClause set)
         {
-            return Values(set, set.Sets.ToList().FindAll(s => s.Value == null).Select(s => s.Column.ToParam()));
+            return Values(set, set.SetFields.ToList().FindAll(s => s.Value == null).Select(s => s.Column.ToParam()));
         }
 
         public static ISetClause ValuesVarCustomer(this ISetClause set, params string[] customrs)
@@ -289,51 +289,51 @@ namespace SqlExpression
             return Values(set, customrs.Select(val => new CustomerExpression(val)));
         }
 
-        public static ISetClause SetItem(this ISetClause set, ISetItemExpression setItem)
+        public static ISetClause SetItem(this ISetClause set, ISetFieldExpression setItem)
         {
-            var list = (set.Sets?.ToList() ?? new List<ISetItemExpression>());
+            var list = (set.SetFields?.ToList() ?? new List<ISetFieldExpression>());
             list.RemoveAll(s => s.Column.Name == setItem.Column.Name);
             list.Add(setItem);
-            set.Sets = list.ToArray();
+            set.SetFields = list.ToArray();
             return set;
         }
 
-        public static ISetClause SetItem(this ISetClause set, IColumnExpression column, IValueExpression value)
+        public static ISetClause SetItem(this ISetClause set, IColumn column, IValue value)
         {
             return SetItem(set, column.Set(value));
         }
 
-        public static ISetClause SetItem(this ISetClause set, IColumnExpression column, object value)
+        public static ISetClause SetItem(this ISetClause set, IColumn column, object value)
         {
             return SetItem(set, column.Set(value));
         }
 
-        public static ISetClause SetItemVarParam(this ISetClause set, IColumnExpression column, string param = null)
+        public static ISetClause SetItemVarParam(this ISetClause set, IColumn column, string param = null)
         {
             return SetItem(set, column.SetVarParam(param));
         }
 
-        public static ISetClause SetItemVarCustomer(this ISetClause set, IColumnExpression column, string customer)
+        public static ISetClause SetItemVarCustomer(this ISetClause set, IColumn column, string customer)
         {
             return SetItem(set, column.SetVarCustomer(customer));
         }
 
-        public static ISetClause SetItem(this ISetClause set, ColumnExpression column, IValueExpression value)
+        public static ISetClause SetItem(this ISetClause set, Column column, IValue value)
         {
             return SetItem(set, column.Set(value));
         }
 
-        public static ISetClause SetItem(this ISetClause set, ColumnExpression column, object value)
+        public static ISetClause SetItem(this ISetClause set, Column column, object value)
         {
             return SetItem(set, column.Set(value));
         }
 
-        public static ISetClause SetItemVarParam(this ISetClause set, ColumnExpression column, string param = null)
+        public static ISetClause SetItemVarParam(this ISetClause set, Column column, string param = null)
         {
             return SetItem(set, column.SetVarParam(param));
         }
 
-        public static ISetClause SetItemVarCustomer(this ISetClause set, ColumnExpression column, string customer)
+        public static ISetClause SetItemVarCustomer(this ISetClause set, Column column, string customer)
         {
             return SetItem(set, column.SetVarCustomer(customer));
         }
@@ -344,52 +344,52 @@ namespace SqlExpression
 
         #region Shortcut
 
-        public static ISetItemExpression ValObj(this ISetItemExpression setItem, object value)
+        public static ISetFieldExpression ValObj(this ISetFieldExpression setItem, object value)
         {
             return ValueVarObject(setItem, value);
         }
 
-        public static ISetItemExpression ValP(this ISetItemExpression setItem, string param = null)
+        public static ISetFieldExpression ValP(this ISetFieldExpression setItem, string param = null)
         {
             return ValueVarParam(setItem, param);
         }
 
-        public static ISetItemExpression ValC(this ISetItemExpression setItem, string customer)
+        public static ISetFieldExpression ValC(this ISetFieldExpression setItem, string customer)
         {
             return ValueVarCustomer(setItem, customer);
         }
 
-        public static ISetItemExpression ValueObj(this ISetItemExpression setItem, object value)
+        public static ISetFieldExpression ValueObj(this ISetFieldExpression setItem, object value)
         {
             return ValueVarObject(setItem, value);
         }
 
-        public static ISetItemExpression ValueP(this ISetItemExpression setItem, string param = null)
+        public static ISetFieldExpression ValueP(this ISetFieldExpression setItem, string param = null)
         {
             return ValueVarParam(setItem, param);
         }
 
-        public static ISetItemExpression ValueC(this ISetItemExpression setItem, string customer)
+        public static ISetFieldExpression ValueC(this ISetFieldExpression setItem, string customer)
         {
             return ValueVarCustomer(setItem, customer);
         }
 
         #endregion
 
-        public static ISetItemExpression ValueVarObject(this ISetItemExpression setItem, object value)
+        public static ISetFieldExpression ValueVarObject(this ISetFieldExpression setItem, object value)
         {
-            setItem.Value = new LiteralValueExpression(value);
+            setItem.Value = new LiteralValue(value);
             return setItem;
         }
 
-        public static ISetItemExpression ValueVarParam(this ISetItemExpression setItem, string param = null)
+        public static ISetFieldExpression ValueVarParam(this ISetFieldExpression setItem, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param)) param = setItem.Column.Name;
-            setItem.Value = new ParamExpression(param);
+            setItem.Value = new Param(param);
             return setItem;
         }
 
-        public static ISetItemExpression ValueVarCustomer(this ISetItemExpression setItem, string customer)
+        public static ISetFieldExpression ValueVarCustomer(this ISetFieldExpression setItem, string customer)
         {
             setItem.Value = new CustomerExpression(customer);
             return setItem;

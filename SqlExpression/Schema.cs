@@ -13,7 +13,7 @@ namespace SqlExpression
             Instance = new Schema();
         }
 
-        public static TableExpression Table { get; protected set; }
+        public static Table Table { get; protected set; }
 
         public static Schema Instance { get; protected set; }
 

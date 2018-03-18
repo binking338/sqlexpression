@@ -8,18 +8,18 @@ namespace SqlExpression
 {
     public static class ExtensionsDeleteExpression
     {
-        public static DeleteStatement Delete(this ITableExpression table)
+        public static DeleteStatement Delete(this ITable table)
         {
             return new DeleteStatement(table, null);
         }
 
-        public static IDeleteStatement From(this IDeleteStatement delete, ITableExpression table)
+        public static IDeleteStatement From(this IDeleteStatement delete, ITable table)
         {
             delete.Table = table;
             return delete;
         }
 
-        public static IDeleteStatement From(this IDeleteStatement delete, TableExpression table)
+        public static IDeleteStatement From(this IDeleteStatement delete, Table table)
         {
             delete.Table = table;
             return delete;

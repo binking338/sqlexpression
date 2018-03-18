@@ -14,11 +14,11 @@ namespace SqlExpression.MySql
 
         private static void InnerInitial()
         {
-            TableExpression.Handlers[DBType.MySql] = (ex) =>
+            Table.Handlers[DBType.MySql] = (ex) =>
             {
                 return string.Format("`{0}`", ex.Name);
             };
-            ColumnExpression.Handlers[DBType.MySql] = (ex) =>
+            Column.Handlers[DBType.MySql] = (ex) =>
             {
                 return string.Format("{1}`{0}`", ex.Name, string.IsNullOrEmpty(ex.Table?.Expression) ? string.Empty : ex.Table.Expression + ".");
             };

@@ -12,85 +12,86 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static SelectStatement SelectC(this ITableExpression table, IEnumerable<string> customers)
+        public static SelectStatement SelectC(this ITable table, IEnumerable<string> customers)
         {
             return SelectVarCustomer(table, customers);
         }
 
-        public static SelectStatement SelectC(this ITableExpression table, params string[] customers)
+        public static SelectStatement SelectC(this ITable table, params string[] customers)
         {
             return SelectVarCustomer(table, customers);
         }
 
-        public static SelectStatement SelectC(this IEnumerable<ITableExpression> tables, IEnumerable<string> customers)
+        public static SelectStatement SelectC(this IEnumerable<ITable> tables, IEnumerable<string> customers)
         {
             return SelectVarCustomer(tables, customers);
         }
 
-        public static SelectStatement SelectC(this IEnumerable<ITableExpression> tables, params string[] customers)
+        public static SelectStatement SelectC(this IEnumerable<ITable> tables, params string[] customers)
         {
             return SelectVarCustomer(tables, customers);
         }
 
         #endregion
 
-        public static SelectStatement Select(this ITableExpression table)
+        public static SelectStatement Select(this ITable table)
         {
-            return new SelectStatement(new ITableExpression[] { table });
+            return new SelectStatement(new ITable[] { table });
         }
 
-        public static SelectStatement Select(this ITableExpression table, IEnumerable<ISelectItemExpression> items)
+        public static SelectStatement Select(this ITable table, IEnumerable<ISelectFieldExpression> items)
         {
-            return new SelectStatement(new ITableExpression[] { table }, items.ToArray(), null, null);
+            return new SelectStatement(new ITable[] { table }, items.ToArray(), null, null);
         }
 
-        public static SelectStatement Select(this ITableExpression table, params ISelectItemExpression[] items)
+        public static SelectStatement Select(this ITable table, params ISelectFieldExpression[] items)
         {
-            return Select(table, items.Cast<ISelectItemExpression>());
+            return Select(table, items.Cast<ISelectFieldExpression>());
         }
 
-        public static SelectStatement Select(this ITableExpression table, params ColumnExpression[] items)
+        public static SelectStatement Select(this ITable table, params IValue[] items)
         {
-            return Select(table, items.Cast<ISelectItemExpression>());
+            return Select(table, items.Select(item => new SelectFieldExpression(item)));
         }
 
-        public static SelectStatement SelectVarCustomer(this ITableExpression table, IEnumerable<string> customers)
+        public static SelectStatement SelectVarCustomer(this ITable table, IEnumerable<string> customers)
         {
-            var columns = customers.Select(c => new CustomerExpression(c));
+            var columns = customers.Select(c => new SelectFieldExpression(new CustomerExpression(c)));
             return Select(table, columns);
         }
 
-        public static SelectStatement SelectVarCustomer(this ITableExpression table, params string[] customers)
+        public static SelectStatement SelectVarCustomer(this ITable table, params string[] customers)
         {
             return SelectVarCustomer(table, customers.AsEnumerable());
         }
-        public static SelectStatement Select(this IEnumerable<ITableExpression> tables)
+
+        public static SelectStatement Select(this IEnumerable<ITable> tables)
         {
             return new SelectStatement(tables.ToArray());
         }
 
-        public static SelectStatement Select(this IEnumerable<ITableExpression> tables, IEnumerable<ISelectItemExpression> items)
+        public static SelectStatement Select(this IEnumerable<ITable> tables, IEnumerable<ISelectFieldExpression> items)
         {
             return new SelectStatement(tables.ToArray(), items.ToArray(), null, null);
         }
 
-        public static SelectStatement Select(this IEnumerable<ITableExpression> tables, params ISelectItemExpression[] items)
+        public static SelectStatement Select(this IEnumerable<ITable> tables, params ISelectFieldExpression[] items)
         {
-            return Select(tables, items.Cast<ISelectItemExpression>());
+            return Select(tables, items.Cast<ISelectFieldExpression>());
         }
 
-        public static SelectStatement Select(this IEnumerable<ITableExpression> tables, params ColumnExpression[] items)
+        public static SelectStatement Select(this IEnumerable<ITable> tables, params IValue[] items)
         {
-            return Select(tables, items.Cast<ISelectItemExpression>());
+            return Select(tables, items.Select(item => new SelectFieldExpression(item)));
         }
 
-        public static SelectStatement SelectVarCustomer(this IEnumerable<ITableExpression> tables, IEnumerable<string> customers)
+        public static SelectStatement SelectVarCustomer(this IEnumerable<ITable> tables, IEnumerable<string> customers)
         {
-            var columns = customers.Select(c => new CustomerExpression(c));
+            var columns = customers.Select(c => new SelectFieldExpression(new CustomerExpression(c)));
             return new SelectStatement(tables.ToArray(), columns.ToArray(), null, null);
         }
 
-        public static SelectStatement SelectVarCustomer(this IEnumerable<ITableExpression> tables, params string[] customers)
+        public static SelectStatement SelectVarCustomer(this IEnumerable<ITable> tables, params string[] customers)
         {
             return SelectVarCustomer(tables, customers.AsEnumerable());
         }
@@ -117,84 +118,56 @@ namespace SqlExpression
 
         #endregion
 
-        public static ISelectStatement GetAs(this ISelectStatement select, ISelectItemExpression item, IColumnExpression asProperty)
+        public static ISelectStatement GetAs(this ISelectStatement select, IValue item, ISelectFieldAlias alias)
         {
-            ISelectItemExpression selectItem = asProperty == null ? item : new AsExpression(item, asProperty) as ISelectItemExpression;
-            var list = (select.Items?.ToList() ?? new List<ISelectItemExpression>());
-            list.Add(selectItem);
-            select.Items = list.ToArray();
-            return select;
+            ISelectFieldExpression selectField = new SelectFieldExpression(item, alias);
+            return Get(select, selectField);
         }
 
-        public static ISelectStatement GetAs(this ISelectStatement select, ISelectItemExpression item, ColumnExpression asProperty)
+        public static ISelectStatement GetAs(this ISelectStatement select, IValue item, string alias)
         {
-            return GetAs(select, item as ISelectItemExpression, asProperty as IColumnExpression);
+            return GetAs(select, item, new SelectFieldAlias(alias));
         }
 
-        public static ISelectStatement GetAs(this ISelectStatement select, ColumnExpression item, IColumnExpression asProperty)
+        public static ISelectStatement Get(this ISelectStatement select, IEnumerable<ISelectFieldExpression> items)
         {
-            return GetAs(select, item as ISelectItemExpression, asProperty);
-        }
-
-        public static ISelectStatement GetAs(this ISelectStatement select, ColumnExpression item, ColumnExpression asProperty)
-        {
-            return GetAs(select, item as ISelectItemExpression, asProperty as IColumnExpression);
-        }
-
-        public static ISelectStatement Get(this ISelectStatement select, ISelectItemExpression item)
-        {
-            return GetAs(select, item, null as IColumnExpression);
-        }
-
-        public static ISelectStatement Get(this ISelectStatement select, ColumnExpression item)
-        {
-            return Get(select, item as ISelectItemExpression);
-        }
-
-        public static ISelectStatement Get(this ISelectStatement select, IEnumerable<ISelectItemExpression> items)
-        {
-            var list = (select.Items?.ToList() ?? new List<ISelectItemExpression>());
+            var list = (select.Fields?.ToList() ?? new List<ISelectFieldExpression>());
             list.AddRange(items);
-            select.Items = list.ToArray();
+            select.Fields = list.ToArray();
             return select;
         }
 
-        public static ISelectStatement Get(this ISelectStatement select, params ISelectItemExpression[] items)
+        public static ISelectStatement Get(this ISelectStatement select, params ISelectFieldExpression[] items)
         {
-            return Get(select, items.Cast<ISelectItemExpression>());
+            return Get(select, items.Cast<ISelectFieldExpression>());
         }
 
-        public static ISelectStatement Get(this ISelectStatement select, params ColumnExpression[] items)
+        public static ISelectStatement Get(this ISelectStatement select, params IValue[] items)
         {
-            return Get(select, items.Cast<ISelectItemExpression>());
-        }
-
-        public static ISelectStatement GetVarCustomer(this ISelectStatement select, string item)
-        {
-            return Get(select, new CustomerExpression(item));
+            return Get(select, items.Select(item => new SelectFieldExpression(item)));
         }
 
         public static ISelectStatement GetVarCustomer(this ISelectStatement select, IEnumerable<string> items)
         {
-            return Get(select, items.Select(i => new CustomerExpression(i)));
+            return Get(select, items.Select(item => new SelectFieldExpression(new CustomerExpression(item))));
         }
 
         public static ISelectStatement GetVarCustomer(this ISelectStatement select, params string[] items)
         {
-            return Get(select, items.Select(i => new CustomerExpression(i)));
+            return Get(select, items.Select(item => new SelectFieldExpression(new CustomerExpression(item))));
         }
 
         #endregion
 
         #region From
 
-        public static ISelectStatement From(this ISelectStatement select, IEnumerable<ITableExpression> tables)
+        public static ISelectStatement From(this ISelectStatement select, IEnumerable<ITable> tables)
         {
             select.Tables = tables.ToArray();
             return select;
         }
 
-        public static ISelectStatement From(this ISelectStatement select, params TableExpression[] tables)
+        public static ISelectStatement From(this ISelectStatement select, params Table[] tables)
         {
             select.Tables = tables;
             return select;
@@ -209,27 +182,27 @@ namespace SqlExpression
         {
             return Join(select, join);
         }
-        public static ISelectStatement J(this ISelectStatement select, ITableExpression table, IFilterExpression on, IJoinOperator joinOperator)
+        public static ISelectStatement J(this ISelectStatement select, ITable table, IFilterExpression on, IJoinOperator joinOperator)
         {
             return Join(select, table, on, joinOperator);
         }
-        public static ISelectStatement J(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement J(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             return Join(select, table, on);
         }
-        public static ISelectStatement IJ(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement IJ(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             return IJ(select, table, on);
         }
-        public static ISelectStatement LJ(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement LJ(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             return LeftJoin(select, table, on);
         }
-        public static ISelectStatement RJ(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement RJ(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             return RightJoin(select, table, on);
         }
-        public static ISelectStatement FJ(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement FJ(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             return FullJoin(select, table, on);
         }
@@ -243,36 +216,36 @@ namespace SqlExpression
             return select;
         }
 
-        public static ISelectStatement Join(this ISelectStatement select, ITableExpression table, IFilterExpression on, IJoinOperator joinOperator)
+        public static ISelectStatement Join(this ISelectStatement select, ITable table, IFilterExpression on, IJoinOperator joinOperator)
         {
             IJoinExpression join = new JoinExpression(joinOperator, table, on);
             return Join(select, join);
         }
 
-        public static ISelectStatement Join(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement Join(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             return Join(select, table, on, Operator.InnerJoin);
         }
 
-        public static ISelectStatement InnerJoin(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement InnerJoin(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             IJoinExpression join = new JoinExpression(Operator.InnerJoin, table, on);
             return Join(select, join);
         }
 
-        public static ISelectStatement LeftJoin(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement LeftJoin(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             IJoinExpression join = new JoinExpression(Operator.LeftJoin, table, on);
             return Join(select, join);
         }
 
-        public static ISelectStatement RightJoin(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement RightJoin(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             IJoinExpression join = new JoinExpression(Operator.RightJoin, table, on);
             return Join(select, join);
         }
 
-        public static ISelectStatement FullJoin(this ISelectStatement select, ITableExpression table, IFilterExpression on)
+        public static ISelectStatement FullJoin(this ISelectStatement select, ITable table, IFilterExpression on)
         {
             IJoinExpression join = new JoinExpression(Operator.FullJoin, table, on);
             return Join(select, join);
@@ -313,10 +286,10 @@ namespace SqlExpression
 
         public static UnionStatement Union(this ISelectStatement select, IEnumerable<ISelectStatement> otherselects)
         {
-            var list = new List<IUnionItemExpression>();
+            var list = new List<IUnionExpression>();
             foreach (var s in otherselects)
             {
-                list.Add(new UnionItemExpression(Operator.Union, s));
+                list.Add(new UnionExpression(Operator.Union, s));
             }
             return new UnionStatement(select, list.ToArray(), null);
         }
@@ -328,10 +301,10 @@ namespace SqlExpression
 
         public static UnionStatement UnionAll(this ISelectStatement select, IEnumerable<ISelectStatement> otherselects)
         {
-            var list = new List<IUnionItemExpression>();
+            var list = new List<IUnionExpression>();
             foreach (var s in otherselects)
             {
-                list.Add(new UnionItemExpression(Operator.UnionAll, s));
+                list.Add(new UnionExpression(Operator.UnionAll, s));
             }
             return new UnionStatement(select, list.ToArray(), null);
         }
@@ -350,7 +323,7 @@ namespace SqlExpression
         {
             return GroupBy(select, column);
         }
-        public static ISelectStatement GB(this ISelectStatement select, IColumnExpression column)
+        public static ISelectStatement GB(this ISelectStatement select, IColumn column)
         {
             return GroupBy(select, column);
         }
@@ -362,10 +335,10 @@ namespace SqlExpression
 
         public static ISelectStatement GroupBy(this ISelectStatement select, string column)
         {
-            return GroupBy(select, new ColumnExpression(column));
+            return GroupBy(select, new Column(column));
         }
 
-        public static ISelectStatement GroupBy(this ISelectStatement select, IColumnExpression column)
+        public static ISelectStatement GroupBy(this ISelectStatement select, IColumn column)
         {
             select.GroupBy = new GroupByClause(column);
             return select;

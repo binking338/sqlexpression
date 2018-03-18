@@ -64,14 +64,16 @@ namespace SqlExpression
         public static ComparisonOperator LtOrEq = new ComparisonOperator("<=");
         public static ComparisonOperator In = new ComparisonOperator(" IN ");
         public static ComparisonOperator NotIn = new ComparisonOperator(" NOT IN ");
-        public static ComparisonOperator Between = new ComparisonOperator(" BETWEEN ");
-        public static ComparisonOperator NotBetween = new ComparisonOperator(" NOT BETWEEN ");
         public static ComparisonOperator Like = new ComparisonOperator(" LIKE ");
         public static ComparisonOperator NotLike = new ComparisonOperator(" NOT LIKE ");
         public static ComparisonOperator Is = new ComparisonOperator(" IS ");
         public static ComparisonOperator IsNot = new ComparisonOperator(" IS NOT ");
         public static UnaryComparisonOperator IsNull = new UnaryComparisonOperator(" IS NULL");
         public static UnaryComparisonOperator IsNotNull = new UnaryComparisonOperator(" IS NOT NULL");
+        public static UnaryComparisonOperator IsTrue = new UnaryComparisonOperator(" IS TRUE");
+        public static UnaryComparisonOperator IsNotTrue = new UnaryComparisonOperator(" IS NOT TRUE");
+        public static UnaryComparisonOperator IsFalse = new UnaryComparisonOperator(" IS FALSE");
+        public static UnaryComparisonOperator IsNotFalse = new UnaryComparisonOperator(" IS NOT FALSE");
 
         public static LogicOperator Or = new LogicOperator(" OR ");
         public static LogicOperator And = new LogicOperator(" AND ");
