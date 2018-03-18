@@ -111,10 +111,10 @@ namespace SqlExpression.UnitTest
             Assert.AreEqual(e.Expression, "test.oname NOT LIKE @oname");
 
             e = t.oid.BetweenVarParam();
-            Assert.AreEqual(e.Expression, "test.oid BETWEEN @oid1 AND @oid2");
+            Assert.AreEqual(e.Expression, "test.oid BETWEEN @oidLower AND @oidUpper");
 
             e = t.oid.NotBetweenVarParam();
-            Assert.AreEqual(e.Expression, "test.oid NOT BETWEEN @oid1 AND @oid2");
+            Assert.AreEqual(e.Expression, "test.oid NOT BETWEEN @oidLower AND @oidUpper");
         }
 
         [TestMethod]
