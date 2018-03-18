@@ -29,10 +29,19 @@ namespace SqlExpression
             return exp;
         }
 
-        public static ISelectFieldExpression As(this IValue val, string asName)
+        #region Alias
+
+        public static ITableAliasExpression As(this ITable table, string alias)
         {
-            return new SelectFieldExpression(val, new SelectFieldAlias(asName));
+            return new TableAliasExpression(table, new TableAlias(alias));
         }
+
+        public static ISelectFieldExpression As(this IValue val, string alias)
+        {
+            return new SelectFieldExpression(val, new SelectFieldAlias(alias));
+        }
+
+        #endregion
 
         #region Column
 
