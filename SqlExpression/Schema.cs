@@ -19,13 +19,13 @@ namespace SqlExpression
 
         public static ISelectStatement Select(Func<ISelectStatement, Schema, ISelectStatement> fun)
         {
-            var sql = new SelectStatement(Table);
+            var sql = new SelectStatement(new TableAliasExpression(Table, null));
             return fun(sql, Instance);
         }
 
         public static IUpdateStatement Update(Func<IUpdateStatement, Schema, IUpdateStatement> fun)
         {
-            var sql = new UpdateStatement(Table);
+            var sql = new UpdateStatement(new TableAliasExpression(Table, null));
             return fun(sql, Instance);
         }
 

@@ -134,16 +134,13 @@ namespace SqlExpression
     /// </summary>
     public class TableAliasExpression : ExpressionBase<TableAliasExpression>, ITableAliasExpression
     {
-        public TableAliasExpression(ITable table, ITableAlias alias)
+        public TableAliasExpression(IDataset table, ITableAlias alias)
         {
             Table = table;
             As = alias;
-            Name = alias.Name;
         }
 
-        public string Name { get; set; }
-
-        public ITable Table { get; set; }
+        public IDataset Table { get; set; }
 
         public ITableAlias As { get; set; }
 
@@ -938,7 +935,7 @@ namespace SqlExpression
 
     public class InExpression : ExpressionBase<InExpression>, IInExpression
     {
-        public InExpression(IValue value, ICollectionExpression collection)
+        public InExpression(IValue value, ICollection collection)
         {
             Value = value;
             Collection = collection;
@@ -946,7 +943,7 @@ namespace SqlExpression
 
         public IValue Value { get; set; }
 
-        public ICollectionExpression Collection { get; set; }
+        public ICollection Collection { get; set; }
 
         protected override string GenExpression()
         {
@@ -964,7 +961,7 @@ namespace SqlExpression
 
     public class NotInExpression : ExpressionBase<NotInExpression>, INotInExpression
     {
-        public NotInExpression(IValue value, ICollectionExpression collection)
+        public NotInExpression(IValue value, ICollection collection)
         {
             Value = value;
             Collection = collection;
@@ -972,7 +969,7 @@ namespace SqlExpression
 
         public IValue Value { get; set; }
 
-        public ICollectionExpression Collection { get; set; }
+        public ICollection Collection { get; set; }
 
         protected override string GenExpression()
         {
@@ -1429,10 +1426,10 @@ namespace SqlExpression
         public InsertStatement() : this(null) { }
 
         public InsertStatement(ITable table)
-            : this(table, new IColumn[0], new IColumn[0])
+            : this(table, new IColumn[0], new ICollection[0])
         { }
 
-        public InsertStatement(ITable table, IColumn[] columns, IValue[] values)
+        public InsertStatement(ITable table, IColumn[] columns, ICollection[] values)
         {
             Table = table;
             Columns = columns;
@@ -1443,7 +1440,7 @@ namespace SqlExpression
 
         public IColumn[] Columns { get; set; }
 
-        public IValue[] Values { get; set; }
+        public ICollection[] Values { get; set; }
 
         public IEnumerable<string> Params
         {
@@ -1473,7 +1470,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ValuesMissing);
             }
-            return string.Format("INSERT INTO {0}({1}) VALUES({2})", Table.Expression, Columns.Join(",", p => p.Expression), Values.Join(",", v => v.Expression));
+            return string.Format("INSERT INTO {0}({1}) VALUES {2}", Table.Expression, Columns.Join(",", p => p.Expression), Values.Join(" ", v => v.Expression));
         }
     }
 
@@ -1530,19 +1527,19 @@ namespace SqlExpression
         {
         }
 
-        public UpdateStatement(ITable table)
+        public UpdateStatement(ITableAliasExpression table)
             : this(table, new SetClause(null), null)
         {
         }
 
-        public UpdateStatement(ITable table, ISetClause set, IWhereClause where)
+        public UpdateStatement(ITableAliasExpression table, ISetClause set, IWhereClause where)
         {
             Table = table;
             Set = set;
             Where = where;
         }
 
-        public ITable Table { get; set; }
+        public ITableAliasExpression Table { get; set; }
 
         public ISetClause Set { get; set; }
 
@@ -1650,19 +1647,19 @@ namespace SqlExpression
             : this(null)
         { }
 
-        public SelectStatement(params ITable[] tables)
+        public SelectStatement(params ITableAliasExpression[] tables)
             : this(tables, new ISelectFieldExpression[0], null)
         { }
 
-        public SelectStatement(ITable[] tables, ISelectFieldExpression[] fields, IWhereClause where, IOrderByClause orderby = null)
+        public SelectStatement(ITableAliasExpression[] tables, ISelectFieldExpression[] fields, IWhereClause where, IOrderByClause orderby = null)
             : this(tables, fields, where, null, null, orderby)
         { }
 
-        public SelectStatement(ITable[] tables, ISelectFieldExpression[] fields, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
+        public SelectStatement(ITableAliasExpression[] tables, ISelectFieldExpression[] fields, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
             : this(tables, fields, null, where, groupby, having, orderby)
         { }
 
-        public SelectStatement(ITable[] tables, ISelectFieldExpression[] fields, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
+        public SelectStatement(ITableAliasExpression[] tables, ISelectFieldExpression[] fields, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
         {
             Tables = tables;
             Fields = fields;
@@ -1673,7 +1670,7 @@ namespace SqlExpression
             OrderBy = orderby;
         }
 
-        public ITable[] Tables { get; set; }
+        public ITableAliasExpression[] Tables { get; set; }
 
         public ISelectFieldExpression[] Fields { get; set; }
 
@@ -1866,7 +1863,7 @@ namespace SqlExpression
     /// </summary>
     public class JoinExpression : ExpressionBase<JoinExpression>, IJoinExpression
     {
-        public JoinExpression(IJoinOperator joinOp, ITable table, IFilterExpression on)
+        public JoinExpression(IJoinOperator joinOp, ITableAliasExpression table, IFilterExpression on)
         {
             JoinOp = joinOp;
             Table = table;
@@ -1875,7 +1872,7 @@ namespace SqlExpression
 
         public IJoinOperator JoinOp { get; set; }
 
-        public ITable Table { get; set; }
+        public ITableAliasExpression Table { get; set; }
 
         public IFilterExpression On { get; set; }
 

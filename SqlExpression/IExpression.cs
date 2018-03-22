@@ -47,18 +47,32 @@ namespace SqlExpression
         string Expression { get; }
     }
 
-    public interface ITableAlias : IExpression
-    {
-        /// <summary>
-        /// 别名
-        /// </summary>
-        string Name { get; set; }
-    }
+    /// <summary>
+    /// 值
+    /// </summary>
+    public interface IValue : IExpression, IFilterExpression { }
+
+    /// <summary>
+    /// 布尔值
+    /// </summary>
+    public interface IBoolValue : IValue { }
+
+    /// <summary>
+    /// 数据集（一般二维）
+    /// </summary>
+    public interface IDataset : IExpression { }
+
+    /// <summary>
+    /// 列表集（一维）
+    /// <see cref="ISubQueryExpression"/>
+    /// <see cref="ValueCollectionExpression"/>
+    /// </summary>
+    public interface ICollection : IValue { }
 
     /// <summary>
     /// 表
     /// </summary>
-    public interface ITable : IExpression
+    public interface ITable : IDataset
     {
         /// <summary>
         /// 表名
@@ -69,28 +83,9 @@ namespace SqlExpression
     /// <summary>
     /// 表别名
     /// </summary>
-    public interface ITableAliasExpression : ITable
+    public interface ITableAlias : ITable
     {
-        /// <summary>
-        /// 表
-        /// </summary>
-        ITable Table { get; set; }
-
-        /// <summary>
-        /// 别名
-        /// </summary>
-        ITableAlias As { get; set; }
     }
-
-    /// <summary>
-    /// 值表达式
-    /// </summary>
-    public interface IValue : IExpression, IFilterExpression { }
-
-    /// <summary>
-    /// 布尔值表达式
-    /// </summary>
-    public interface IBoolValue : IValue { }
 
     /// <summary>
     /// 属性（字段）
@@ -263,7 +258,7 @@ namespace SqlExpression
         /// <summary>
         /// 集合
         /// </summary>
-        ICollectionExpression Collection { get; set; }
+        ICollection Collection { get; set; }
     }
 
     /// <summary>
@@ -279,7 +274,7 @@ namespace SqlExpression
         /// <summary>
         /// 集合
         /// </summary>
-        ICollectionExpression Collection { get; set; }
+        ICollection Collection { get; set; }
     }
 
     /// <summary>
@@ -304,16 +299,9 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 集合表达式
-    /// <see cref="ISubQueryExpression"/>
-    /// <see cref="ValueCollectionExpression"/>
-    /// </summary>
-    public interface ICollectionExpression : IValue { }
-
-    /// <summary>
     /// 值集合
     /// </summary>
-    public interface IValueCollectionExpression : ICollectionExpression
+    public interface IValueCollectionExpression : ICollection
     {
         IValue[] Values { get; set; }
     }
@@ -321,7 +309,7 @@ namespace SqlExpression
     /// <summary>
     /// 子查询
     /// </summary>
-    public interface ISubQueryExpression : ICollectionExpression
+    public interface ISubQueryExpression : ICollection, IDataset
     {
         /// <summary>
         /// 子查询语句，返回单列
@@ -342,6 +330,22 @@ namespace SqlExpression
         IEnumerable<string> Params { get; }
     }
 
+    /// <summary>
+    /// 表别名
+    /// </summary>
+    public interface ITableAliasExpression : IExpression
+    {
+        /// <summary>
+        /// 表
+        /// </summary>
+        IDataset Table { get; set; }
+
+        /// <summary>
+        /// 别名
+        /// </summary>
+        ITableAlias As { get; set; }
+    }
+
     #region WhereClause
 
     /// <summary>
@@ -357,6 +361,7 @@ namespace SqlExpression
 
     /// <summary>
     /// 过滤条件表达式
+    /// todo:直接去掉 使用IValue ？
     /// </summary>
     public interface IFilterExpression : IExpression { }
 
@@ -378,9 +383,10 @@ namespace SqlExpression
         IColumn[] Columns { get; set; }
 
         /// <summary>
-        /// 插入值 todo 理清
+        /// 插入值
+        /// todo:支持子查询
         /// </summary>
-        IValue[] Values { get; set; }
+        ICollection[] Values { get; set; }
     }
 
     /// <summary>
@@ -409,7 +415,7 @@ namespace SqlExpression
         /// <summary>
         /// 表
         /// </summary>
-        ITable Table { get; set; }
+        ITableAliasExpression Table { get; set; }
 
         /// <summary>
         /// 字段赋值子句
@@ -460,7 +466,7 @@ namespace SqlExpression
         /// <summary>
         /// 表
         /// </summary>
-        ITable[] Tables { get; set; }
+        ITableAliasExpression[] Tables { get; set; }
 
         /// <summary>
         /// 字段
@@ -581,8 +587,9 @@ namespace SqlExpression
 
         /// <summary>
         /// 连接表
+        /// todo:支持子查询
         /// </summary>
-        ITable Table { get; set; }
+        ITableAliasExpression Table { get; set; }
 
         /// <summary>
         /// 连接条件

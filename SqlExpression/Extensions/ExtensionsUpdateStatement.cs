@@ -31,13 +31,13 @@ namespace SqlExpression
 
         public static UpdateStatement Update(this ITable table)
         {
-            return new UpdateStatement(table);
+            return new UpdateStatement(new TableAliasExpression(table, null));
         }
 
         public static UpdateStatement Update(this ITable table, IEnumerable<IColumn> columns)
         {
             var set = new SetClause(columns.Select(c => new SetFieldExpression(c, null) as ISetFieldExpression).ToArray());
-            return new UpdateStatement(table, set, null);
+            return new UpdateStatement(new TableAliasExpression(table, null), set, null);
         }
 
         public static UpdateStatement Update(this ITable table, params IColumn[] columns)
@@ -53,7 +53,7 @@ namespace SqlExpression
         public static UpdateStatement UpdateVarParam(this ITable table, IEnumerable<IColumn> columns)
         {
             var set = new SetClause(columns.Select(col => col.SetVarParam() as ISetFieldExpression).ToArray());
-            return new UpdateStatement(table, set, null);
+            return new UpdateStatement(new TableAliasExpression(table, null), set, null);
         }
 
         public static UpdateStatement UpdateVarParam(this ITable table, params IColumn[] columns)
