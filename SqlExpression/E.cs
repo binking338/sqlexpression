@@ -164,7 +164,7 @@ namespace SqlExpression
             return new UpdateStatement(table);
         }
 
-        public static UpdateStatement Update(ITable table, ITableAlias alias = null)
+        public static UpdateStatement Update(ITable table, IDatasetAlias alias = null)
         {
             if (table == null)
             {
@@ -182,7 +182,7 @@ namespace SqlExpression
             return Update(TableAlias(table, alias));
         }
 
-        public static UpdateStatement Update(string table, ITableAlias alias = null)
+        public static UpdateStatement Update(string table, IDatasetAlias alias = null)
         {
             if (table == null)
             {
@@ -209,7 +209,7 @@ namespace SqlExpression
             return new Table(table);
         }
 
-        public static TableAliasExpression TableAlias(ITable table, ITableAlias alias = null)
+        public static TableAliasExpression TableAlias(ITable table, IDatasetAlias alias = null)
         {
             if (table == null)
             {
@@ -227,7 +227,7 @@ namespace SqlExpression
             return TableAlias(table, string.IsNullOrWhiteSpace(alias) ? null : new TableAlias(alias));
         }
 
-        public static TableAliasExpression TableAlias(string table, ITableAlias alias = null)
+        public static TableAliasExpression TableAlias(string table, IDatasetAlias alias = null)
         {
             if (table == null)
             {

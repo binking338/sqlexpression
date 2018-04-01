@@ -37,7 +37,8 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 表达式接口 IExpression
+    /// 表达式接口
+    /// 所有的SQL语句组成都继承该接口
     /// </summary>
     public interface IExpression
     {
@@ -50,29 +51,28 @@ namespace SqlExpression
     /// <summary>
     /// 值
     /// </summary>
-    public interface IValue : IExpression, IFilterExpression { }
+    public interface IValue : IExpression { }
+
+    /// <summary>
+    /// 简单值
+    /// 相对于ICollection，IDataset
+    /// </summary>
+    public interface ISimpleValue : IValue { }
 
     /// <summary>
     /// 布尔值
     /// </summary>
-    public interface IBoolValue : IValue { }
+    public interface IBoolValue : ISimpleValue { }
 
     /// <summary>
-    /// 数据集（一般二维）
-    /// </summary>
-    public interface IDataset : IExpression { }
-
-    /// <summary>
-    /// 列表集（一维）
-    /// <see cref="ISubQueryExpression"/>
-    /// <see cref="ValueCollectionExpression"/>
+    /// 值列表
     /// </summary>
     public interface ICollection : IValue { }
 
     /// <summary>
     /// 表
     /// </summary>
-    public interface ITable : IDataset
+    public interface ITable : IExpression
     {
         /// <summary>
         /// 表名
@@ -83,14 +83,18 @@ namespace SqlExpression
     /// <summary>
     /// 表别名
     /// </summary>
-    public interface ITableAlias : ITable
+    public interface IDatasetAlias : IExpression
     {
+        /// <summary>
+        /// 别名
+        /// </summary>
+        string Name { get; set; }
     }
 
     /// <summary>
     /// 属性（字段）
     /// </summary>
-    public interface IColumn : IValue
+    public interface IColumn : ISimpleValue
     {
         /// <summary>
         /// 属性（字段）名称
@@ -106,7 +110,7 @@ namespace SqlExpression
     /// <summary>
     /// 字面值
     /// </summary>
-    public interface ILiteralValue : IValue
+    public interface ILiteralValue : ISimpleValue
     {
         /// <summary>
         /// 值
@@ -117,7 +121,7 @@ namespace SqlExpression
     /// <summary>
     /// 参数
     /// </summary>
-    public interface IParam : IValue
+    public interface IParam : ISimpleValue
     {
         /// <summary>
         /// 参数名称
@@ -128,7 +132,7 @@ namespace SqlExpression
     /// <summary>
     /// 一元表达式
     /// </summary>
-    public interface IUnaryExpression : IValue
+    public interface IUnaryExpression : ISimpleValue
     {
         /// <summary>
         /// 运算符
@@ -149,7 +153,7 @@ namespace SqlExpression
     /// <summary>
     /// 二元表达式
     /// </summary>
-    public interface IBinaryExpression : IValue
+    public interface IBinaryExpression : ISimpleValue
     {
         /// <summary>
         /// 操作符
@@ -214,17 +218,17 @@ namespace SqlExpression
     /// </summary>
     public interface IBetweenExpression : IBoolValue
     {
-        IValue Value { get; set; }
+        ISimpleValue Value { get; set; }
 
         /// <summary>
         /// 下限
         /// </summary>
-        IValue Lower { get; set; }
+        ISimpleValue Lower { get; set; }
 
         /// <summary>
         /// 上限
         /// </summary>
-        IValue Upper { get; set; }
+        ISimpleValue Upper { get; set; }
     }
 
     /// <summary>
@@ -232,17 +236,17 @@ namespace SqlExpression
     /// </summary>
     public interface INotBetweenExpression : IBoolValue
     {
-        IValue Value { get; set; }
+        ISimpleValue Value { get; set; }
 
         /// <summary>
         /// 下限
         /// </summary>
-        IValue Lower { get; set; }
+        ISimpleValue Lower { get; set; }
 
         /// <summary>
         /// 上限
         /// </summary>
-        IValue Upper { get; set; }
+        ISimpleValue Upper { get; set; }
     }
 
     /// <summary>
@@ -253,7 +257,7 @@ namespace SqlExpression
         /// <summary>
         /// 值
         /// </summary>
-        IValue Value { get; set; }
+        ISimpleValue Value { get; set; }
 
         /// <summary>
         /// 集合
@@ -269,7 +273,7 @@ namespace SqlExpression
         /// <summary>
         /// 值
         /// </summary>
-        IValue Value { get; set; }
+        ISimpleValue Value { get; set; }
 
         /// <summary>
         /// 集合
@@ -285,7 +289,7 @@ namespace SqlExpression
     /// <summary>
     /// 函数表达式
     /// </summary>
-    public interface IFunctionExpression : IValue
+    public interface IFunctionExpression : ISimpleValue
     {
         /// <summary>
         /// 函数名
@@ -295,7 +299,7 @@ namespace SqlExpression
         /// <summary>
         /// 参数值
         /// </summary>
-        IValue[] Values { get; set; }
+        ISimpleValue[] Values { get; set; }
     }
 
     /// <summary>
@@ -303,13 +307,13 @@ namespace SqlExpression
     /// </summary>
     public interface IValueCollectionExpression : ICollection
     {
-        IValue[] Values { get; set; }
+        ISimpleValue[] Values { get; set; }
     }
 
     /// <summary>
     /// 子查询
     /// </summary>
-    public interface ISubQueryExpression : ICollection, IDataset
+    public interface ISubQueryExpression : ICollection
     {
         /// <summary>
         /// 子查询语句，返回单列
@@ -330,20 +334,31 @@ namespace SqlExpression
         IEnumerable<string> Params { get; }
     }
 
+    public interface IDatasetWithAlias : IExpression
+    {
+        /// <summary>
+        /// 别名
+        /// </summary>
+        IDatasetAlias As { get; set; }
+    }
+
     /// <summary>
     /// 表别名
     /// </summary>
-    public interface ITableAliasExpression : IExpression
+    public interface ITableAliasExpression : IDatasetWithAlias
     {
         /// <summary>
         /// 表
         /// </summary>
-        IDataset Table { get; set; }
+        ITable Table { get; set; }
+    }
 
+    public interface ISubQueryAliasExpression : IDatasetWithAlias 
+    {
         /// <summary>
-        /// 别名
+        /// 数据集
         /// </summary>
-        ITableAlias As { get; set; }
+        ISubQueryExpression Dataset { get; set; }
     }
 
     #region WhereClause
@@ -356,14 +371,8 @@ namespace SqlExpression
         /// <summary>
         /// 过滤条件
         /// </summary>
-        IFilterExpression Filter { get; set; }
+        ISimpleValue Filter { get; set; }
     }
-
-    /// <summary>
-    /// 过滤条件表达式
-    /// todo:直接去掉 使用IValue ？
-    /// </summary>
-    public interface IFilterExpression : IExpression { }
 
     #endregion
 
@@ -386,7 +395,7 @@ namespace SqlExpression
         /// 插入值
         /// todo:支持子查询
         /// </summary>
-        ICollection[] Values { get; set; }
+        ICollection Values { get; set; }
     }
 
     /// <summary>
@@ -451,7 +460,7 @@ namespace SqlExpression
         /// <summary>
         /// 更新值
         /// </summary>
-        IValue Value { get; set; }
+        ISimpleValue Value { get; set; }
     }
 
     #endregion
@@ -466,7 +475,7 @@ namespace SqlExpression
         /// <summary>
         /// 表
         /// </summary>
-        ITableAliasExpression[] Tables { get; set; }
+        IDatasetWithAlias[] Tables { get; set; }
 
         /// <summary>
         /// 字段
@@ -556,7 +565,7 @@ namespace SqlExpression
         /// <summary>
         /// 查询项
         /// </summary>
-        IValue Field { get; set; }
+        ISimpleValue Field { get; set; }
 
         /// <summary>
         /// 别名
@@ -572,7 +581,7 @@ namespace SqlExpression
         /// <summary>
         /// 去重字段
         /// </summary>
-        IValue[] SelectFields { get; set; }
+        ISimpleValue[] SelectFields { get; set; }
     }
 
     /// <summary>
@@ -594,7 +603,18 @@ namespace SqlExpression
         /// <summary>
         /// 连接条件
         /// </summary>
-        IFilterExpression On { get; set; }
+        IOnClause On { get; set; }
+    }
+
+    /// <summary>
+    /// On子句
+    /// </summary>
+    public interface IOnClause : IExpression
+    {
+        /// <summary>
+        /// 连接条件
+        /// </summary>
+        ISimpleValue On { get; set; }
     }
 
     /// <summary>
@@ -621,7 +641,7 @@ namespace SqlExpression
         /// <summary>
         /// 分组条件
         /// </summary>
-        IFilterExpression Filter { get; set; }
+        ISimpleValue Filter { get; set; }
     }
 
     /// <summary>
@@ -673,9 +693,9 @@ namespace SqlExpression
     public interface ICustomerValue : IValue, IBoolValue { }
 
     /// <summary>
-    /// 自定义过滤条件表达式
+    /// 自定义简单值表达式
     /// </summary>
-    public interface ICustomerFilterExpression : IFilterExpression { }
+    public interface ICustomerSimpleValue : ISimpleValue { }
 
     /// <summary>
     /// 自定义sql语句
@@ -685,7 +705,7 @@ namespace SqlExpression
     /// <summary>
     /// 自定义表达式
     /// </summary>
-    public interface ICustomerExpression : IExpression, ICustomerValue, ICustomerFilterExpression, ICustomerSqlStatement { }
+    public interface ICustomerExpression : IExpression, ICustomerValue, ICustomerSimpleValue, ICustomerSqlStatement { }
 
     #endregion
 }
