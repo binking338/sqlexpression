@@ -149,7 +149,7 @@ namespace SqlExpression
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, IColumn column, IValue value)
+        public static IUpdateStatement Set(this IUpdateStatement update, IColumn column, ISimpleValue value)
         {
             update.Set = update.Set.SetItem(column, value);
             return update;
@@ -173,7 +173,7 @@ namespace SqlExpression
             return update;
         }
 
-        public static IUpdateStatement Set(this IUpdateStatement update, Column column, IValue value)
+        public static IUpdateStatement Set(this IUpdateStatement update, Column column, ISimpleValue value)
         {
             update.Set = update.Set.SetItem(column, value);
             return update;
@@ -201,7 +201,7 @@ namespace SqlExpression
 
         #region Where
         
-        public static IUpdateStatement Where(this IUpdateStatement update, IFilterExpression filter)
+        public static IUpdateStatement Where(this IUpdateStatement update, ISimpleValue filter)
         {
             update.Where = new WhereClause(filter);
             return update;
@@ -212,7 +212,7 @@ namespace SqlExpression
         #region ISetClause
 
         #region Shortcut
-        public static ISetClause Vals(this ISetClause set, IEnumerable<IValue> values)
+        public static ISetClause Vals(this ISetClause set, IEnumerable<ISimpleValue> values)
         {
             return Values(set, values);
         }
@@ -261,7 +261,7 @@ namespace SqlExpression
 
         #endregion
 
-        public static ISetClause Values(this ISetClause set, IEnumerable<IValue> values)
+        public static ISetClause Values(this ISetClause set, IEnumerable<ISimpleValue> values)
         {
             var list = values.ToList();
             for (int i = 0, j = 0; i < set.SetFields.Length && j < list.Count;)
@@ -276,7 +276,7 @@ namespace SqlExpression
 
         public static ISetClause Values(this ISetClause set, params object[] values)
         {
-            return Values(set, values.Select(val => val is IValue ? val as IValue : new LiteralValue(val)));
+            return Values(set, values.Select(val => val is ISimpleValue ? val as ISimpleValue : new LiteralValue(val)));
         }
 
         public static ISetClause ValuesVarParam(this ISetClause set)
@@ -298,7 +298,7 @@ namespace SqlExpression
             return set;
         }
 
-        public static ISetClause SetItem(this ISetClause set, IColumn column, IValue value)
+        public static ISetClause SetItem(this ISetClause set, IColumn column, ISimpleValue value)
         {
             return SetItem(set, column.Set(value));
         }
@@ -318,7 +318,7 @@ namespace SqlExpression
             return SetItem(set, column.SetVarCustomer(customer));
         }
 
-        public static ISetClause SetItem(this ISetClause set, Column column, IValue value)
+        public static ISetClause SetItem(this ISetClause set, Column column, ISimpleValue value)
         {
             return SetItem(set, column.Set(value));
         }

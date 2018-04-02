@@ -49,7 +49,7 @@ namespace SqlExpression
             return Select(table, items.Cast<ISelectFieldExpression>());
         }
 
-        public static SelectStatement Select(this ITable table, params IValue[] items)
+        public static SelectStatement Select(this ITable table, params ISimpleValue[] items)
         {
             return Select(table, items.Select(item => new SelectFieldExpression(item)));
         }
@@ -80,7 +80,7 @@ namespace SqlExpression
             return Select(tables, items.Cast<ISelectFieldExpression>());
         }
 
-        public static SelectStatement Select(this IEnumerable<ITable> tables, params IValue[] items)
+        public static SelectStatement Select(this IEnumerable<ITable> tables, params ISimpleValue[] items)
         {
             return Select(tables, items.Select(item => new SelectFieldExpression(item)));
         }
@@ -118,13 +118,13 @@ namespace SqlExpression
 
         #endregion
 
-        public static ISelectStatement GetAs(this ISelectStatement select, IValue item, ISelectFieldAlias alias)
+        public static ISelectStatement GetAs(this ISelectStatement select, ISimpleValue item, ISelectFieldAlias alias)
         {
             ISelectFieldExpression selectField = new SelectFieldExpression(item, alias);
             return Get(select, selectField);
         }
 
-        public static ISelectStatement GetAs(this ISelectStatement select, IValue item, string alias)
+        public static ISelectStatement GetAs(this ISelectStatement select, ISimpleValue item, string alias)
         {
             return GetAs(select, item, new SelectFieldAlias(alias));
         }
@@ -142,7 +142,7 @@ namespace SqlExpression
             return Get(select, items.Cast<ISelectFieldExpression>());
         }
 
-        public static ISelectStatement Get(this ISelectStatement select, params IValue[] items)
+        public static ISelectStatement Get(this ISelectStatement select, params ISimpleValue[] items)
         {
             return Get(select, items.Select(item => new SelectFieldExpression(item)));
         }
@@ -181,27 +181,78 @@ namespace SqlExpression
         {
             return Join(select, join);
         }
-        public static ISelectStatement J(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on, IJoinOperator joinOperator)
+        public static ISelectStatement J(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on, IJoinOperator joinOperator)
         {
             return Join(select, table, on, joinOperator);
         }
-        public static ISelectStatement J(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement J(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
         {
             return Join(select, table, on);
         }
-        public static ISelectStatement IJ(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement IJ(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
         {
             return IJ(select, table, on);
         }
-        public static ISelectStatement LJ(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement LJ(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
         {
             return LeftJoin(select, table, on);
         }
-        public static ISelectStatement RJ(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement RJ(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
         {
             return RightJoin(select, table, on);
         }
-        public static ISelectStatement FJ(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement FJ(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
+        {
+            return FullJoin(select, table, on);
+        }
+
+        public static ISelectStatement J(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on, IJoinOperator joinOperator)
+        {
+            return Join(select, table, tableAlias, on, joinOperator);
+        }
+        public static ISelectStatement J(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            return Join(select, table, tableAlias, on);
+        }
+        public static ISelectStatement IJ(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            return IJ(select, table, tableAlias, on);
+        }
+        public static ISelectStatement LJ(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            return LeftJoin(select, table, tableAlias, on);
+        }
+        public static ISelectStatement RJ(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            return RightJoin(select, table, tableAlias, on);
+        }
+        public static ISelectStatement FJ(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            return FullJoin(select, table, tableAlias, on);
+        }
+
+
+        public static ISelectStatement J(this ISelectStatement select, ITable table, ISimpleValue on, IJoinOperator joinOperator)
+        {
+            return Join(select, table, on, joinOperator);
+        }
+        public static ISelectStatement J(this ISelectStatement select, ITable table, ISimpleValue on)
+        {
+            return Join(select, table, on);
+        }
+        public static ISelectStatement IJ(this ISelectStatement select, ITable table, ISimpleValue on)
+        {
+            return IJ(select, table, on);
+        }
+        public static ISelectStatement LJ(this ISelectStatement select, ITable table, ISimpleValue on)
+        {
+            return LeftJoin(select, table, on);
+        }
+        public static ISelectStatement RJ(this ISelectStatement select, ITable table, ISimpleValue on)
+        {
+            return RightJoin(select, table, on);
+        }
+        public static ISelectStatement FJ(this ISelectStatement select, ITable table, ISimpleValue on)
         {
             return FullJoin(select, table, on);
         }
@@ -215,46 +266,113 @@ namespace SqlExpression
             return select;
         }
 
-        public static ISelectStatement Join(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on, IJoinOperator joinOperator)
+        public static ISelectStatement Join(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on, IJoinOperator joinOperator)
         {
             IJoinExpression join = new JoinExpression(joinOperator, table, on);
             return Join(select, join);
         }
 
-        public static ISelectStatement Join(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement Join(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
         {
             return Join(select, table, on, Operator.InnerJoin);
         }
 
-        public static ISelectStatement InnerJoin(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement InnerJoin(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
         {
             IJoinExpression join = new JoinExpression(Operator.InnerJoin, table, on);
             return Join(select, join);
         }
 
-        public static ISelectStatement LeftJoin(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement LeftJoin(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
         {
             IJoinExpression join = new JoinExpression(Operator.LeftJoin, table, on);
             return Join(select, join);
         }
 
-        public static ISelectStatement RightJoin(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement RightJoin(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
         {
             IJoinExpression join = new JoinExpression(Operator.RightJoin, table, on);
             return Join(select, join);
         }
 
-        public static ISelectStatement FullJoin(this ISelectStatement select, ITableAliasExpression table, IFilterExpression on)
+        public static ISelectStatement FullJoin(this ISelectStatement select, ITableAliasExpression table, ISimpleValue on)
         {
             IJoinExpression join = new JoinExpression(Operator.FullJoin, table, on);
             return Join(select, join);
         }
 
+
+        public static ISelectStatement Join(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on, IJoinOperator joinOperator)
+        {
+            IJoinExpression join = new JoinExpression(joinOperator, table.As(tableAlias), on);
+            return Join(select, join);
+        }
+
+        public static ISelectStatement Join(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            return Join(select, table.As(tableAlias), on, Operator.InnerJoin);
+        }
+
+        public static ISelectStatement InnerJoin(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            IJoinExpression join = new JoinExpression(Operator.InnerJoin, table.As(tableAlias), on);
+            return Join(select, join);
+        }
+
+        public static ISelectStatement LeftJoin(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            IJoinExpression join = new JoinExpression(Operator.LeftJoin, table.As(tableAlias), on);
+            return Join(select, join);
+        }
+
+        public static ISelectStatement RightJoin(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            IJoinExpression join = new JoinExpression(Operator.RightJoin, table.As(tableAlias), on);
+            return Join(select, join);
+        }
+
+        public static ISelectStatement FullJoin(this ISelectStatement select, ITable table, string tableAlias, ISimpleValue on)
+        {
+            IJoinExpression join = new JoinExpression(Operator.FullJoin, table.As(tableAlias), on);
+            return Join(select, join);
+        }
+
+
+
+        public static ISelectStatement Join(this ISelectStatement select, ITable table, ISimpleValue on, IJoinOperator joinOperator)
+        {
+            return Join(select, table, on, joinOperator);
+        }
+
+        public static ISelectStatement Join(this ISelectStatement select, ITable table, ISimpleValue on)
+        {
+            return Join(select, table, null, on);
+        }
+
+        public static ISelectStatement InnerJoin(this ISelectStatement select, ITable table, ISimpleValue on)
+        {
+            return InnerJoin(select, table, null, on);
+        }
+
+        public static ISelectStatement LeftJoin(this ISelectStatement select, ITable table, ISimpleValue on)
+        {
+            return LeftJoin(select, table, null, on);
+        }
+
+        public static ISelectStatement RightJoin(this ISelectStatement select, ITable table, ISimpleValue on)
+        {
+            return RightJoin(select, table, null, on);
+        }
+
+        public static ISelectStatement FullJoin(this ISelectStatement select, ITable table, ISimpleValue on)
+        {
+            return FullJoin(select, table, null, on);
+        }
         #endregion
 
         #region Where
 
-        public static ISelectStatement Where(this ISelectStatement select, IFilterExpression filter)
+        public static ISelectStatement Where(this ISelectStatement select, ISimpleValue filter)
         {
             select.Where = new WhereClause(filter);
             return select;
@@ -326,7 +444,7 @@ namespace SqlExpression
         {
             return GroupBy(select, column);
         }
-        public static ISelectStatement H(this ISelectStatement select, IFilterExpression filter)
+        public static ISelectStatement H(this ISelectStatement select, ISimpleValue filter)
         {
             return Having(select, filter);
         }
@@ -343,7 +461,7 @@ namespace SqlExpression
             return select;
         }
 
-        public static ISelectStatement Having(this ISelectStatement select, IFilterExpression filter)
+        public static ISelectStatement Having(this ISelectStatement select, ISimpleValue filter)
         {
             select.Having = new HavingClause(filter);
             return select;

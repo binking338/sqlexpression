@@ -41,7 +41,7 @@ namespace SqlExpression
             return fun(sql, Instance);
         }
 
-        public static IFilterExpression Filter(Func<Schema, IFilterExpression> fun)
+        public static ISimpleValue Filter(Func<Schema, ISimpleValue> fun)
         {
             return fun(Instance);
         }

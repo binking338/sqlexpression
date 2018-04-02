@@ -35,5 +35,7 @@ namespace SqlExpression
         public const string QueryMissing = "query missing";
         public const string BetweenLowerMissing = "between lower missing";
         public const string BetweenUpperMissing = "between upper missing";
+
+        public const string SetValueError = "only IValueCollectionExpression can set ISimpleValue";
     }
 }

@@ -224,7 +224,7 @@ namespace SqlExpression
             {
                 throw new ArgumentNullException(nameof(table));
             }
-            return TableAlias(table, string.IsNullOrWhiteSpace(alias) ? null : new TableAlias(alias));
+            return TableAlias(table, string.IsNullOrWhiteSpace(alias) ? null : new DatasetAlias(alias));
         }
 
         public static TableAliasExpression TableAlias(string table, IDatasetAlias alias = null)
@@ -242,7 +242,7 @@ namespace SqlExpression
             {
                 throw new ArgumentNullException(nameof(table));
             }
-            return TableAlias(Table(table), string.IsNullOrWhiteSpace(alias) ? null : new TableAlias(alias));
+            return TableAlias(Table(table), string.IsNullOrWhiteSpace(alias) ? null : new DatasetAlias(alias));
         }
 
         public static IEnumerable<Table> Tables(IEnumerable<string> tables)
@@ -372,7 +372,7 @@ namespace SqlExpression
             return new ValueCollectionExpression(values.Select(v => new LiteralValue(v)).ToArray());
         }
 
-        public static IValue And(IEnumerable<IValue> filters)
+        public static ISimpleValue And(IEnumerable<ISimpleValue> filters)
         {
             if (filters == null)
             {
@@ -391,7 +391,7 @@ namespace SqlExpression
             return filter;
         }
 
-        public static IValue And(params IValue[] filters)
+        public static ISimpleValue And(params ISimpleValue[] filters)
         {
             if (filters == null)
             {
@@ -404,7 +404,7 @@ namespace SqlExpression
             return And(filters.AsEnumerable());
         }
 
-        public static IValue Or(IEnumerable<IValue> filters)
+        public static ISimpleValue Or(IEnumerable<ISimpleValue> filters)
         {
             if (filters == null)
             {
@@ -423,7 +423,7 @@ namespace SqlExpression
             return filter;
         }
 
-        public static IValue Or(params IValue[] filters)
+        public static ISimpleValue Or(params ISimpleValue[] filters)
         {
             if (filters == null)
             {
@@ -436,7 +436,7 @@ namespace SqlExpression
             return Or(filters.AsEnumerable());
         }
 
-        public static GroupByClause GroupBy(IEnumerable<IValue> columns)
+        public static GroupByClause GroupBy(IEnumerable<ISimpleValue> columns)
         {
             if (columns == null)
             {
@@ -449,7 +449,7 @@ namespace SqlExpression
             return new GroupByClause(columns.ToArray());
         }
 
-        public static GroupByClause GroupBy(params IValue[] columns)
+        public static GroupByClause GroupBy(params ISimpleValue[] columns)
         {
             if (columns == null)
             {

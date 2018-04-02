@@ -36,7 +36,7 @@ namespace SqlExpression
 
         public static InsertStatement Insert(this ITable table, IEnumerable<IColumn> columns)
         {
-            return new InsertStatement(table, columns.ToArray(), null);
+            return new InsertStatement(table, columns.ToArray(), null as ICollection);
         }
 
         public static InsertStatement Insert(this ITable table, params IColumn[] columns)
@@ -48,7 +48,7 @@ namespace SqlExpression
         {
             var _params = columns.Select(col => col.ToParam());
             ValueCollectionExpression collection = new ValueCollectionExpression(_params.ToArray());
-            return new InsertStatement(table, columns.ToArray(), new ICollection[] { collection });
+            return new InsertStatement(table, columns.ToArray(), collection );
         }
 
         public static InsertStatement InsertVarParam(this ITable table, params IColumn[] columns)
@@ -122,7 +122,7 @@ namespace SqlExpression
 
         #region Shortcut
 
-        public static IInsertStatement Vals(this IInsertStatement insert, IEnumerable<IValue> values)
+        public static IInsertStatement Vals(this IInsertStatement insert, IEnumerable<ISimpleValue> values)
         {
             return Values(insert, values);
         }
@@ -160,7 +160,7 @@ namespace SqlExpression
 
         #endregion
 
-        public static IInsertStatement Values(this IInsertStatement insert, IEnumerable<IValue> values)
+        public static IInsertStatement Values(this IInsertStatement insert, IEnumerable<ISimpleValue> values)
         {
             if (insert.Columns == null)
             {
@@ -169,14 +169,10 @@ namespace SqlExpression
             else
             {
                 values = values.Count() > insert.Columns.Length ? 
-                               values.Take(insert.Columns.Length) : values.Concat(new IValue[insert.Columns.Length - values.Count()]);
+                               values.Take(insert.Columns.Length) : values.Concat(new ISimpleValue[insert.Columns.Length - values.Count()]);
                 IValueCollectionExpression collection = new ValueCollectionExpression(values.ToArray());
-                List<ICollection> collections = new List<ICollection>();
-                if (insert.Values != null)
-                {
-                    collections.AddRange(insert.Values); 
-                }
-                insert.Values = collections.ToArray();
+
+                insert.Values = collection;
             }
 
 
@@ -185,7 +181,7 @@ namespace SqlExpression
 
         public static IInsertStatement Values(this IInsertStatement insert, params object[] values)
         {
-            var setableValues = values.Select(val => val is IValue ? val as IValue : new LiteralValue(val));
+            var setableValues = values.Select(val => val is ISimpleValue ? val as ISimpleValue : new LiteralValue(val));
             return Values(insert, setableValues);
         }
 
@@ -202,9 +198,90 @@ namespace SqlExpression
         public static IInsertStatement ValuesVarParam(this IInsertStatement insert)
         {
             if (insert.Columns == null) return insert;
-            var vals = insert.Columns.Select(col => new Param(col.Name) as IValue);
+            var vals = insert.Columns.Select(col => new Param(col.Name) as ISimpleValue);
 
             return Values(insert, vals);
+        }
+        public static IInsertStatement ValuesFillNull(this IInsertStatement insert)
+        {
+            if (insert.Columns == null) return insert;
+            var vals = insert.Columns.Select(col => new LiteralValue(null) as ISimpleValue);
+
+            return Values(insert, vals);
+        }
+
+        #endregion
+
+
+        #region Set
+
+        #region Shortcut
+
+        public static IInsertStatement SetP(this IInsertStatement insert, IColumn column, string param = null)
+        {
+            return SetVarParam(insert, column, param);
+        }
+
+        public static IInsertStatement SetC(this IInsertStatement insert, IColumn column, string customer)
+        {
+            return SetVarCustomer(insert, column, customer);
+        }
+
+        public static IInsertStatement SetP(this IInsertStatement insert, Column column, string param = null)
+        {
+            return SetVarParam(insert, column, param);
+        }
+
+        public static IInsertStatement SetC(this IInsertStatement insert, Column column, string customer)
+        {
+            return SetVarCustomer(insert, column, customer);
+        }
+
+        #endregion
+
+        public static IInsertStatement Set(this IInsertStatement insert, IColumn column, ISimpleValue value)
+        {
+            if(!(insert.Values is IValueCollectionExpression))
+            {
+                throw new SqlSyntaxException(insert, Error.SetValueError);
+            }
+            var cols = insert.Columns?.ToList() ?? new List<IColumn>();
+            var valCollections = insert.Values as IValueCollectionExpression;
+            var vals = valCollections.Values?.ToList() ?? new List<ISimpleValue>();
+            cols.Add(column);
+            vals.Add(value);
+            insert.Columns = cols.ToArray();
+            valCollections.Values = vals.ToArray();
+            return insert;
+        }
+        public static IInsertStatement Set(this IInsertStatement insert, IColumn column, object value)
+        {
+            return Set(insert, column, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
+        }
+        public static IInsertStatement SetVarParam(this IInsertStatement insert, IColumn column, string param = null)
+        {
+            return Set(insert, column, column.ToParam(param));
+        }
+        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, IColumn column, string customer)
+        {
+            return Set(insert, column, new CustomerExpression(customer));
+        }
+
+        public static IInsertStatement Set(this IInsertStatement insert, Column column, ISimpleValue value)
+        {
+            return Set(insert, column as IColumn, value);
+        }
+        public static IInsertStatement Set(this IInsertStatement insert, Column column, object value)
+        {
+            return Set(insert, column as IColumn, value);
+        }
+        public static IInsertStatement SetVarParam(this IInsertStatement insert, Column column, string param = null)
+        {
+            return SetVarParam(insert, column as IColumn, param);
+        }
+        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, Column column, string customer)
+        {
+            return SetVarCustomer(insert, column as IColumn, customer);
         }
 
         #endregion

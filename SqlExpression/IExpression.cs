@@ -142,7 +142,7 @@ namespace SqlExpression
         /// <summary>
         /// 操作数
         /// </summary>
-        IValue A { get; set; }
+        ISimpleValue A { get; set; }
 
         /// <summary>
         /// 是否括号括起来
@@ -163,12 +163,12 @@ namespace SqlExpression
         /// <summary>
         /// 操作数
         /// </summary>
-        IValue A { get; set; }
+        ISimpleValue A { get; set; }
 
         /// <summary>
         /// 操作数
         /// </summary>
-        IValue B { get; set; }
+        ISimpleValue B { get; set; }
 
         /// <summary>
         /// 是否括号括起来
@@ -334,6 +334,9 @@ namespace SqlExpression
         IEnumerable<string> Params { get; }
     }
 
+    /// <summary>
+    /// 数据集别名
+    /// </summary>
     public interface IDatasetWithAlias : IExpression
     {
         /// <summary>
@@ -353,12 +356,15 @@ namespace SqlExpression
         ITable Table { get; set; }
     }
 
-    public interface ISubQueryAliasExpression : IDatasetWithAlias 
+    /// <summary>
+    /// 子查询别名
+    /// </summary>
+    public interface ISubQueryAliasExpression : IDatasetWithAlias , ISimpleValue
     {
         /// <summary>
         /// 数据集
         /// </summary>
-        ISubQueryExpression Dataset { get; set; }
+        ISubQueryExpression SubQuery { get; set; }
     }
 
     #region WhereClause
@@ -614,7 +620,7 @@ namespace SqlExpression
         /// <summary>
         /// 连接条件
         /// </summary>
-        ISimpleValue On { get; set; }
+        ISimpleValue Condition { get; set; }
     }
 
     /// <summary>
@@ -630,7 +636,7 @@ namespace SqlExpression
         /// <summary>
         /// 分组字段
         /// </summary>
-        IValue[] Fields { get; set; }
+        ISimpleValue[] Fields { get; set; }
     }
 
     /// <summary>
@@ -652,7 +658,7 @@ namespace SqlExpression
         /// <summary>
         /// 字段
         /// </summary>
-        IValue Field { get; set; }
+        ISimpleValue Field { get; set; }
         /// <summary>
         /// 升序|降序
         /// </summary>
@@ -690,7 +696,7 @@ namespace SqlExpression
     /// <summary>
     /// 自定义值表达式
     /// </summary>
-    public interface ICustomerValue : IValue, IBoolValue { }
+    public interface ICustomerValue : IValue { }
 
     /// <summary>
     /// 自定义简单值表达式

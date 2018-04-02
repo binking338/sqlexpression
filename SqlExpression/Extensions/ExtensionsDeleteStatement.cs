@@ -25,7 +25,7 @@ namespace SqlExpression
             return delete;
         }
 
-        public static IDeleteStatement Where(this IDeleteStatement delete, IFilterExpression filter)
+        public static IDeleteStatement Where(this IDeleteStatement delete, ISimpleValue filter)
         {
             delete.Where = new WhereClause(filter);
             return delete;
