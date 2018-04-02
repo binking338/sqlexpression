@@ -20,7 +20,7 @@ namespace SqlExpression.MySql
             };
             Column.Handlers[DBType.MySql] = (ex) =>
             {
-                return string.Format("{1}`{0}`", ex.Name, string.IsNullOrEmpty(ex.Table?.Expression) ? string.Empty : ex.Table.Expression + ".");
+                return string.Format("{1}`{0}`", ex.Name, string.IsNullOrEmpty(ex.Dataset?.Expression) ? string.Empty : ex.Dataset.Expression + ".");
             };
         }
 

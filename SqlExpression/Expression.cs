@@ -137,12 +137,12 @@ namespace SqlExpression
         public TableAliasExpression(ITable table, IDatasetAlias alias)
         {
             Table = table;
-            As = alias;
+            Alias = alias;
         }
 
         public ITable Table { get; set; }
 
-        public IDatasetAlias As { get; set; }
+        public IDatasetAlias Alias { get; set; }
 
         protected override string GenExpression()
         {
@@ -150,7 +150,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableMissing);
             }
-            return string.Format("{0}{1}", Table.Expression, As == null || string.IsNullOrWhiteSpace(As.Name) ? string.Empty : " AS " + As.Expression);
+            return string.Format("{0}{1}", Table.Expression, Alias == null || string.IsNullOrWhiteSpace(Alias.Name) ? string.Empty : " AS " + Alias.Expression);
         }
     }
 
@@ -172,7 +172,7 @@ namespace SqlExpression
         /// <summary>
         /// 
         /// </summary>
-        public IDatasetAlias As { get; set; }
+        public IDatasetAlias Alias { get; set; }
 
         /// <summary>
         /// 
@@ -194,10 +194,10 @@ namespace SqlExpression
     /// </summary>
     public class Column : ExpressionBase<Column>, IColumn
     {
-        public Column(string name, ITable table = null)
+        public Column(string name, IDatasetAlias dataset = null)
         {
             Name = name;
-            Table = table;
+            Dataset = dataset;
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace SqlExpression
         /// </summary>
         public string Name { get; set; }
 
-        public ITable Table { get; set; }
+        public IDatasetAlias Dataset { get; set; }
 
         protected override string GenExpression()
         {
@@ -213,7 +213,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ColumnNameMissing);
             }
-            return string.Format("{1}{0}", Name, Table == null ? string.Empty : Table.Expression + ".");
+            return string.Format("{1}{0}", Name, Dataset == null ? string.Empty : Dataset.Expression + ".");
         }
 
         #region 比较运算符
@@ -1896,8 +1896,8 @@ namespace SqlExpression
     /// </summary>
     public class AllFieldssExpression : Column
     {
-        public AllFieldssExpression(ITable table = null)
-            : base("*", table)
+        public AllFieldssExpression(IDatasetAlias dataset = null)
+            : base("*", dataset)
         {
         }
     }

@@ -92,19 +92,19 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 属性（字段）
+    /// 列（字段）
     /// </summary>
     public interface IColumn : ISimpleValue
     {
         /// <summary>
-        /// 属性（字段）名称
+        /// 列（字段）名称
         /// </summary>
         string Name { get; set; }
 
         /// <summary>
         /// 所属表
         /// </summary>
-        ITable Table { get; set; }
+        IDatasetAlias Dataset { get; set; }
     }
 
     /// <summary>
@@ -316,7 +316,7 @@ namespace SqlExpression
     public interface ISubQueryExpression : ICollection
     {
         /// <summary>
-        /// 子查询语句，返回单列
+        /// 子查询语句
         /// </summary>
         ISelectStatement Query { get; set; }
     }
@@ -342,7 +342,7 @@ namespace SqlExpression
         /// <summary>
         /// 别名
         /// </summary>
-        IDatasetAlias As { get; set; }
+        IDatasetAlias Alias { get; set; }
     }
 
     /// <summary>

@@ -271,13 +271,13 @@ namespace SqlExpression
             return tables.Select(t => new Table(t));
         }
 
-        public static Column Column(string column, string table = null)
+        public static Column Column(string column, string tableAlias = null)
         {
             if (column == null)
             {
                 throw new ArgumentNullException(nameof(column));
             }
-            return new Column(column, string.IsNullOrWhiteSpace(table) ? null : Table(table));
+            return new Column(column, string.IsNullOrWhiteSpace(tableAlias) ? null : new DatasetAlias(tableAlias));
         }
 
         public static LiteralValue Value(object value)
