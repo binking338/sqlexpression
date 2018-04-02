@@ -399,7 +399,6 @@ namespace SqlExpression
 
         /// <summary>
         /// 插入值
-        /// todo:支持子查询
         /// </summary>
         ICollection Values { get; set; }
     }
