@@ -38,7 +38,7 @@ namespace SqlExpression
 
         public static ISelectFieldExpression As(this ISimpleValue val, string alias)
         {
-            return new SelectFieldExpression(val, new SelectFieldAlias(alias));
+            return new SelectFieldExpression(val, string.IsNullOrWhiteSpace(alias) ? null : new SelectFieldAlias(alias));
         }
 
         #endregion

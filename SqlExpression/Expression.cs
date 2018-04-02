@@ -1887,7 +1887,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.FieldMissing);
             }
-            return string.Format("{0}{1}", Field.Expression, Alias == null ? string.Empty : " AS " + Alias.Expression);
+            return string.Format("{0}{1}", Field.Expression, Alias == null || string.IsNullOrWhiteSpace(Alias.Name) ? string.Empty : " AS " + Alias.Expression);
         }
     }
 
