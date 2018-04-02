@@ -150,7 +150,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableMissing);
             }
-            return string.Format("{0}{1}", Table.Expression, As == null ? string.Empty : " AS " + As.Expression);
+            return string.Format("{0}{1}", Table.Expression, As == null || string.IsNullOrWhiteSpace(As.Name) ? string.Empty : " AS " + As.Expression);
         }
     }
 
