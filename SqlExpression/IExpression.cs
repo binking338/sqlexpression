@@ -649,6 +649,17 @@ namespace SqlExpression
     }
 
     /// <summary>
+    /// 排序子句
+    /// </summary>
+    public interface IOrderByClause : IExpression
+    {
+        /// <summary>
+        /// 字段排序方式
+        /// </summary>
+        IOrderExpression[] Orders { get; set; }
+    }
+
+    /// <summary>
     /// 字段排序方式
     /// </summary>
     public interface IOrderExpression : IExpression
@@ -661,17 +672,6 @@ namespace SqlExpression
         /// 升序|降序
         /// </summary>
         OrderEnum Order { get; set; }
-    }
-
-    /// <summary>
-    /// 排序子句
-    /// </summary>
-    public interface IOrderByClause : IExpression
-    {
-        /// <summary>
-        /// 字段排序方式
-        /// </summary>
-        IOrderExpression[] Orders { get; set; }
     }
 
     #endregion
