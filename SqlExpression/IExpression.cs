@@ -359,7 +359,7 @@ namespace SqlExpression
     /// <summary>
     /// 子查询别名
     /// </summary>
-    public interface ISubQueryAliasExpression : IDatasetWithAlias , ISimpleValue
+    public interface ISubQueryAliasExpression : IDatasetWithAlias, ISimpleValue
     {
         /// <summary>
         /// 数据集
@@ -483,9 +483,9 @@ namespace SqlExpression
         IDatasetWithAlias[] Tables { get; set; }
 
         /// <summary>
-        /// 字段
+        /// 查询项列表
         /// </summary>
-        ISelectFieldExpression[] Fields { get; set; }
+        ISelectFieldsExpression Items { get; set; }
 
         /// <summary>
         /// 表连接
@@ -555,6 +555,22 @@ namespace SqlExpression
     #endregion
 
     /// <summary>
+    /// 查询项列表表达式
+    /// </summary>
+    public interface ISelectFieldsExpression : IExpression
+    {
+        /// <summary>
+        /// 字段列表
+        /// </summary>
+        ISelectFieldExpression[] Fields { get; set; }
+    }
+
+    /// <summary>
+    /// Distinct查询项列表表达式
+    /// </summary>
+    public interface IDistinctSelectFieldsExpression : ISelectFieldsExpression { }
+
+    /// <summary>
     /// 查询项表达式
     /// </summary>
     public interface ISelectFieldExpression : IExpression
@@ -576,17 +592,6 @@ namespace SqlExpression
     public interface ISelectFieldAlias : IValue
     {
         string Name { get; set; }
-    }
-
-    /// <summary>
-    /// 去重
-    /// </summary>
-    public interface IDistinctExpression : IValue
-    {
-        /// <summary>
-        /// 去重字段
-        /// </summary>
-        ISimpleValue[] SelectFields { get; set; }
     }
 
     /// <summary>

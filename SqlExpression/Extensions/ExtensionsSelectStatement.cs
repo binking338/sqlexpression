@@ -131,9 +131,9 @@ namespace SqlExpression
 
         public static ISelectStatement Get(this ISelectStatement select, IEnumerable<ISelectFieldExpression> items)
         {
-            var list = (select.Fields?.ToList() ?? new List<ISelectFieldExpression>());
+            var list = (select.Items?.Fields?.ToList() ?? new List<ISelectFieldExpression>());
             list.AddRange(items);
-            select.Fields = list.ToArray();
+            select.Items = new SelectFieldsExpression(list.ToArray());
             return select;
         }
 

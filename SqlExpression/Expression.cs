@@ -1704,9 +1704,13 @@ namespace SqlExpression
         { }
 
         public SelectStatement(IDatasetWithAlias[] tables, ISelectFieldExpression[] fields, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
+            : this(tables, new SelectFieldsExpression(fields), joins, where, groupby, having, orderby)
+        { }
+
+        public SelectStatement(IDatasetWithAlias[] tables, ISelectFieldsExpression fields, IJoinExpression[] joins, IWhereClause where, IGroupByClause groupby, IHavingClause having, IOrderByClause orderby = null)
         {
             Tables = tables;
-            Fields = fields;
+            Items = fields;
             Joins = joins;
             Where = where;
             GroupBy = groupby;
@@ -1716,7 +1720,7 @@ namespace SqlExpression
 
         public IDatasetWithAlias[] Tables { get; set; }
 
-        public ISelectFieldExpression[] Fields { get; set; }
+        public ISelectFieldsExpression Items { get; set; }
 
         public IJoinExpression[] Joins { get; set; }
 
@@ -1752,11 +1756,11 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableMissing);
             }
-            if (Fields == null || Fields.Length == 0)
+            if (Items == null || Items.Fields.Length == 0)
             {
                 throw new SqlSyntaxException(this, Error.SelectFieldsMissing);
             }
-            return string.Format("SELECT {0} FROM {1}", Fields.Join(",", s => s.Expression),
+            return string.Format("SELECT {0} FROM {1}", Items.Fields.Join(",", s => s.Expression),
                 string.Join(" ", new string[] {
                         Tables.Join(",", t => t.Expression),
                         Joins?.Join(" ", j => j?.Expression),
@@ -1843,27 +1847,52 @@ namespace SqlExpression
         }
     }
 
-    public class SelectFieldAlias : ExpressionBase<SelectFieldAlias>, ISelectFieldAlias
+    /// <summary>
+    /// 查询项列表表达式
+    /// </summary>
+    public class SelectFieldsExpression : ExpressionBase<SelectFieldsExpression>, ISelectFieldsExpression
     {
-        public SelectFieldAlias(string name)
+        public SelectFieldsExpression(ISelectFieldExpression[] fields)
         {
-            Name = name;
+            Fields = fields;
         }
 
-        public string Name { get; set; }
+        public ISelectFieldExpression[] Fields { get; set; }
 
         protected override string GenExpression()
         {
-            if (Name == null)
+            if (Fields == null || Fields.Length == 0)
             {
-                throw new SqlSyntaxException(this, Error.SelectFieldNameMissing);
+                throw new SqlSyntaxException(this, Error.SelectFieldsMissing);
             }
-            return Name;
+            return Fields.Join(",", s => s.Expression);
         }
     }
 
     /// <summary>
-    /// 查询列别名
+    /// 查询项列表去重表达式
+    /// </summary>
+    public class DistinctSelectFieldsExpression : ExpressionBase<DistinctSelectFieldsExpression>, IDistinctSelectFieldsExpression
+    {
+        public DistinctSelectFieldsExpression(ISelectFieldExpression[] fields)
+        {
+            Fields = fields;
+        }
+
+        public ISelectFieldExpression[] Fields { get; set; }
+
+        protected override string GenExpression()
+        {
+            if (Fields == null || Fields.Length == 0)
+            {
+                throw new SqlSyntaxException(this, Error.SelectFieldsMissing);
+            }
+            return string.Format("DISTINCT {0}", Fields.Join(",", s => s.Expression));
+        }
+    }
+
+    /// <summary>
+    /// 查询项表达式
     /// </summary>
     public class SelectFieldExpression : ExpressionBase<SelectFieldExpression>, ISelectFieldExpression
     {
@@ -1888,6 +1917,28 @@ namespace SqlExpression
                 throw new SqlSyntaxException(this, Error.FieldMissing);
             }
             return string.Format("{0}{1}", Field.Expression, Alias == null || string.IsNullOrWhiteSpace(Alias.Name) ? string.Empty : " AS " + Alias.Expression);
+        }
+    }
+
+    /// <summary>
+    /// 查询项别名
+    /// </summary>
+    public class SelectFieldAlias : ExpressionBase<SelectFieldAlias>, ISelectFieldAlias
+    {
+        public SelectFieldAlias(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; set; }
+
+        protected override string GenExpression()
+        {
+            if (Name == null)
+            {
+                throw new SqlSyntaxException(this, Error.SelectFieldNameMissing);
+            }
+            return Name;
         }
     }
 
