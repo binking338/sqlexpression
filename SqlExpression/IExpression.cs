@@ -516,22 +516,6 @@ namespace SqlExpression
     #region UnionStatement
 
     /// <summary>
-    /// 合并项
-    /// </summary>
-    public interface IUnionExpression : IExpression
-    {
-        /// <summary>
-        /// union运算符
-        /// </summary>
-        IUnionOperator UnionOp { get; set; }
-
-        /// <summary>
-        /// select语句
-        /// </summary>
-        ISelectStatement Select { get; set; }
-    }
-
-    /// <summary>
     /// 合并查询语句
     /// </summary>
     public interface IUnionStatement : ISqlStatement
@@ -550,6 +534,22 @@ namespace SqlExpression
         /// 排序方式
         /// </summary>
         IOrderByClause OrderBy { get; set; }
+    }
+
+    /// <summary>
+    /// 合并项
+    /// </summary>
+    public interface IUnionExpression : IExpression
+    {
+        /// <summary>
+        /// union运算符
+        /// </summary>
+        IUnionOperator UnionOp { get; set; }
+
+        /// <summary>
+        /// select语句
+        /// </summary>
+        ISelectStatement Select { get; set; }
     }
 
     #endregion
