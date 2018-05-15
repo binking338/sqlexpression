@@ -1933,11 +1933,11 @@ namespace SqlExpression
     /// </summary>
     public class JoinExpression : ExpressionBase<JoinExpression>, IJoinExpression
     {
-        public JoinExpression(IJoinOperator joinOp, ITableAliasExpression table, ISimpleValue on)
+        public JoinExpression(IJoinOperator joinOp, IDatasetWithAlias table, ISimpleValue on)
             : this(joinOp, table, new OnClause(on))
         {
         }
-        public JoinExpression(IJoinOperator joinOp, ITableAliasExpression table, IOnClause on)
+        public JoinExpression(IJoinOperator joinOp, IDatasetWithAlias table, IOnClause on)
         {
             JoinOp = joinOp;
             Table = table;
@@ -1946,7 +1946,7 @@ namespace SqlExpression
 
         public IJoinOperator JoinOp { get; set; }
 
-        public ITableAliasExpression Table { get; set; }
+        public IDatasetWithAlias Table { get; set; }
 
         public IOnClause On { get; set; }
 

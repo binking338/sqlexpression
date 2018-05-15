@@ -313,7 +313,7 @@ namespace SqlExpression
     /// <summary>
     /// 子查询
     /// </summary>
-    public interface ISubQueryExpression : ICollection
+    public interface ISubQueryExpression : ICollection, ISimpleValue
     {
         /// <summary>
         /// 子查询语句
@@ -555,14 +555,6 @@ namespace SqlExpression
     #endregion
 
     /// <summary>
-    /// 查询项别名
-    /// </summary>
-    public interface ISelectFieldAlias : IValue
-    {
-        string Name { get; set; }
-    }
-
-    /// <summary>
     /// 查询项表达式
     /// </summary>
     public interface ISelectFieldExpression : IExpression
@@ -576,6 +568,14 @@ namespace SqlExpression
         /// 别名
         /// </summary>
         ISelectFieldAlias Alias { get; set; }
+    }
+
+    /// <summary>
+    /// 查询项别名
+    /// </summary>
+    public interface ISelectFieldAlias : IValue
+    {
+        string Name { get; set; }
     }
 
     /// <summary>
@@ -601,9 +601,8 @@ namespace SqlExpression
 
         /// <summary>
         /// 连接表
-        /// todo:支持子查询
         /// </summary>
-        ITableAliasExpression Table { get; set; }
+        IDatasetWithAlias Table { get; set; }
 
         /// <summary>
         /// 连接条件
