@@ -498,11 +498,6 @@ namespace SqlExpression
         IWhereClause Where { get; set; }
 
         /// <summary>
-        /// 排序方式
-        /// </summary>
-        IOrderByClause OrderBy { get; set; }
-
-        /// <summary>
         /// 分组方式
         /// </summary>
         IGroupByClause GroupBy { get; set; }
@@ -511,6 +506,11 @@ namespace SqlExpression
         /// 分组条件
         /// </summary>
         IHavingClause Having { get; set; }
+
+        /// <summary>
+        /// 排序方式
+        /// </summary>
+        IOrderByClause OrderBy { get; set; }
     }
 
     #region UnionStatement
