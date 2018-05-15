@@ -192,7 +192,7 @@ namespace SqlExpression
     public interface IComparisonExpression : IBinaryExpression, IBoolValue { }
 
     /// <summary>
-    /// 子查询结果集数量大于0
+    /// Exists表达式：子查询结果集数量大于0
     /// </summary>
     public interface IExistsExpression : IBoolValue
     {
@@ -203,7 +203,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 子查询结果集数量等于0
+    /// Not Exists表达式：子查询结果集数量等于0
     /// </summary>
     public interface INotExistsExpression : IBoolValue
     {
