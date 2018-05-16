@@ -213,6 +213,9 @@ namespace SqlExpression
         /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// 数据集别名
+        /// </summary>
         public IDatasetAlias Dataset { get; set; }
 
         protected override string GenExpression()
