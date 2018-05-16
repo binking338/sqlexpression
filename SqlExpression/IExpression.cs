@@ -29,11 +29,11 @@ namespace SqlExpression
         /// <summary>
         /// 升序
         /// </summary>
-        Asc,
+        Asc = 0,
         /// <summary>
         /// 降序
         /// </summary>
-        Desc
+        Desc = 1
     }
 
     /// <summary>
