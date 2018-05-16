@@ -485,7 +485,7 @@ namespace SqlExpression
         /// <summary>
         /// 查询项列表
         /// </summary>
-        ISelectFieldsExpression Items { get; set; }
+        ISelectItemsExpression Items { get; set; }
 
         /// <summary>
         /// 表连接
@@ -557,23 +557,23 @@ namespace SqlExpression
     /// <summary>
     /// 查询项列表表达式
     /// </summary>
-    public interface ISelectFieldsExpression : IExpression
+    public interface ISelectItemsExpression : IExpression
     {
         /// <summary>
         /// 字段列表
         /// </summary>
-        ISelectFieldExpression[] Fields { get; set; }
+        ISelectItemExpression[] Fields { get; set; }
     }
 
     /// <summary>
     /// Distinct查询项列表表达式
     /// </summary>
-    public interface IDistinctSelectFieldsExpression : ISelectFieldsExpression { }
+    public interface IDistinctSelectItemsExpression : ISelectItemsExpression { }
 
     /// <summary>
     /// 查询项表达式
     /// </summary>
-    public interface ISelectFieldExpression : IExpression
+    public interface ISelectItemExpression : IExpression
     {
         /// <summary>
         /// 查询项

@@ -36,9 +36,9 @@ namespace SqlExpression
             return new TableAliasExpression(table, string.IsNullOrWhiteSpace(alias) ? null : new DatasetAlias(alias));
         }
 
-        public static ISelectFieldExpression As(this ISimpleValue val, string alias)
+        public static ISelectItemExpression As(this ISimpleValue val, string alias)
         {
-            return new SelectFieldExpression(val, string.IsNullOrWhiteSpace(alias) ? null : new SelectFieldAlias(alias));
+            return new SelectItemExpression(val, string.IsNullOrWhiteSpace(alias) ? null : new SelectFieldAlias(alias));
         }
 
         #endregion
@@ -105,27 +105,27 @@ namespace SqlExpression
 
         public static AggregateFunctionExpression Sum(this IColumn column)
         {
-            return FunctionExpression.Sum(column);
+            return AggregateFunctionExpression.Sum(column);
         }
 
         public static AggregateFunctionExpression Count(this IColumn column)
         {
-            return FunctionExpression.Count(column);
+            return AggregateFunctionExpression.Count(column);
         }
 
         public static AggregateFunctionExpression Avg(this IColumn column)
         {
-            return FunctionExpression.Avg(column);
+            return AggregateFunctionExpression.Avg(column);
         }
 
         public static AggregateFunctionExpression Min(this IColumn column)
         {
-            return FunctionExpression.Min(column);
+            return AggregateFunctionExpression.Min(column);
         }
 
         public static AggregateFunctionExpression Max(this IColumn column)
         {
-            return FunctionExpression.Max(column);
+            return AggregateFunctionExpression.Max(column);
         }
 
         #endregion
