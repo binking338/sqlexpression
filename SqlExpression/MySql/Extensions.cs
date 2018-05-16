@@ -39,7 +39,15 @@ namespace SqlExpression.MySql
             };
         }
 
-        public static void Initial() { }
+        public static void EnableDefault()
+        {
+            Expression.DefaultType = DBType.MySql;
+        }
+
+        public static void DisableDefault()
+        {
+            Expression.DefaultType = DBType.Common;
+        }
 
         /// <summary>
         /// 返回分页sql语句

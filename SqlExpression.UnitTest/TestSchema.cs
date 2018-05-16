@@ -17,12 +17,12 @@ namespace SqlExpression.UnitTest
 
         static TestSchema()
         {
-            Table = new Table("test") { Type = DBType.MySql };
-            _oid = new Column("oid") { Type = DBType.MySql, Table = Table };
-            _oname = new Column("oname") { Type = DBType.MySql, Table = Table };
-            _age = new Column("age") { Type = DBType.MySql, Table = Table };
-            _gender = new Column("gender") { Type = DBType.MySql, Table = Table };
-            _isdel = new Column("isdel") { Type = DBType.MySql, Table = Table };
+            Table = new Table("test");
+            _oid = new Column("oid") { Dataset = new DatasetAlias(Table.Name) };
+            _oname = new Column("oname") { Dataset = new DatasetAlias(Table.Name)  };
+            _age = new Column("age") { Dataset = new DatasetAlias(Table.Name) };
+            _gender = new Column("gender") {  Dataset = new DatasetAlias(Table.Name) };
+            _isdel = new Column("isdel") {  Dataset = new DatasetAlias(Table.Name) };
             __PKs = new Column[] { _oid };
             __All = new Column[] { _oid, _oname, _age, _gender, _isdel };
         }
@@ -54,10 +54,10 @@ namespace SqlExpression.UnitTest
 
         static FooSchema()
         {
-            Table = new Table("foo") { Type = DBType.MySql };
-            _oid = new Column("oid") { Type = DBType.MySql, Table = Table };
-            _oname = new Column("oname") { Type = DBType.MySql, Table = Table };
-            _isdel = new Column("isdel") { Type = DBType.MySql, Table = Table };
+            Table = new Table("foo");
+            _oid = new Column("oid") {  Dataset = new DatasetAlias(Table.Name) };
+            _oname = new Column("oname") {  Dataset = new DatasetAlias(Table.Name) };
+            _isdel = new Column("isdel") {  Dataset = new DatasetAlias(Table.Name) };
             __PKs = new Column[] { _oid };
             __All = new Column[] { _oid, _oname, _isdel };
         }
@@ -87,10 +87,10 @@ namespace SqlExpression.UnitTest
 
         static BarSchema()
         {
-            Table = new Table("bar") { Type = DBType.MySql };
-            _oid = new Column("oid") { Type = DBType.MySql, Table = Table };
-            _oname = new Column("oname") { Type = DBType.MySql, Table = Table };
-            _isdel = new Column("isdel") { Type = DBType.MySql, Table = Table };
+            Table = new Table("bar");
+            _oid = new Column("oid") {  Dataset = new DatasetAlias(Table.Name) };
+            _oname = new Column("oname") {  Dataset = new DatasetAlias(Table.Name) };
+            _isdel = new Column("isdel") {  Dataset = new DatasetAlias(Table.Name) };
             __PKs = new Column[] { _oid };
             __All = new Column[] { _oid, _oname, _isdel };
         }

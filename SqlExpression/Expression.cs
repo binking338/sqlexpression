@@ -25,6 +25,11 @@ namespace SqlExpression
             }
         }
 
+        public ExpressionBase()
+        {
+            Type = SqlExpression.Expression.DefaultType;
+        }
+
         /// <summary>
         /// 表达式
         /// </summary>
@@ -75,6 +80,11 @@ namespace SqlExpression
         {
             return this.Expression?.GetHashCode() ?? 0;
         }
+    }
+
+    public static class Expression
+    {
+        public static DBType DefaultType { get; set; } = DBType.Common;
     }
 
     /// <summary>
