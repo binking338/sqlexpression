@@ -18,20 +18,24 @@ namespace SqlExpression.MySql
             {
                 return string.Format("`{0}`", ex.Name);
             };
-            Column.Handlers[DBType.MySql] = (ex) =>
+            Column.Handlers[DBType.MySql] = (exp) =>
             {
-                if (string.IsNullOrEmpty(ex.Dataset?.Expression))
+                if (string.IsNullOrEmpty(exp.Dataset?.Expression))
                 {
-                    return string.Format("`{0}`", ex.Name);
+                    return string.Format("`{0}`", exp.Name);
                 }
                 else
                 {
-                    return string.Format("{1}.`{0}`", ex.Name, ex.Dataset.Expression);
+                    return string.Format("{1}.`{0}`", exp.Name, exp.Dataset.Expression);
                 }
             };
-            SelectFieldAlias.Handlers[DBType.MySql] = (ex) =>
+            DatasetAlias.Handlers[DBType.MySql] = (exp) =>
             {
-                return string.Format("`{0}`", ex.Name);
+                return string.Format("`{0}`", exp.Name);
+            };
+            SelectFieldAlias.Handlers[DBType.MySql] = (exp) =>
+            {
+                return string.Format("`{0}`", exp.Name);
             };
         }
 
