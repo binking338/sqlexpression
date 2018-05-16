@@ -10,42 +10,47 @@ namespace SqlExpression.UnitTest
         public void Test()
         {
             MySql.Extensions.EnableDefault();
-            Assert.AreEqual("`foo`.`oid`", Foo4MysqlSchema.Instance.oid.Expression);
-            Assert.AreEqual("`foo`", Foo4MysqlSchema.Instance.oid.Dataset.Expression);
+            Assert.AreEqual("`foo`.`oid`", new Foo4MysqlSchema().oid.Expression);
+            Assert.AreEqual("`foo`", new Foo4MysqlSchema().As("foo").oid.Dataset.Expression);
             MySql.Extensions.DisableDefault();
         }
 
-        public class Foo4MysqlSchema : SchemaBase<Foo4MysqlSchema>
+        public class Foo4MysqlSchema
         {
-            private static Column[] __PKs;
-            private static Column[] __All;
-            private static Column _oid;
-            private static Column _oname;
-            private static Column _isdel;
+            public static Table Table { get; protected set; }
 
             static Foo4MysqlSchema()
             {
                 Table = new Table("foo");
-                _oid = new Column("oid") { Dataset = new DatasetAlias(Table.Name) };
-                _oname = new Column("oname") { Dataset = new DatasetAlias(Table.Name) };
-                _isdel = new Column("isdel") { Dataset = new DatasetAlias(Table.Name) };
-                __PKs = new Column[] { _oid };
-                __All = new Column[] { _oid, _oname, _isdel };
             }
 
-            public Column oid { get { return _oid; } }
-            public Column oname { get { return _oname; } }
-            public Column isdel { get { return _isdel; } }
-
-            public Column[] PKs()
+            public Foo4MysqlSchema As(string alias)
             {
-                return __PKs;
+                return new Foo4MysqlSchema(alias);
             }
 
-            public Column[] All()
+            public Foo4MysqlSchema()
+                : this("foo")
             {
-                return __All;
+
             }
+
+            public Foo4MysqlSchema(string alias)
+            {
+                oid = new Column("oid", new DatasetAlias(alias));
+                oname = new Column("oname", new DatasetAlias(alias));
+                isdel = new Column("isdel", new DatasetAlias(alias));
+                PKs = new Column[] { oid };
+                All = new Column[] { oid, oname, isdel };
+            }
+
+            public Column oid { get; set; }
+            public Column oname { get; set; }
+            public Column isdel { get; set; }
+
+            public Column[] PKs { get; set; }
+
+            public Column[] All { get; set; }
         }
     }
 }
