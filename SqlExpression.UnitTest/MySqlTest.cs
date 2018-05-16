@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SqlExpression;
 
 namespace SqlExpression.UnitTest
 {
@@ -10,8 +11,9 @@ namespace SqlExpression.UnitTest
         public void Test()
         {
             MySql.Extensions.EnableDefault();
-            Assert.AreEqual("`foo`.`oid`", new Foo4MysqlSchema().oid.Expression);
-            Assert.AreEqual("`foo`", new Foo4MysqlSchema().As("foo").oid.Dataset.Expression);
+            var foo = new Foo4MysqlSchema();
+            Assert.AreEqual("`foo`.`oid`", foo.oid.Expression);
+            Assert.AreEqual("`foo`", foo.As("foo").oid.Dataset.Expression);
             MySql.Extensions.DisableDefault();
         }
 
@@ -37,20 +39,25 @@ namespace SqlExpression.UnitTest
 
             public Foo4MysqlSchema(string alias)
             {
-                oid = new Column("oid", new DatasetAlias(alias));
-                oname = new Column("oname", new DatasetAlias(alias));
-                isdel = new Column("isdel", new DatasetAlias(alias));
+                var datasetAlias = new DatasetAlias(alias);
+
+                TableAlias = new TableAliasExpression(Table, datasetAlias);
+                oid = new Column("oid", datasetAlias);
+                oname = new Column("oname", datasetAlias);
+                isdel = new Column("isdel", datasetAlias);
                 PKs = new Column[] { oid };
                 All = new Column[] { oid, oname, isdel };
             }
 
-            public Column oid { get; set; }
-            public Column oname { get; set; }
-            public Column isdel { get; set; }
+            public TableAliasExpression TableAlias { get; protected set; }
 
-            public Column[] PKs { get; set; }
+            public Column oid { get; protected set; }
+            public Column oname { get; protected set; }
+            public Column isdel { get; protected set; }
 
-            public Column[] All { get; set; }
+            public Column[] PKs { get; protected set; }
+
+            public Column[] All { get; protected set; }
         }
     }
 }
