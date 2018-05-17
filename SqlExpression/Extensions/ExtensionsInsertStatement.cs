@@ -79,38 +79,38 @@ namespace SqlExpression
 
         #endregion
 
-        #region Columns
+        #region Fields
 
         #region ShortCut
 
-        public static IInsertStatement Cols(this IInsertStatement insert, IEnumerable<IField> fields)
+        public static IInsertStatement Flds(this IInsertStatement insert, IEnumerable<IField> fields)
         {
-            return Columns(insert, fields);
+            return Fields(insert, fields);
         }
-        public static IInsertStatement Cols(this IInsertStatement insert, params IField[] fields)
+        public static IInsertStatement Flds(this IInsertStatement insert, params IField[] fields)
         {
-            return Columns(insert, fields);
+            return Fields(insert, fields);
         }
-        public static IInsertStatement Cols(this IInsertStatement insert, params Field[] fields)
+        public static IInsertStatement Flds(this IInsertStatement insert, params Field[] fields)
         {
-            return Columns(insert, fields);
+            return Fields(insert, fields);
         }
 
         #endregion
 
-        public static IInsertStatement Columns(this IInsertStatement insert, IEnumerable<IField> fields)
+        public static IInsertStatement Fields(this IInsertStatement insert, IEnumerable<IField> fields)
         {
             insert.Fields = fields.ToArray();
             return insert;
         }
 
-        public static IInsertStatement Columns(this IInsertStatement insert, params IField[] fields)
+        public static IInsertStatement Fields(this IInsertStatement insert, params IField[] fields)
         {
             insert.Fields = fields.ToArray();
             return insert;
         }
 
-        public static IInsertStatement Columns(this IInsertStatement insert, params Field[] fields)
+        public static IInsertStatement Fields(this IInsertStatement insert, params Field[] fields)
         {
             insert.Fields = fields.ToArray();
             return insert;
@@ -211,7 +211,6 @@ namespace SqlExpression
         }
 
         #endregion
-
 
         #region Set
 

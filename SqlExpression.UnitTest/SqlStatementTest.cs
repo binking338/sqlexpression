@@ -106,7 +106,7 @@ namespace SqlExpression.UnitTest
             statement = FooSchema.Insert((sql, s) => sql.Set(s.oid, 1).Set(s.oname, "foo1"));
             Assert.AreEqual("INSERT INTO foo(foo.oid,foo.oname) VALUES(1,'foo1')", statement.ToString());
 
-            statement = FooSchema.Table.Insert().Columns(FooSchema.Instance.oid, FooSchema.Instance.oname).Values(1, "foo1");
+            statement = FooSchema.Table.Insert().Fields(FooSchema.Instance.oid, FooSchema.Instance.oname).Values(1, "foo1");
             Assert.AreEqual("INSERT INTO foo(foo.oid,foo.oname) VALUES(1,'foo1')", statement.ToString());
 
             statement = FooSchema.Table.Insert().Set(FooSchema.Instance.oid, 1).Set(FooSchema.Instance.oname, "foo1");
