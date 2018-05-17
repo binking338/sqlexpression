@@ -181,42 +181,6 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 子查询别名
-    /// </summary>
-    public class SubQueryAliasExpression : ExpressionBase<SubQueryAliasExpression>, ISubQueryAliasExpression
-    {
-        public SubQueryAliasExpression(ISubQueryExpression subquery, IDatasetAlias alias = null)
-        {
-            SubQuery = subquery;
-            Alias = alias;
-        }
-
-        public SubQueryAliasExpression(ISelectStatement subquery)
-            : this(new SubQueryExpression(subquery))
-        {
-        }
-
-        /// <summary>
-        /// 子查询
-        /// </summary>
-        public ISubQueryExpression SubQuery { get; set; }
-
-        /// <summary>
-        /// 别名
-        /// </summary>
-        public IDatasetAlias Alias { get; set; }
-
-        protected override string GenExpression()
-        {
-            if (SubQuery == null)
-            {
-                throw new SqlSyntaxException(this, Error.SubQueryMissing);
-            }
-            return string.Format("({0})", SubQuery);
-        }
-    }
-
-    /// <summary>
     /// 字段
     /// </summary>
     public class Field : ExpressionBase<Field>, IField
@@ -557,14 +521,7 @@ namespace SqlExpression
 
         public override bool Equals(object obj)
         {
-            if (obj is FunctionExpression)
-            {
-                return (obj as FunctionExpression).Expression == this.Expression;
-            }
-            else
-            {
-                return false;
-            }
+            return base.Equals(obj);
         }
         public override int GetHashCode()
         {
@@ -775,7 +732,7 @@ namespace SqlExpression
         {
             if (obj is Param)
             {
-                return (obj as Param).Expression == this.Expression;
+                return (obj as Param).Name == this.Name;
             }
             else
             {
@@ -1023,6 +980,42 @@ namespace SqlExpression
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+    }
+
+    /// <summary>
+    /// 子查询别名
+    /// </summary>
+    public class SubQueryAliasExpression : ExpressionBase<SubQueryAliasExpression>, ISubQueryAliasExpression
+    {
+        public SubQueryAliasExpression(ISubQueryExpression subquery, IDatasetAlias alias = null)
+        {
+            SubQuery = subquery;
+            Alias = alias;
+        }
+
+        public SubQueryAliasExpression(ISelectStatement subquery)
+            : this(new SubQueryExpression(subquery))
+        {
+        }
+
+        /// <summary>
+        /// 子查询
+        /// </summary>
+        public ISubQueryExpression SubQuery { get; set; }
+
+        /// <summary>
+        /// 别名
+        /// </summary>
+        public IDatasetAlias Alias { get; set; }
+
+        protected override string GenExpression()
+        {
+            if (SubQuery == null)
+            {
+                throw new SqlSyntaxException(this, Error.SubQueryMissing);
+            }
+            return string.Format("({0})", SubQuery);
         }
     }
 
