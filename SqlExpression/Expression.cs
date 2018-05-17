@@ -376,6 +376,7 @@ namespace SqlExpression
             return new ArithmeticExpression(field, Operator.Mod, val);
         }
 
+
         public static ArithmeticExpression operator +(LiteralValue val, Field field)
         {
             return new ArithmeticExpression(val, Operator.Add, field);
@@ -395,6 +396,20 @@ namespace SqlExpression
         public static ArithmeticExpression operator %(LiteralValue val, Field field)
         {
             return new ArithmeticExpression(val, Operator.Mod, field);
+        }
+
+        #endregion
+
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(Field exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(Field exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
         #endregion
@@ -475,7 +490,7 @@ namespace SqlExpression
                 return Value?.ToString();
             }
         }
-
+        
         #region 隐式转换
 
         public static implicit operator LiteralValue(string value)
@@ -484,6 +499,11 @@ namespace SqlExpression
         }
 
         public static implicit operator LiteralValue(DateTime value)
+        {
+            return new LiteralValue(value);
+        }
+
+        public static implicit operator LiteralValue(bool value)
         {
             return new LiteralValue(value);
         }
@@ -534,6 +554,22 @@ namespace SqlExpression
         }
 
         #endregion
+
+        public override bool Equals(object obj)
+        {
+            if (obj is FunctionExpression)
+            {
+                return (obj as FunctionExpression).Expression == this.Expression;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     /// <summary>
@@ -611,6 +647,7 @@ namespace SqlExpression
         {
             return new ComparisonExpression(param, Operator.LtOrEq, val);
         }
+
 
         public static ComparisonExpression operator ==(LiteralValue val, Param param)
         {
@@ -706,6 +743,20 @@ namespace SqlExpression
 
         #endregion
 
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(Param exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(Param exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
+
         #region 隐式转换
 
         public static implicit operator Param(string param)
@@ -794,6 +845,185 @@ namespace SqlExpression
             }
             return string.Format("({0})", Query.Expression);
         }
+
+        #region 比较运算符
+
+        public static ComparisonExpression operator ==(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.LtOrEq, val);
+        }
+
+        public static ComparisonExpression operator ==(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ComparisonExpression(subquery, Operator.LtOrEq, val);
+        }
+
+
+        public static ComparisonExpression operator ==(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ComparisonExpression(val, Operator.Eq, subquery);
+        }
+        public static ComparisonExpression operator !=(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ComparisonExpression(val, Operator.Neq, subquery);
+        }
+        public static ComparisonExpression operator >(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ComparisonExpression(val, Operator.Gt, subquery);
+        }
+        public static ComparisonExpression operator <(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ComparisonExpression(val, Operator.Lt, subquery);
+        }
+        public static ComparisonExpression operator >=(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ComparisonExpression(val, Operator.GtOrEq, subquery);
+        }
+        public static ComparisonExpression operator <=(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ComparisonExpression(val, Operator.LtOrEq, subquery);
+        }
+
+        #endregion
+
+        #region 算术运算符
+
+        public static ArithmeticExpression operator +(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(SubQueryExpression subquery, ISimpleValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Mod, val);
+        }
+
+        public static ArithmeticExpression operator +(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(SubQueryExpression subquery, LiteralValue val)
+        {
+            return new ArithmeticExpression(subquery, Operator.Mod, val);
+        }
+
+        public static ArithmeticExpression operator +(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ArithmeticExpression(val, Operator.Add, subquery);
+        }
+        public static ArithmeticExpression operator -(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ArithmeticExpression(val, Operator.Sub, subquery);
+        }
+        public static ArithmeticExpression operator *(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ArithmeticExpression(val, Operator.Mul, subquery);
+        }
+        public static ArithmeticExpression operator /(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ArithmeticExpression(val, Operator.Div, subquery);
+        }
+        public static ArithmeticExpression operator %(LiteralValue val, SubQueryExpression subquery)
+        {
+            return new ArithmeticExpression(val, Operator.Mod, subquery);
+        }
+
+        #endregion
+
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(SubQueryExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(SubQueryExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
+
+        #region 隐式转换
+
+        public static implicit operator SubQueryExpression(SelectStatement query)
+        {
+            return new SubQueryExpression(query);
+        }
+
+        #endregion
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     /// <summary>
@@ -834,9 +1064,8 @@ namespace SqlExpression
     /// <summary>
     /// 二元表达式
     /// </summary>
-    public class BinaryExpression : ExpressionBase<BinaryExpression>, IBinaryExpression
+    public abstract class BinaryExpression : ExpressionBase<BinaryExpression>, IBinaryExpression
     {
-
         public BinaryExpression(ISimpleValue a, IBinaryOperator op, ISimpleValue b)
         {
             A = a;
@@ -907,6 +1136,156 @@ namespace SqlExpression
             return string.Format(Op.Format, A.Expression);
         }
 
+        #region 比较运算符
+
+        public static ComparisonExpression operator ==(BracketExpression exp, ISimpleValue val)
+        {
+            return new ComparisonExpression(exp, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(BracketExpression exp, ISimpleValue val)
+        {
+            return new ComparisonExpression(exp, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(BracketExpression exp, ISimpleValue val)
+        {
+            return new ComparisonExpression(exp, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(BracketExpression exp, ISimpleValue val)
+        {
+            return new ComparisonExpression(exp, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(BracketExpression exp, ISimpleValue val)
+        {
+            return new ComparisonExpression(exp, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(BracketExpression exp, ISimpleValue val)
+        {
+            return new ComparisonExpression(exp, Operator.LtOrEq, val);
+        }
+
+        public static ComparisonExpression operator ==(BracketExpression exp, LiteralValue val)
+        {
+            return new ComparisonExpression(exp, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(BracketExpression exp, LiteralValue val)
+        {
+            return new ComparisonExpression(exp, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(BracketExpression exp, LiteralValue val)
+        {
+            return new ComparisonExpression(exp, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(BracketExpression exp, LiteralValue val)
+        {
+            return new ComparisonExpression(exp, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(BracketExpression exp, LiteralValue val)
+        {
+            return new ComparisonExpression(exp, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(BracketExpression exp, LiteralValue val)
+        {
+            return new ComparisonExpression(exp, Operator.LtOrEq, val);
+        }
+
+
+        public static ComparisonExpression operator ==(LiteralValue val, BracketExpression value)
+        {
+            return new ComparisonExpression(val, Operator.Eq, value);
+        }
+        public static ComparisonExpression operator !=(LiteralValue val, BracketExpression value)
+        {
+            return new ComparisonExpression(val, Operator.Neq, value);
+        }
+        public static ComparisonExpression operator >(LiteralValue val, BracketExpression value)
+        {
+            return new ComparisonExpression(val, Operator.Gt, value);
+        }
+        public static ComparisonExpression operator <(LiteralValue val, BracketExpression value)
+        {
+            return new ComparisonExpression(val, Operator.Lt, value);
+        }
+        public static ComparisonExpression operator >=(LiteralValue val, BracketExpression value)
+        {
+            return new ComparisonExpression(val, Operator.GtOrEq, value);
+        }
+        public static ComparisonExpression operator <=(LiteralValue val, BracketExpression value)
+        {
+            return new ComparisonExpression(val, Operator.LtOrEq, value);
+        }
+
+        #endregion
+
+        #region 算术运算符
+
+        public static ArithmeticExpression operator +(BracketExpression exp, ISimpleValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(BracketExpression exp, ISimpleValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(BracketExpression exp, ISimpleValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(BracketExpression exp, ISimpleValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(BracketExpression exp, ISimpleValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Mod, val);
+        }
+
+
+        public static ArithmeticExpression operator +(BracketExpression exp, LiteralValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(BracketExpression exp, LiteralValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(BracketExpression exp, LiteralValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(BracketExpression exp, LiteralValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(BracketExpression exp, LiteralValue val)
+        {
+            return new ArithmeticExpression(exp, Operator.Mod, val);
+        }
+
+
+        public static ArithmeticExpression operator +(LiteralValue val, BracketExpression value)
+        {
+            return new ArithmeticExpression(val, Operator.Add, value);
+        }
+        public static ArithmeticExpression operator -(LiteralValue val, BracketExpression value)
+        {
+            return new ArithmeticExpression(val, Operator.Sub, value);
+        }
+        public static ArithmeticExpression operator *(LiteralValue val, BracketExpression value)
+        {
+            return new ArithmeticExpression(val, Operator.Mul, value);
+        }
+        public static ArithmeticExpression operator /(LiteralValue val, BracketExpression value)
+        {
+            return new ArithmeticExpression(val, Operator.Div, value);
+        }
+        public static ArithmeticExpression operator %(LiteralValue val, BracketExpression value)
+        {
+            return new ArithmeticExpression(val, Operator.Mod, value);
+        }
+
+        #endregion
+
+        #region 逻辑运算符
 
         public static LogicExpression operator &(BracketExpression exp1, ISimpleValue exp2)
         {
@@ -916,6 +1295,17 @@ namespace SqlExpression
         public static LogicExpression operator |(BracketExpression exp1, ISimpleValue exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 
@@ -929,6 +1319,8 @@ namespace SqlExpression
         {
         }
 
+        #region 逻辑运算符
+
         public static LogicExpression operator &(UnaryComparisonExpression exp1, ISimpleValue exp2)
         {
             return new LogicExpression(exp1, Operator.And, exp2);
@@ -938,6 +1330,8 @@ namespace SqlExpression
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -950,6 +1344,8 @@ namespace SqlExpression
         {
         }
 
+        #region 逻辑运算符
+
         public static LogicExpression operator &(ComparisonExpression exp1, ISimpleValue exp2)
         {
             return new LogicExpression(exp1, Operator.And, exp2);
@@ -959,6 +1355,8 @@ namespace SqlExpression
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -981,6 +1379,20 @@ namespace SqlExpression
             }
             return string.Format("EXISTS {0}", SubQuery.Expression);
         }
+
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(ExistsExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(ExistsExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -1003,6 +1415,20 @@ namespace SqlExpression
             }
             return string.Format("NOT EXISTS {0}", SubQuery.Expression);
         }
+
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(NotExistsExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(NotExistsExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -1039,6 +1465,20 @@ namespace SqlExpression
             }
             return string.Format("{0} BETWEEN {1} AND {2}", Value.Expression, Lower.Expression, Upper.Expression);
         }
+
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(BetweenExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(BetweenExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -1075,6 +1515,20 @@ namespace SqlExpression
             }
             return string.Format("{0} NOT BETWEEN {1} AND {2}", Value.Expression, Lower.Expression, Upper.Expression);
         }
+
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(NotBetweenExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(NotBetweenExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -1104,6 +1558,20 @@ namespace SqlExpression
             }
             return string.Format("{0} IN {1}", Value.Expression, Collection.Expression);
         }
+
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(InExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(InExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -1133,8 +1601,22 @@ namespace SqlExpression
             }
             return string.Format("{0} NOT IN {1}", Value.Expression, Collection.Expression);
         }
+
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(NotInExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(NotInExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
     }
-    
+
     /// <summary>
     /// 逻辑表达式
     /// </summary>
@@ -1145,6 +1627,8 @@ namespace SqlExpression
         {
         }
 
+        #region 逻辑运算符
+
         public static LogicExpression operator &(LogicExpression exp1, ISimpleValue exp2)
         {
             return new LogicExpression(exp1, Operator.And, exp2);
@@ -1154,6 +1638,8 @@ namespace SqlExpression
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -1218,29 +1704,30 @@ namespace SqlExpression
             return new ComparisonExpression(exp, Operator.LtOrEq, val);
         }
 
-        public static ComparisonExpression operator ==(LiteralValue val, ArithmeticExpression exp)
+
+        public static ComparisonExpression operator ==(LiteralValue val, ArithmeticExpression value)
         {
-            return new ComparisonExpression(val, Operator.Eq, exp);
+            return new ComparisonExpression(val, Operator.Eq, value);
         }
-        public static ComparisonExpression operator !=(LiteralValue val, ArithmeticExpression exp)
+        public static ComparisonExpression operator !=(LiteralValue val, ArithmeticExpression value)
         {
-            return new ComparisonExpression(val, Operator.Neq, exp);
+            return new ComparisonExpression(val, Operator.Neq, value);
         }
-        public static ComparisonExpression operator >(LiteralValue val, ArithmeticExpression exp)
+        public static ComparisonExpression operator >(LiteralValue val, ArithmeticExpression value)
         {
-            return new ComparisonExpression(val, Operator.Gt, exp);
+            return new ComparisonExpression(val, Operator.Gt, value);
         }
-        public static ComparisonExpression operator <(LiteralValue val, ArithmeticExpression exp)
+        public static ComparisonExpression operator <(LiteralValue val, ArithmeticExpression value)
         {
-            return new ComparisonExpression(val, Operator.Lt, exp);
+            return new ComparisonExpression(val, Operator.Lt, value);
         }
-        public static ComparisonExpression operator >=(LiteralValue val, ArithmeticExpression exp)
+        public static ComparisonExpression operator >=(LiteralValue val, ArithmeticExpression value)
         {
-            return new ComparisonExpression(val, Operator.GtOrEq, exp);
+            return new ComparisonExpression(val, Operator.GtOrEq, value);
         }
-        public static ComparisonExpression operator <=(LiteralValue val, ArithmeticExpression exp)
+        public static ComparisonExpression operator <=(LiteralValue val, ArithmeticExpression value)
         {
-            return new ComparisonExpression(val, Operator.LtOrEq, exp);
+            return new ComparisonExpression(val, Operator.LtOrEq, value);
         }
 
         #endregion
@@ -1268,6 +1755,7 @@ namespace SqlExpression
             return new ArithmeticExpression(exp, Operator.Mod, val);
         }
 
+
         public static ArithmeticExpression operator +(ArithmeticExpression exp, LiteralValue val)
         {
             return new ArithmeticExpression(exp, Operator.Add, val);
@@ -1289,39 +1777,47 @@ namespace SqlExpression
             return new ArithmeticExpression(exp, Operator.Mod, val);
         }
 
-        public static ArithmeticExpression operator +(LiteralValue val, ArithmeticExpression exp)
+
+        public static ArithmeticExpression operator +(LiteralValue val, ArithmeticExpression value)
         {
-            return new ArithmeticExpression(val, Operator.Add, exp);
+            return new ArithmeticExpression(val, Operator.Add, value);
         }
-        public static ArithmeticExpression operator -(LiteralValue val, ArithmeticExpression exp)
+        public static ArithmeticExpression operator -(LiteralValue val, ArithmeticExpression value)
         {
-            return new ArithmeticExpression(val, Operator.Sub, exp);
+            return new ArithmeticExpression(val, Operator.Sub, value);
         }
-        public static ArithmeticExpression operator *(LiteralValue val, ArithmeticExpression exp)
+        public static ArithmeticExpression operator *(LiteralValue val, ArithmeticExpression value)
         {
-            return new ArithmeticExpression(val, Operator.Mul, exp);
+            return new ArithmeticExpression(val, Operator.Mul, value);
         }
-        public static ArithmeticExpression operator /(LiteralValue val, ArithmeticExpression exp)
+        public static ArithmeticExpression operator /(LiteralValue val, ArithmeticExpression value)
         {
-            return new ArithmeticExpression(val, Operator.Div, exp);
+            return new ArithmeticExpression(val, Operator.Div, value);
         }
-        public static ArithmeticExpression operator %(LiteralValue val, ArithmeticExpression exp)
+        public static ArithmeticExpression operator %(LiteralValue val, ArithmeticExpression value)
         {
-            return new ArithmeticExpression(val, Operator.Mod, exp);
+            return new ArithmeticExpression(val, Operator.Mod, value);
+        }
+
+        #endregion
+
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(ArithmeticExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(ArithmeticExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
         #endregion
 
         public override bool Equals(object obj)
         {
-            if (obj is ArithmeticExpression)
-            {
-                return (obj as ArithmeticExpression).Expression == this.Expression;
-            }
-            else
-            {
-                return false;
-            }
+            return base.Equals(obj);
         }
         public override int GetHashCode()
         {
@@ -1380,6 +1876,7 @@ namespace SqlExpression
         {
             return new ComparisonExpression(fun, Operator.LtOrEq, val);
         }
+
 
         public static ComparisonExpression operator ==(FunctionExpression fun, LiteralValue val)
         {
@@ -1456,6 +1953,7 @@ namespace SqlExpression
             return new ArithmeticExpression(fun, Operator.Mod, val);
         }
 
+
         public static ArithmeticExpression operator +(FunctionExpression fun, LiteralValue val)
         {
             return new ArithmeticExpression(fun, Operator.Add, val);
@@ -1500,16 +1998,233 @@ namespace SqlExpression
 
         #endregion
 
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(FunctionExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(FunctionExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
+
         public override bool Equals(object obj)
         {
-            if (obj is FunctionExpression)
-            {
-                return (obj as FunctionExpression).Expression == this.Expression;
-            }
-            else
-            {
-                return false;
-            }
+            return base.Equals(obj);
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+    }
+
+    /// <summary>
+    /// 聚合函数表达式
+    /// </summary>
+    public class AggregateFunctionExpression : FunctionExpression, IAggregateFunctionExpression
+    {
+        public static AggregateFunctionExpression Count(ISimpleValue field)
+        {
+            return new AggregateFunctionExpression("COUNT", field);
+        }
+
+        public static AggregateFunctionExpression Sum(ISimpleValue field)
+        {
+            return new AggregateFunctionExpression("SUM", field);
+        }
+
+        public static AggregateFunctionExpression Avg(ISimpleValue field)
+        {
+            return new AggregateFunctionExpression("AVG", field);
+        }
+
+        public static AggregateFunctionExpression Max(ISimpleValue field)
+        {
+            return new AggregateFunctionExpression("MAX", field);
+        }
+
+        public static AggregateFunctionExpression Min(ISimpleValue field)
+        {
+            return new AggregateFunctionExpression("MIN", field);
+        }
+
+        public AggregateFunctionExpression(string name, ISimpleValue value)
+            : base(name, value)
+        {
+
+        }
+
+        #region 比较运算符
+
+        public static ComparisonExpression operator ==(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ComparisonExpression(fun, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ComparisonExpression(fun, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ComparisonExpression(fun, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ComparisonExpression(fun, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ComparisonExpression(fun, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ComparisonExpression(fun, Operator.LtOrEq, val);
+        }
+
+
+        public static ComparisonExpression operator ==(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ComparisonExpression(fun, Operator.Eq, val);
+        }
+        public static ComparisonExpression operator !=(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ComparisonExpression(fun, Operator.Neq, val);
+        }
+        public static ComparisonExpression operator >(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ComparisonExpression(fun, Operator.Gt, val);
+        }
+        public static ComparisonExpression operator <(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ComparisonExpression(fun, Operator.Lt, val);
+        }
+        public static ComparisonExpression operator >=(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ComparisonExpression(fun, Operator.GtOrEq, val);
+        }
+        public static ComparisonExpression operator <=(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ComparisonExpression(fun, Operator.LtOrEq, val);
+        }
+
+
+        public static ComparisonExpression operator ==(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ComparisonExpression(val, Operator.Eq, fun);
+        }
+        public static ComparisonExpression operator !=(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ComparisonExpression(val, Operator.Neq, fun);
+        }
+        public static ComparisonExpression operator >(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ComparisonExpression(val, Operator.Gt, fun);
+        }
+        public static ComparisonExpression operator <(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ComparisonExpression(val, Operator.Lt, fun);
+        }
+        public static ComparisonExpression operator >=(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ComparisonExpression(val, Operator.GtOrEq, fun);
+        }
+        public static ComparisonExpression operator <=(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ComparisonExpression(val, Operator.LtOrEq, fun);
+        }
+
+        #endregion
+
+        #region 算术运算符
+
+        public static ArithmeticExpression operator +(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(AggregateFunctionExpression fun, ISimpleValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Mod, val);
+        }
+
+
+        public static ArithmeticExpression operator +(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(AggregateFunctionExpression fun, LiteralValue val)
+        {
+            return new ArithmeticExpression(fun, Operator.Mod, val);
+        }
+
+
+        public static ArithmeticExpression operator +(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ArithmeticExpression(val, Operator.Add, fun);
+        }
+        public static ArithmeticExpression operator -(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ArithmeticExpression(val, Operator.Sub, fun);
+        }
+        public static ArithmeticExpression operator *(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ArithmeticExpression(val, Operator.Mul, fun);
+        }
+        public static ArithmeticExpression operator /(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ArithmeticExpression(val, Operator.Div, fun);
+        }
+        public static ArithmeticExpression operator %(LiteralValue val, AggregateFunctionExpression fun)
+        {
+            return new ArithmeticExpression(val, Operator.Mod, fun);
+        }
+
+        #endregion
+        
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(AggregateFunctionExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(AggregateFunctionExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
         }
         public override int GetHashCode()
         {
@@ -1832,7 +2547,7 @@ namespace SqlExpression
             get
             {
                 var list = new List<string>();
-                foreach(var field in Items.Fields)
+                foreach (var field in Items.Fields)
                 {
                     list.AddRange(field.Field.Params());
                 }
@@ -2094,7 +2809,7 @@ namespace SqlExpression
             return string.Format("{0} {1}{2}", JoinOp, Table.Expression, On?.Expression);
         }
     }
-    
+
     /// <summary>
     /// On子句
     /// </summary>
@@ -2163,43 +2878,6 @@ namespace SqlExpression
                 throw new SqlSyntaxException(this, Error.FilterMissing);
             }
             return string.Format("HAVING {0}", Filter.Expression);
-        }
-    }
-
-    /// <summary>
-    /// 聚合函数表达式
-    /// </summary>
-    public class AggregateFunctionExpression : FunctionExpression, IAggregateFunctionExpression
-    {
-        public static AggregateFunctionExpression Count(ISimpleValue field)
-        {
-            return new AggregateFunctionExpression("COUNT", field);
-        }
-
-        public static AggregateFunctionExpression Sum(ISimpleValue field)
-        {
-            return new AggregateFunctionExpression("SUM", field);
-        }
-
-        public static AggregateFunctionExpression Avg(ISimpleValue field)
-        {
-            return new AggregateFunctionExpression("AVG", field);
-        }
-
-        public static AggregateFunctionExpression Max(ISimpleValue field)
-        {
-            return new AggregateFunctionExpression("MAX", field);
-        }
-
-        public static AggregateFunctionExpression Min(ISimpleValue field)
-        {
-            return new AggregateFunctionExpression("MIN", field);
-        }
-
-        public AggregateFunctionExpression(string name, ISimpleValue value)
-            : base(name, value)
-        {
-
         }
     }
 
@@ -2362,7 +3040,7 @@ namespace SqlExpression
             {
                 return GetParam(simpleValue as IUnaryExpression);
             }
-            else  if(simpleValue is IFunctionExpression)
+            else if (simpleValue is IFunctionExpression)
             {
                 return GetParam(simpleValue as IFunctionExpression);
             }
@@ -2469,7 +3147,7 @@ namespace SqlExpression
         private static List<string> GetParam(IFunctionExpression function)
         {
             List<string> list = new List<string>();
-            foreach(var value  in function.Values)
+            foreach (var value in function.Values)
             {
                 if (value is ICustomerExpression)
                 {
@@ -2487,7 +3165,7 @@ namespace SqlExpression
                 {
                     list.AddRange(GetParam(value as IBinaryExpression));
                 }
-                else if(value is IFunctionExpression)
+                else if (value is IFunctionExpression)
                 {
                     list.AddRange(GetParam(value as IFunctionExpression));
                 }
