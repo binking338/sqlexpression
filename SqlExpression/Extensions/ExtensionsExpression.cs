@@ -30,19 +30,24 @@ namespace SqlExpression
 
         #region Alias
 
-        public static ITableAliasExpression As(this ITable table, string alias)
+        public static TableAliasExpression As(this ITable table, string alias)
         {
             return new TableAliasExpression(table, string.IsNullOrWhiteSpace(alias) ? null : new DatasetAlias(alias));
         }
 
-        public static ISelectItemExpression As(this ISimpleValue val, string alias)
+        public static SubQueryAliasExpression As(this ISubQueryExpression subquery, string alias)
+        {
+            return new SubQueryAliasExpression(subquery, string.IsNullOrWhiteSpace(alias) ? null : new DatasetAlias(alias));
+        }
+
+        public static SelectItemExpression As(this ISimpleValue val, string alias)
         {
             return new SelectItemExpression(val, string.IsNullOrWhiteSpace(alias) ? null : new SelectFieldAlias(alias));
         }
 
         #endregion
 
-        #region Column
+        #region Field
 
         #region ShortCut
 
