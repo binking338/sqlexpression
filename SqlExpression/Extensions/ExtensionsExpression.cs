@@ -51,56 +51,56 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static IParam ToP(this IField field, string param = null)
+        public static Param ToP(this IField field, string param = null)
         {
             return ToParam(field, param);
         }
 
-        public static ISetFieldExpression SetC(this IField field, string customer)
+        public static SetFieldExpression SetC(this IField field, string customer)
         {
             return SetVarCustomer(field, customer);
         }
 
-        public static ISetFieldExpression SetP(this IField field, string param = null)
+        public static SetFieldExpression SetP(this IField field, string param = null)
         {
             return SetVarParam(field, param);
         }
 
         #endregion
 
-        public static IParam ToParam(this IField field, string param = null)
+        public static Param ToParam(this IField field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param)) param = field.Name;
             return new Param(param);
         }
 
-        public static ISetFieldExpression SetVarCustomer(this IField field, string customer)
+        public static SetFieldExpression SetVarCustomer(this IField field, string customer)
         {
             return Set(field, new CustomerExpression(customer));
         }
 
-        public static ISetFieldExpression SetVarParam(this IField field, string param = null)
+        public static SetFieldExpression SetVarParam(this IField field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param)) param = field.Name;
             return Set(field, field.ToParam(param));
         }
 
-        public static ISetFieldExpression Set(this IField field, object value = null)
+        public static SetFieldExpression Set(this IField field, object value = null)
         {
             return Set(field, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
         }
 
-        public static ISetFieldExpression Set(this IField field, ISimpleValue value)
+        public static SetFieldExpression Set(this IField field, ISimpleValue value)
         {
             return new SetFieldExpression(field, value);
         }
 
-        public static IOrderExpression Desc(this IField field)
+        public static OrderExpression Desc(this IField field)
         {
             return new OrderExpression(field, OrderEnum.Desc);
         }
 
-        public static IOrderExpression Asc(this IField field)
+        public static OrderExpression Asc(this IField field)
         {
             return new OrderExpression(field, OrderEnum.Asc);
         }
