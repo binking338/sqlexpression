@@ -1015,7 +1015,11 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.SubQueryMissing);
             }
-            return string.Format("({0})", SubQuery);
+            if( Alias == null)
+            {
+                throw new SqlSyntaxException(this, Error.AliasMissing);
+            }
+            return string.Format("{0} AS {1}", SubQuery.Expression, Alias.Expression);
         }
     }
 

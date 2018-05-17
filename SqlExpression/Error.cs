@@ -31,6 +31,7 @@ namespace SqlExpression
         public const string UnionOperatorMissing = "union operator missing";
         public const string OrderByFieldsMissing = "order by fields missing";
         public const string SubQueryMissing = "subquery missing";
+        public const string AliasMissing = "alias missing";
         public const string QueryMissing = "query missing";
         public const string BetweenLowerMissing = "between lower missing";
         public const string BetweenUpperMissing = "between upper missing";
