@@ -29,7 +29,7 @@ namespace SqlExpression
             return Tables(tables);
         }
 
-        public static Column Col(string column, string table = null)
+        public static Field Col(string column, string table = null)
         {
             return Column(column, table);
         }
@@ -54,7 +54,7 @@ namespace SqlExpression
             return Params(_params);
         }
 
-        public static GroupByClause GB(IColumn column)
+        public static GroupByClause GB(IField column)
         {
             return GroupBy(column);
         }
@@ -271,13 +271,13 @@ namespace SqlExpression
             return tables.Select(t => new Table(t));
         }
 
-        public static Column Column(string column, string tableAlias = null)
+        public static Field Column(string column, string tableAlias = null)
         {
             if (column == null)
             {
                 throw new ArgumentNullException(nameof(column));
             }
-            return new Column(column, string.IsNullOrWhiteSpace(tableAlias) ? null : new DatasetAlias(tableAlias));
+            return new Field(column, string.IsNullOrWhiteSpace(tableAlias) ? null : new DatasetAlias(tableAlias));
         }
 
         public static LiteralValue Value(object value)
@@ -488,7 +488,7 @@ namespace SqlExpression
             return new OrderByClause(orders);
         }
 
-        public static OrderExpression Desc(IColumn column)
+        public static OrderExpression Desc(IField column)
         {
             if (column == null)
             {
@@ -497,7 +497,7 @@ namespace SqlExpression
             return new OrderExpression(column, OrderEnum.Desc);
         }
 
-        public static OrderExpression Asc(IColumn column)
+        public static OrderExpression Asc(IField column)
         {
             if (column == null)
             {

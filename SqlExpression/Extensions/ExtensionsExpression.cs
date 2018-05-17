@@ -16,17 +16,16 @@ namespace SqlExpression
             return new BatchSqlStatement(sqls.ToArray());
         }
 
-        public static T B<T>(this T exp)
-            where T : IBinaryExpression
+        public static BracketExpression WithB<T>(this T exp)
+            where T : ISimpleValue
         {
-            return Bracket(exp);
+            return WithBracket(exp);
         }
 
-        public static T Bracket<T>(this T exp)
-            where T : IBinaryExpression
+        public static BracketExpression WithBracket<T>(this T exp)
+            where T : ISimpleValue
         {
-            exp.WithBracket = true;
-            return exp;
+            return new BracketExpression(exp);
         }
 
         #region Alias
@@ -47,114 +46,114 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static IParam ToP(this IColumn column, string param = null)
+        public static IParam ToP(this IField field, string param = null)
         {
-            return ToParam(column, param);
+            return ToParam(field, param);
         }
 
-        public static ISetFieldExpression SetC(this IColumn column, string customer)
+        public static ISetFieldExpression SetC(this IField field, string customer)
         {
-            return SetVarCustomer(column, customer);
+            return SetVarCustomer(field, customer);
         }
 
-        public static ISetFieldExpression SetP(this IColumn column, string param = null)
+        public static ISetFieldExpression SetP(this IField field, string param = null)
         {
-            return SetVarParam(column, param);
+            return SetVarParam(field, param);
         }
 
         #endregion
 
-        public static IParam ToParam(this IColumn column, string param = null)
+        public static IParam ToParam(this IField field, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = column.Name;
+            if (string.IsNullOrWhiteSpace(param)) param = field.Name;
             return new Param(param);
         }
 
-        public static ISetFieldExpression SetVarCustomer(this IColumn column, string customer)
+        public static ISetFieldExpression SetVarCustomer(this IField field, string customer)
         {
-            return Set(column, new CustomerExpression(customer));
+            return Set(field, new CustomerExpression(customer));
         }
 
-        public static ISetFieldExpression SetVarParam(this IColumn column, string param = null)
+        public static ISetFieldExpression SetVarParam(this IField field, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = column.Name;
-            return Set(column, column.ToParam(param));
+            if (string.IsNullOrWhiteSpace(param)) param = field.Name;
+            return Set(field, field.ToParam(param));
         }
 
-        public static ISetFieldExpression Set(this IColumn column, object value = null)
+        public static ISetFieldExpression Set(this IField field, object value = null)
         {
-            return Set(column, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
+            return Set(field, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
         }
 
-        public static ISetFieldExpression Set(this IColumn column, ISimpleValue value)
+        public static ISetFieldExpression Set(this IField field, ISimpleValue value)
         {
-            return new SetFieldExpression(column, value);
+            return new SetFieldExpression(field, value);
         }
 
-        public static IOrderExpression Desc(this IColumn col)
+        public static IOrderExpression Desc(this IField field)
         {
-            return new OrderExpression(col, OrderEnum.Desc);
+            return new OrderExpression(field, OrderEnum.Desc);
         }
 
-        public static IOrderExpression Asc(this IColumn col)
+        public static IOrderExpression Asc(this IField field)
         {
-            return new OrderExpression(col, OrderEnum.Asc);
+            return new OrderExpression(field, OrderEnum.Asc);
         }
 
         #region 聚合函数 AggregateFunctionExpression
 
-        public static AggregateFunctionExpression Sum(this IColumn column)
+        public static AggregateFunctionExpression Sum(this IField field)
         {
-            return AggregateFunctionExpression.Sum(column);
+            return AggregateFunctionExpression.Sum(field);
         }
 
-        public static AggregateFunctionExpression Count(this IColumn column)
+        public static AggregateFunctionExpression Count(this IField field)
         {
-            return AggregateFunctionExpression.Count(column);
+            return AggregateFunctionExpression.Count(field);
         }
 
-        public static AggregateFunctionExpression Avg(this IColumn column)
+        public static AggregateFunctionExpression Avg(this IField field)
         {
-            return AggregateFunctionExpression.Avg(column);
+            return AggregateFunctionExpression.Avg(field);
         }
 
-        public static AggregateFunctionExpression Min(this IColumn column)
+        public static AggregateFunctionExpression Min(this IField field)
         {
-            return AggregateFunctionExpression.Min(column);
+            return AggregateFunctionExpression.Min(field);
         }
 
-        public static AggregateFunctionExpression Max(this IColumn column)
+        public static AggregateFunctionExpression Max(this IField field)
         {
-            return AggregateFunctionExpression.Max(column);
+            return AggregateFunctionExpression.Max(field);
         }
 
         #endregion
 
         #region 算术表达式 ArithmeticExpression
 
-        public static ArithmeticExpression Add(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Add(this IField field, ISimpleValue value)
         {
-            return new ArithmeticExpression(column, Operator.Add, value);
+            return new ArithmeticExpression(field, Operator.Add, value);
         }
 
-        public static ArithmeticExpression Sub(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Sub(this IField field, ISimpleValue value)
         {
-            return new ArithmeticExpression(column, Operator.Sub, value);
+            return new ArithmeticExpression(field, Operator.Sub, value);
         }
 
-        public static ArithmeticExpression Mul(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Mul(this IField field, ISimpleValue value)
         {
-            return new ArithmeticExpression(column, Operator.Mul, value);
+            return new ArithmeticExpression(field, Operator.Mul, value);
         }
 
-        public static ArithmeticExpression Div(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Div(this IField field, ISimpleValue value)
         {
-            return new ArithmeticExpression(column, Operator.Div, value);
+            return new ArithmeticExpression(field, Operator.Div, value);
         }
 
-        public static ArithmeticExpression Mod(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Mod(this IField field, ISimpleValue value)
         {
-            return new ArithmeticExpression(column, Operator.Mod, value);
+            return new ArithmeticExpression(field, Operator.Mod, value);
         }
 
         #endregion
@@ -165,78 +164,78 @@ namespace SqlExpression
 
         #region LogicExpresssion
 
-        public static IBoolValue AllEq(this IEnumerable<IColumn> cols, IEnumerable<ISimpleValue> values)
+        public static IBoolValue AllEq(this IEnumerable<IField> fields, IEnumerable<ISimpleValue> values)
         {
             IBoolValue filter = null;
             var em = values.GetEnumerator();
-            foreach (var col in cols)
+            foreach (var field in fields)
             {
                 em.MoveNext();
-                filter = filter == null ? col.Eq(em.Current) as IBoolValue : filter.And(col.Eq(em.Current));
+                filter = filter == null ? field.Eq(em.Current) as IBoolValue : filter.And(field.Eq(em.Current));
             }
             return filter;
         }
 
-        public static IBoolValue AllEq(this IEnumerable<IColumn> cols, IEnumerable<object> values)
+        public static IBoolValue AllEq(this IEnumerable<IField> fields, IEnumerable<object> values)
         {
             var vals = values.Select(val => val is ISimpleValue ? val as ISimpleValue : new LiteralValue(val));
-            return AllEq(cols, vals);
+            return AllEq(fields, vals);
         }
 
-        public static IBoolValue AllEq(this IEnumerable<IColumn> cols, params ISimpleValue[] values)
+        public static IBoolValue AllEq(this IEnumerable<IField> fields, params ISimpleValue[] values)
         {
-            return AllEq(cols, values.AsEnumerable());
+            return AllEq(fields, values.AsEnumerable());
         }
 
-        public static IBoolValue AllEq(this IEnumerable<IColumn> cols, params object[] values)
+        public static IBoolValue AllEq(this IEnumerable<IField> fields, params object[] values)
         {
-            return AllEq(cols, values.AsEnumerable());
+            return AllEq(fields, values.AsEnumerable());
         }
 
-        public static IBoolValue AllEqVarParam(this IEnumerable<IColumn> cols)
+        public static IBoolValue AllEqVarParam(this IEnumerable<IField> fields)
         {
             IBoolValue boolValue = null;
-            foreach (var col in cols)
+            foreach (var field in fields)
             {
-                boolValue = boolValue == null ? col.EqVarParam() as IBoolValue : boolValue.And(col.EqVarParam());
+                boolValue = boolValue == null ? field.EqVarParam() as IBoolValue : boolValue.And(field.EqVarParam());
             }
             return boolValue;
         }
 
-        public static IBoolValue AnyEq(this IEnumerable<IColumn> cols, IEnumerable<ISimpleValue> values)
+        public static IBoolValue AnyEq(this IEnumerable<IField> fields, IEnumerable<ISimpleValue> values)
         {
             IBoolValue boolValue = null;
             var em = values.GetEnumerator();
-            foreach (var col in cols)
+            foreach (var field in fields)
             {
                 em.MoveNext();
-                boolValue = boolValue == null ? col.Eq(em.Current) as IBoolValue : boolValue.Or(col.Eq(em.Current));
+                boolValue = boolValue == null ? field.Eq(em.Current) as IBoolValue : boolValue.Or(field.Eq(em.Current));
             }
             return boolValue;
         }
 
-        public static IBoolValue AnyEq(this IEnumerable<IColumn> cols, IEnumerable<object> values)
+        public static IBoolValue AnyEq(this IEnumerable<IField> fields, IEnumerable<object> values)
         {
             var vals = values.Select(val => val is ISimpleValue ? val as ISimpleValue : new LiteralValue(val));
-            return AnyEq(cols, vals);
+            return AnyEq(fields, vals);
         }
 
-        public static IBoolValue AnyEq(this IEnumerable<IColumn> cols, params ISimpleValue[] values)
+        public static IBoolValue AnyEq(this IEnumerable<IField> fields, params ISimpleValue[] values)
         {
-            return AnyEq(cols, values.AsEnumerable());
+            return AnyEq(fields, values.AsEnumerable());
         }
 
-        public static IBoolValue AnyEq(this IEnumerable<IColumn> cols, params object[] values)
+        public static IBoolValue AnyEq(this IEnumerable<IField> fields, params object[] values)
         {
-            return AnyEq(cols, values.AsEnumerable());
+            return AnyEq(fields, values.AsEnumerable());
         }
 
-        public static IBoolValue AnyEqVarParam(this IEnumerable<IColumn> cols)
+        public static IBoolValue AnyEqVarParam(this IEnumerable<IField> fields)
         {
             IBoolValue boolValue = null;
-            foreach (var col in cols)
+            foreach (var field in fields)
             {
-                boolValue = boolValue == null ? col.EqVarParam() as IBoolValue : boolValue.Or(col.EqVarParam());
+                boolValue = boolValue == null ? field.EqVarParam() as IBoolValue : boolValue.Or(field.EqVarParam());
             }
             return boolValue;
         }
@@ -245,11 +244,11 @@ namespace SqlExpression
         {
             if (a is ILogicExpression)
             {
-                (a as ILogicExpression).WithBracket = true;
+                a = WithBracket(a as ILogicExpression);
             }
             if (b is ILogicExpression)
             {
-                (b as ILogicExpression).WithBracket = true;
+                b = WithBracket(b as ILogicExpression);
             }
             return new LogicExpression(a, LogicOperator.And, b);
         }
@@ -258,11 +257,11 @@ namespace SqlExpression
         {
             if (a is ILogicExpression)
             {
-                (a as ILogicExpression).WithBracket = true;
+                a = WithBracket(a as ILogicExpression);
             }
             if (b is ILogicExpression)
             {
-                (b as ILogicExpression).WithBracket = true;
+                b = WithBracket(b as ILogicExpression);
             }
             return new LogicExpression(a, LogicOperator.Or, b);
         }
@@ -271,260 +270,260 @@ namespace SqlExpression
 
         #region ComparisonExpression
 
-        public static UnaryComparisonExpression IsNull(this ISimpleValue col)
+        public static UnaryComparisonExpression IsNull(this ISimpleValue field)
         {
-            return new UnaryComparisonExpression(col, Operator.IsNull);
-            //return new ComparisonExpression(col, Operator.Is, new LiteralValueExpression(null));
+            return new UnaryComparisonExpression(field, Operator.IsNull);
+            //return new ComparisonExpression(field, Operator.Is, new LiteralValueExpression(null));
         }
 
-        public static UnaryComparisonExpression IsNotNull(this ISimpleValue col)
+        public static UnaryComparisonExpression IsNotNull(this ISimpleValue field)
         {
-            return new UnaryComparisonExpression(col, Operator.IsNotNull);
-            //return new ComparisonExpression(col, Operator.IsNot, new LiteralValueExpression(null));
+            return new UnaryComparisonExpression(field, Operator.IsNotNull);
+            //return new ComparisonExpression(field, Operator.IsNot, new LiteralValueExpression(null));
         }
 
-        public static ComparisonExpression Eq(this ISimpleValue col, ISimpleValue val)
+        public static ComparisonExpression Eq(this ISimpleValue field, ISimpleValue val)
         {
-            return new ComparisonExpression(col, Operator.Eq, val);
+            return new ComparisonExpression(field, Operator.Eq, val);
         }
 
-        public static ComparisonExpression Neq(this ISimpleValue col, ISimpleValue val)
+        public static ComparisonExpression Neq(this ISimpleValue field, ISimpleValue val)
         {
-            return new ComparisonExpression(col, Operator.Neq, val);
+            return new ComparisonExpression(field, Operator.Neq, val);
         }
 
-        public static ComparisonExpression Gt(this ISimpleValue col, ISimpleValue val)
+        public static ComparisonExpression Gt(this ISimpleValue field, ISimpleValue val)
         {
-            return new ComparisonExpression(col, Operator.Gt, val);
+            return new ComparisonExpression(field, Operator.Gt, val);
         }
 
-        public static ComparisonExpression GtOrEq(this ISimpleValue col, ISimpleValue val)
+        public static ComparisonExpression GtOrEq(this ISimpleValue field, ISimpleValue val)
         {
-            return new ComparisonExpression(col, Operator.GtOrEq, val);
+            return new ComparisonExpression(field, Operator.GtOrEq, val);
         }
 
-        public static ComparisonExpression Lt(this ISimpleValue col, ISimpleValue val)
+        public static ComparisonExpression Lt(this ISimpleValue field, ISimpleValue val)
         {
-            return new ComparisonExpression(col, Operator.Lt, val);
+            return new ComparisonExpression(field, Operator.Lt, val);
         }
 
-        public static ComparisonExpression LtOrEq(this ISimpleValue col, ISimpleValue val)
+        public static ComparisonExpression LtOrEq(this ISimpleValue field, ISimpleValue val)
         {
-            return new ComparisonExpression(col, Operator.LtOrEq, val);
+            return new ComparisonExpression(field, Operator.LtOrEq, val);
         }
 
-        public static ComparisonExpression Like(this ISimpleValue col, ISimpleValue val)
+        public static ComparisonExpression Like(this ISimpleValue field, ISimpleValue val)
         {
-            return new ComparisonExpression(col, Operator.Like, val);
+            return new ComparisonExpression(field, Operator.Like, val);
         }
 
-        public static ComparisonExpression NotLike(this ISimpleValue col, ISimpleValue val)
+        public static ComparisonExpression NotLike(this ISimpleValue field, ISimpleValue val)
         {
-            return new ComparisonExpression(col, Operator.NotLike, val);
+            return new ComparisonExpression(field, Operator.NotLike, val);
         }
 
-        public static ComparisonExpression Eq(this ISimpleValue col, object val)
+        public static ComparisonExpression Eq(this ISimpleValue field, object val)
         {
-            return col.Eq(new LiteralValue(val));
+            return field.Eq(new LiteralValue(val));
         }
 
-        public static ComparisonExpression Neq(this ISimpleValue col, object val)
+        public static ComparisonExpression Neq(this ISimpleValue field, object val)
         {
-            return col.Neq(new LiteralValue(val));
+            return field.Neq(new LiteralValue(val));
         }
 
-        public static ComparisonExpression Gt(this ISimpleValue col, object val)
+        public static ComparisonExpression Gt(this ISimpleValue field, object val)
         {
-            return col.Gt(new LiteralValue(val));
+            return field.Gt(new LiteralValue(val));
         }
 
-        public static ComparisonExpression GtOrEq(this ISimpleValue col, object val)
+        public static ComparisonExpression GtOrEq(this ISimpleValue field, object val)
         {
-            return col.GtOrEq(new LiteralValue(val));
+            return field.GtOrEq(new LiteralValue(val));
         }
 
-        public static ComparisonExpression Lt(this ISimpleValue col, object val)
+        public static ComparisonExpression Lt(this ISimpleValue field, object val)
         {
-            return col.Lt(new LiteralValue(val));
+            return field.Lt(new LiteralValue(val));
         }
 
-        public static ComparisonExpression LtOrEq(this ISimpleValue col, object val)
+        public static ComparisonExpression LtOrEq(this ISimpleValue field, object val)
         {
-            return col.LtOrEq(new LiteralValue(val));
+            return field.LtOrEq(new LiteralValue(val));
         }
 
-        public static ComparisonExpression Like(this ISimpleValue col, object val)
+        public static ComparisonExpression Like(this ISimpleValue field, object val)
         {
-            return col.Like(new LiteralValue(val));
+            return field.Like(new LiteralValue(val));
         }
 
-        public static ComparisonExpression NotLike(this ISimpleValue col, object val)
+        public static ComparisonExpression NotLike(this ISimpleValue field, object val)
         {
-            return col.NotLike(new LiteralValue(val));
+            return field.NotLike(new LiteralValue(val));
         }
 
-        public static BetweenExpression Between(this ISimpleValue col, object a, object b)
+        public static BetweenExpression Between(this ISimpleValue field, object a, object b)
         {
-            return new BetweenExpression(col, new LiteralValue(a), new LiteralValue(b));
+            return new BetweenExpression(field, new LiteralValue(a), new LiteralValue(b));
         }
 
-        public static NotBetweenExpression NotBetween(this ISimpleValue col, object a, object b)
+        public static NotBetweenExpression NotBetween(this ISimpleValue field, object a, object b)
         {
-            return new NotBetweenExpression(col, new LiteralValue(a), new LiteralValue(b));
+            return new NotBetweenExpression(field, new LiteralValue(a), new LiteralValue(b));
         }
 
-        public static InExpression In(this ISimpleValue col, params object[] values)
+        public static InExpression In(this ISimpleValue field, params object[] values)
         {
-            return new InExpression(col, new ValueCollectionExpression(values.Select(val => new LiteralValue(val)).ToArray()));
+            return new InExpression(field, new ValueCollectionExpression(values.Select(val => new LiteralValue(val)).ToArray()));
         }
 
-        public static NotInExpression NotIn(this ISimpleValue col, params object[] values)
+        public static NotInExpression NotIn(this ISimpleValue field, params object[] values)
         {
-            return new NotInExpression(col, new ValueCollectionExpression(values.Select(val => new LiteralValue(val)).ToArray()));
+            return new NotInExpression(field, new ValueCollectionExpression(values.Select(val => new LiteralValue(val)).ToArray()));
         }
 
-        public static InExpression In(this ISimpleValue col, ISubQueryExpression subquery)
+        public static InExpression In(this ISimpleValue field, ISubQueryExpression subquery)
         {
-            return new InExpression(col, subquery);
+            return new InExpression(field, subquery);
         }
 
-        public static NotInExpression NotIn(this ISimpleValue col, ISubQueryExpression subquery)
+        public static NotInExpression NotIn(this ISimpleValue field, ISubQueryExpression subquery)
         {
-            return new NotInExpression(col, subquery);
+            return new NotInExpression(field, subquery);
         }
 
-        public static InExpression In(this ISimpleValue col, ISelectStatement select)
+        public static InExpression In(this ISimpleValue field, ISelectStatement select)
         {
-            return new InExpression(col, new SubQueryExpression(select));
+            return new InExpression(field, new SubQueryExpression(select));
         }
 
-        public static NotInExpression NotIn(this ISimpleValue col, ISelectStatement select)
+        public static NotInExpression NotIn(this ISimpleValue field, ISelectStatement select)
         {
-            return new NotInExpression(col, new SubQueryExpression(select));
+            return new NotInExpression(field, new SubQueryExpression(select));
         }
 
-        public static ComparisonExpression EqVarParam(this ISimpleValue col, string param = null)
+        public static ComparisonExpression EqVarParam(this ISimpleValue field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (col is IColumn) param = (col as IColumn).Name;
+                if (field is IField) param = (field as IField).Name;
                 else throw new ArgumentNullException("param");
             }
-            return col.Eq(new Param(param));
+            return field.Eq(new Param(param));
         }
 
-        public static ComparisonExpression NeqVarParam(this ISimpleValue col, string param = null)
+        public static ComparisonExpression NeqVarParam(this ISimpleValue field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (col is IColumn) param = (col as IColumn).Name;
+                if (field is IField) param = (field as IField).Name;
                 else throw new ArgumentNullException("param");
             }
-            return col.Neq(new Param(param));
+            return field.Neq(new Param(param));
         }
 
-        public static ComparisonExpression GtVarParam(this ISimpleValue col, string param = null)
+        public static ComparisonExpression GtVarParam(this ISimpleValue field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (col is IColumn) param = (col as IColumn).Name;
+                if (field is IField) param = (field as IField).Name;
                 else throw new ArgumentNullException("param");
             }
-            return col.Gt(new Param(param));
+            return field.Gt(new Param(param));
         }
 
-        public static ComparisonExpression GtOrEqVarParam(this ISimpleValue col, string param = null)
+        public static ComparisonExpression GtOrEqVarParam(this ISimpleValue field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (col is IColumn) param = (col as IColumn).Name;
+                if (field is IField) param = (field as IField).Name;
                 else throw new ArgumentNullException("param");
             }
-            return col.GtOrEq(new Param(param));
+            return field.GtOrEq(new Param(param));
         }
 
-        public static ComparisonExpression LtVarParam(this ISimpleValue col, string param = null)
+        public static ComparisonExpression LtVarParam(this ISimpleValue field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (col is IColumn) param = (col as IColumn).Name;
+                if (field is IField) param = (field as IField).Name;
                 else throw new ArgumentNullException("param");
             }
-            return col.Lt(new Param(param));
+            return field.Lt(new Param(param));
         }
 
-        public static ComparisonExpression LtOrEqVarParam(this ISimpleValue col, string param = null)
+        public static ComparisonExpression LtOrEqVarParam(this ISimpleValue field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (col is IColumn) param = (col as IColumn).Name;
+                if (field is IField) param = (field as IField).Name;
                 else throw new ArgumentNullException("param");
             }
-            return col.LtOrEq(new Param(param));
+            return field.LtOrEq(new Param(param));
         }
 
-        public static ComparisonExpression LikeVarParam(this ISimpleValue col, string param = null)
+        public static ComparisonExpression LikeVarParam(this ISimpleValue field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (col is IColumn) param = (col as IColumn).Name;
+                if (field is IField) param = (field as IField).Name;
                 else throw new ArgumentNullException("param");
             }
-            return col.Like(new Param(param));
+            return field.Like(new Param(param));
         }
 
-        public static ComparisonExpression NotLikeVarParam(this ISimpleValue col, string param = null)
+        public static ComparisonExpression NotLikeVarParam(this ISimpleValue field, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (col is IColumn) param = (col as IColumn).Name;
+                if (field is IField) param = (field as IField).Name;
                 else throw new ArgumentNullException("param");
             }
-            return col.NotLike(new Param(param));
+            return field.NotLike(new Param(param));
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="col"></param>
+        /// <param name="field"></param>
         /// <param name="paramLower"></param>
         /// <param name="paramUpper"></param>
-        /// <returns>Expression:{col.Expression} BETWEEN @{col.Name}Lower AND @{col.Name}Upper</returns>
-        public static BetweenExpression BetweenVarParam(this ISimpleValue col, string paramLower = null, string paramUpper = null)
+        /// <returns>Expression:{field.Expression} BETWEEN @{field.Name}Lower AND @{field.Name}Upper</returns>
+        public static BetweenExpression BetweenVarParam(this ISimpleValue field, string paramLower = null, string paramUpper = null)
         {
             if (string.IsNullOrWhiteSpace(paramLower))
             {
-                if (col is IColumn) paramLower = (col as IColumn).Name + "Lower";
+                if (field is IField) paramLower = (field as IField).Name + "Lower";
                 else throw new ArgumentNullException("paramLower");
             }
             if (string.IsNullOrWhiteSpace(paramUpper))
             {
-                if (col is IColumn) paramUpper = (col as IColumn).Name + "Upper";
+                if (field is IField) paramUpper = (field as IField).Name + "Upper";
                 else throw new ArgumentNullException("paramUpper");
             }
-            return new BetweenExpression(col, new Param(paramLower), new Param(paramUpper));
+            return new BetweenExpression(field, new Param(paramLower), new Param(paramUpper));
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="col"></param>
+        /// <param name="field"></param>
         /// <param name="paramLower"></param>
         /// <param name="paramUpper"></param>
-        /// <returns>Expression:{col.Expression} NOT BETWEEN @{col.Name}Lower AND @{col.Name}Upper</returns>
-        public static NotBetweenExpression NotBetweenVarParam(this ISimpleValue col, string paramLower = null, string paramUpper = null)
+        /// <returns>Expression:{field.Expression} NOT BETWEEN @{field.Name}Lower AND @{field.Name}Upper</returns>
+        public static NotBetweenExpression NotBetweenVarParam(this ISimpleValue field, string paramLower = null, string paramUpper = null)
         {
             if (string.IsNullOrWhiteSpace(paramLower))
             {
-                if (col is IColumn) paramLower = (col as IColumn).Name + "Lower";
+                if (field is IField) paramLower = (field as IField).Name + "Lower";
                 else throw new ArgumentNullException("paramLower");
             }
             if (string.IsNullOrWhiteSpace(paramUpper))
             {
-                if (col is IColumn) paramUpper = (col as IColumn).Name + "Upper";
+                if (field is IField) paramUpper = (field as IField).Name + "Upper";
                 else throw new ArgumentNullException("paramUpper");
             }
-            return new NotBetweenExpression(col, new Param(paramLower), new Param(paramUpper));
+            return new NotBetweenExpression(field, new Param(paramLower), new Param(paramUpper));
         }
 
         #endregion

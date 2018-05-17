@@ -9,7 +9,10 @@ namespace SqlExpression
     /// <summary>
     /// 运算符
     /// </summary>
-    public interface IOperator { }
+    public interface IOperator
+    {
+        string Format { get; }
+    }
 
     /// <summary>
     /// 一元运算符
@@ -68,12 +71,14 @@ namespace SqlExpression
         public static ComparisonOperator NotLike = new ComparisonOperator(" NOT LIKE ");
         public static ComparisonOperator Is = new ComparisonOperator(" IS ");
         public static ComparisonOperator IsNot = new ComparisonOperator(" IS NOT ");
-        public static UnaryComparisonOperator IsNull = new UnaryComparisonOperator(" IS NULL");
-        public static UnaryComparisonOperator IsNotNull = new UnaryComparisonOperator(" IS NOT NULL");
-        public static UnaryComparisonOperator IsTrue = new UnaryComparisonOperator(" IS TRUE");
-        public static UnaryComparisonOperator IsNotTrue = new UnaryComparisonOperator(" IS NOT TRUE");
-        public static UnaryComparisonOperator IsFalse = new UnaryComparisonOperator(" IS FALSE");
-        public static UnaryComparisonOperator IsNotFalse = new UnaryComparisonOperator(" IS NOT FALSE");
+        public static UnaryComparisonOperator IsNull = new UnaryComparisonOperator("IS NULL", "{0} IS NULL");
+        public static UnaryComparisonOperator IsNotNull = new UnaryComparisonOperator("IS NOT NULL", "{0} IS NOT NULL");
+        public static UnaryComparisonOperator IsTrue = new UnaryComparisonOperator("IS TRUE", "{0} IS TRUE");
+        public static UnaryComparisonOperator IsNotTrue = new UnaryComparisonOperator("IS NOT TRUE", "{0} IS NOT TRUE");
+        public static UnaryComparisonOperator IsFalse = new UnaryComparisonOperator("IS FALSE", "{0} IS FALSE");
+        public static UnaryComparisonOperator IsNotFalse = new UnaryComparisonOperator("IS NOT FALSE", "{0} IS NOT FALSE");
+
+        public static UnaryOperator Bracket = new UnaryOperator("()", "({0})");
 
         public static LogicOperator Or = new LogicOperator(" OR ");
         public static LogicOperator And = new LogicOperator(" AND ");
@@ -86,18 +91,28 @@ namespace SqlExpression
 
         public static UnionOperator Union = new UnionOperator("UNION");
         public static UnionOperator UnionAll = new UnionOperator("UNION ALL");
-        
+
         public static JoinOperator InnerJoin = new JoinOperator("INNER JOIN");
         public static JoinOperator LeftJoin = new JoinOperator("LEFT JOIN");
         public static JoinOperator RightJoin = new JoinOperator("RIGHT JOIN");
         public static JoinOperator FullJoin = new JoinOperator("FULL JOIN");
 
-        public Operator(string literal)
+        public Operator(string literal, string format)
         {
             _literal = literal;
+            _format = format;
         }
 
         protected string _literal;
+        protected string _format;
+
+        public string Format
+        {
+            get
+            {
+                return _format;
+            }
+        }
         public override string ToString()
         {
             return _literal;
@@ -106,12 +121,17 @@ namespace SqlExpression
 
     public class UnaryOperator : Operator, IUnaryOperator
     {
-        public UnaryOperator(string literal) : base(literal) { }
+        public UnaryOperator(string literal, string format) : base(literal, format) { }
+    }
+
+    public class BracketOperator : UnaryOperator
+    {
+        public BracketOperator(string literal, string format) : base(literal, format) { }
     }
 
     public class BinaryOperator : Operator, IBinaryOperator
     {
-        public BinaryOperator(string literal) : base(literal) { }
+        public BinaryOperator(string literal) : base(literal, string.Format("{{0}}{0}{{1}}", literal)) { }
     }
 
     public class ComparisonOperator : BinaryOperator, IComparisonOperator
@@ -121,26 +141,26 @@ namespace SqlExpression
 
     public class UnaryComparisonOperator : UnaryOperator, IUnaryComparisonOperator
     {
-        public UnaryComparisonOperator(string literal) : base(literal) { }
+        public UnaryComparisonOperator(string literal, string format) : base(literal, format) { }
     }
 
-    public class LogicOperator : Operator, ILogicOperator
+    public class LogicOperator : BinaryOperator, ILogicOperator
     {
         public LogicOperator(string literal) : base(literal) { }
     }
 
-    public class ArithmeticOperator : Operator, IArithmeticOperator
+    public class ArithmeticOperator : BinaryOperator, IArithmeticOperator
     {
         public ArithmeticOperator(string literal) : base(literal) { }
     }
 
     public class UnionOperator : Operator, IUnionOperator
     {
-        public UnionOperator(string literal) : base(literal) { }
+        public UnionOperator(string literal) : base(literal, literal) { }
     }
 
     public class JoinOperator : Operator, IJoinOperator
     {
-        public JoinOperator(string literal) : base(literal) { }
+        public JoinOperator(string literal) : base(literal, literal) { }
     }
 }

@@ -18,7 +18,7 @@ namespace SqlExpression.MySql
             {
                 return string.Format("`{0}`", ex.Name);
             };
-            Column.Handlers[DBType.MySql] = (exp) =>
+            Field.Handlers[DBType.MySql] = (exp) =>
             {
                 if (string.IsNullOrEmpty(exp.Dataset?.Expression))
                 {

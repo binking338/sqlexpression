@@ -56,8 +56,8 @@ namespace SqlExpression
 
         public static SelectStatement SelectVarCustomer(this ITable table, IEnumerable<string> customers)
         {
-            var columns = customers.Select(c => new SelectItemExpression(new CustomerExpression(c)));
-            return Select(table, columns);
+            var fields = customers.Select(c => new SelectItemExpression(new CustomerExpression(c)));
+            return Select(table, fields);
         }
 
         public static SelectStatement SelectVarCustomer(this ITable table, params string[] customers)
@@ -87,8 +87,8 @@ namespace SqlExpression
 
         public static SelectStatement SelectVarCustomer(this IEnumerable<ITable> tables, IEnumerable<string> customers)
         {
-            var columns = customers.Select(c => new SelectItemExpression(new CustomerExpression(c)));
-            return new SelectStatement(tables.Select(table => new TableAliasExpression(table, null)).ToArray(), columns.ToArray(), null, null);
+            var fields = customers.Select(c => new SelectItemExpression(new CustomerExpression(c)));
+            return new SelectStatement(tables.Select(table => new TableAliasExpression(table, null)).ToArray(), fields.ToArray(), null, null);
         }
 
         public static SelectStatement SelectVarCustomer(this IEnumerable<ITable> tables, params string[] customers)
@@ -436,13 +436,13 @@ namespace SqlExpression
         #region GroupBy
 
         #region Shortcut
-        public static ISelectStatement GB(this ISelectStatement select, string column)
+        public static ISelectStatement GB(this ISelectStatement select, string field)
         {
-            return GroupBy(select, column);
+            return GroupBy(select, field);
         }
-        public static ISelectStatement GB(this ISelectStatement select, IColumn column)
+        public static ISelectStatement GB(this ISelectStatement select, IField field)
         {
-            return GroupBy(select, column);
+            return GroupBy(select, field);
         }
         public static ISelectStatement H(this ISelectStatement select, ISimpleValue filter)
         {
@@ -450,14 +450,14 @@ namespace SqlExpression
         }
         #endregion
 
-        public static ISelectStatement GroupBy(this ISelectStatement select, string column)
+        public static ISelectStatement GroupBy(this ISelectStatement select, string field)
         {
-            return GroupBy(select, new Column(column));
+            return GroupBy(select, new Field(field));
         }
 
-        public static ISelectStatement GroupBy(this ISelectStatement select, IColumn column)
+        public static ISelectStatement GroupBy(this ISelectStatement select, IField field)
         {
-            select.GroupBy = new GroupByClause(column);
+            select.GroupBy = new GroupByClause(field);
             return select;
         }
 

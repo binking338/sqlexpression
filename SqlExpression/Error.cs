@@ -9,7 +9,7 @@ namespace SqlExpression
     {
         public const string TableNameMissing = "table name missing";
         public const string AliasNameMissing = "alias name missing";
-        public const string ColumnNameMissing = "column name missing";
+        public const string FieldNameMissing = "field name missing";
         public const string ParamNameMissing = "param name missing";
         public const string CollectionMissing = "collection missing";
         public const string CollectionValuesMissing = "collection values missing";
@@ -18,9 +18,9 @@ namespace SqlExpression
         public const string FunctionNameMissing = "function name missing";
         public const string FilterMissing = "filter missing";
         public const string TableMissing = "table missing";
-        public const string ColumnMissing = "column missing";
+        public const string FieldMissing = "field missing";
         public const string ValueMissing = "value missing";
-        public const string ColumnsMissing = "columns missing";
+        public const string FieldsMissing = "fields missing";
         public const string ValuesMissing = "values missing";
         public const string SetClauseMissing = "set clause missing";
         public const string SetClauseFieldsMissing = "set clause fields missing";
@@ -29,7 +29,6 @@ namespace SqlExpression
         public const string GroupByFieldsMissing = "group by fields missing";
         public const string UnionSelectMissing = "union select missing";
         public const string UnionOperatorMissing = "union operator missing";
-        public const string FieldMissing = "field missing";
         public const string OrderByFieldsMissing = "order by fields missing";
         public const string SubQueryMissing = "subquery missing";
         public const string QueryMissing = "query missing";

@@ -42,22 +42,22 @@ namespace SqlExpression.UnitTest
                 var datasetAlias = new DatasetAlias(alias);
 
                 TableAlias = new TableAliasExpression(Table, datasetAlias);
-                oid = new Column("oid", datasetAlias);
-                oname = new Column("oname", datasetAlias);
-                isdel = new Column("isdel", datasetAlias);
-                PKs = new Column[] { oid };
-                All = new Column[] { oid, oname, isdel };
+                oid = new Field("oid", datasetAlias);
+                oname = new Field("oname", datasetAlias);
+                isdel = new Field("isdel", datasetAlias);
+                PKs = new Field[] { oid };
+                All = new Field[] { oid, oname, isdel };
             }
 
             public TableAliasExpression TableAlias { get; protected set; }
 
-            public Column oid { get; protected set; }
-            public Column oname { get; protected set; }
-            public Column isdel { get; protected set; }
+            public Field oid { get; protected set; }
+            public Field oname { get; protected set; }
+            public Field isdel { get; protected set; }
 
-            public Column[] PKs { get; protected set; }
+            public Field[] PKs { get; protected set; }
 
-            public Column[] All { get; protected set; }
+            public Field[] All { get; protected set; }
         }
     }
 }

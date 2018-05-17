@@ -154,13 +154,13 @@ namespace SqlExpression.UnitTest
 
 
             // 运算符表达式不会自动加括号 需要自行决定
-            e = (t.oid > 1 | t.oid < 100).Bracket() & t.oname.Like("%");
+            e = (t.oid > 1 | t.oid < 100).WithBracket() & t.oname.Like("%");
             Assert.AreEqual(e.Expression, "(test.oid>1 OR test.oid<100) AND test.oname LIKE '%'");
 
-            e = t.oid > 1 | (t.oid < 100 & t.oname.Like("%")).Bracket();
+            e = t.oid > 1 | (t.oid < 100 & t.oname.Like("%")).WithBracket();
             Assert.AreEqual(e.Expression, "test.oid>1 OR (test.oid<100 AND test.oname LIKE '%')");
 
-            e = (t.oname.Like("%") | t.oid > 1).Bracket() & t.oid < 100;
+            e = (t.oname.Like("%") | t.oid > 1).WithBracket() & t.oid < 100;
             Assert.AreEqual(e.Expression, "(test.oname LIKE '%' OR test.oid>1) AND test.oid<100");
         }
 

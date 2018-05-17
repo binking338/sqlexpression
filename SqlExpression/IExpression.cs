@@ -81,7 +81,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 表别名
+    /// 数据集别名
     /// </summary>
     public interface IDatasetAlias : IExpression
     {
@@ -94,7 +94,7 @@ namespace SqlExpression
     /// <summary>
     /// 列（字段）
     /// </summary>
-    public interface IColumn : ISimpleValue
+    public interface IField : ISimpleValue
     {
         /// <summary>
         /// 列（字段）名称
@@ -144,10 +144,10 @@ namespace SqlExpression
         /// </summary>
         ISimpleValue A { get; set; }
 
-        /// <summary>
-        /// 是否括号括起来
-        /// </summary>
-        bool WithBracket { get; set; }
+        ///// <summary>
+        ///// 是否括号括起来
+        ///// </summary>
+        //bool WithBracket { get; set; }
     }
 
     /// <summary>
@@ -170,10 +170,10 @@ namespace SqlExpression
         /// </summary>
         ISimpleValue B { get; set; }
 
-        /// <summary>
-        /// 是否括号括起来
-        /// </summary>
-        bool WithBracket { get; set; }
+        ///// <summary>
+        ///// 是否括号括起来
+        ///// </summary>
+        //bool WithBracket { get; set; }
     }
 
     /// <summary>
@@ -395,7 +395,7 @@ namespace SqlExpression
         /// <summary>
         /// 插入字段
         /// </summary>
-        IColumn[] Columns { get; set; }
+        IField[] Fields { get; set; }
 
         /// <summary>
         /// 插入值
@@ -461,7 +461,7 @@ namespace SqlExpression
         /// <summary>
         /// 更新字段
         /// </summary>
-        IColumn Column { get; set; }
+        IField Field { get; set; }
         /// <summary>
         /// 更新值
         /// </summary>

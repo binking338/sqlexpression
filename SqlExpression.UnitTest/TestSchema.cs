@@ -7,38 +7,38 @@ namespace SqlExpression.UnitTest
 {
     public class TestSchema : SchemaBase<TestSchema>
     {
-        private static Column[] __PKs;
-        private static Column[] __All;
-        private static Column _oid;
-        private static Column _oname;
-        private static Column _age;
-        private static Column _gender;
-        private static Column _isdel;
+        private static Field[] __PKs;
+        private static Field[] __All;
+        private static Field _oid;
+        private static Field _oname;
+        private static Field _age;
+        private static Field _gender;
+        private static Field _isdel;
 
         static TestSchema()
         {
             Table = new Table("test");
-            _oid = new Column("oid") { Dataset = new DatasetAlias(Table.Name) };
-            _oname = new Column("oname") { Dataset = new DatasetAlias(Table.Name)  };
-            _age = new Column("age") { Dataset = new DatasetAlias(Table.Name) };
-            _gender = new Column("gender") {  Dataset = new DatasetAlias(Table.Name) };
-            _isdel = new Column("isdel") {  Dataset = new DatasetAlias(Table.Name) };
-            __PKs = new Column[] { _oid };
-            __All = new Column[] { _oid, _oname, _age, _gender, _isdel };
+            _oid = new Field("oid") { Dataset = new DatasetAlias(Table.Name) };
+            _oname = new Field("oname") { Dataset = new DatasetAlias(Table.Name)  };
+            _age = new Field("age") { Dataset = new DatasetAlias(Table.Name) };
+            _gender = new Field("gender") {  Dataset = new DatasetAlias(Table.Name) };
+            _isdel = new Field("isdel") {  Dataset = new DatasetAlias(Table.Name) };
+            __PKs = new Field[] { _oid };
+            __All = new Field[] { _oid, _oname, _age, _gender, _isdel };
         }
 
-        public Column oid { get { return _oid; } }
-        public Column oname { get { return _oname; } }
-        public Column age { get { return _age; } }
-        public Column gender { get { return _gender; } }
-        public Column isdel { get { return _isdel; } }
+        public Field oid { get { return _oid; } }
+        public Field oname { get { return _oname; } }
+        public Field age { get { return _age; } }
+        public Field gender { get { return _gender; } }
+        public Field isdel { get { return _isdel; } }
 
-        public Column[] PKs()
+        public Field[] PKs()
         {
             return __PKs;
         }
 
-        public Column[] All()
+        public Field[] All()
         {
             return __All;
         }
@@ -46,32 +46,32 @@ namespace SqlExpression.UnitTest
 
     public class FooSchema : SchemaBase<FooSchema>
     {
-        private static Column[] __PKs;
-        private static Column[] __All;
-        private static Column _oid;
-        private static Column _oname;
-        private static Column _isdel;
+        private static Field[] __PKs;
+        private static Field[] __All;
+        private static Field _oid;
+        private static Field _oname;
+        private static Field _isdel;
 
         static FooSchema()
         {
             Table = new Table("foo");
-            _oid = new Column("oid") {  Dataset = new DatasetAlias(Table.Name) };
-            _oname = new Column("oname") {  Dataset = new DatasetAlias(Table.Name) };
-            _isdel = new Column("isdel") {  Dataset = new DatasetAlias(Table.Name) };
-            __PKs = new Column[] { _oid };
-            __All = new Column[] { _oid, _oname, _isdel };
+            _oid = new Field("oid") {  Dataset = new DatasetAlias(Table.Name) };
+            _oname = new Field("oname") {  Dataset = new DatasetAlias(Table.Name) };
+            _isdel = new Field("isdel") {  Dataset = new DatasetAlias(Table.Name) };
+            __PKs = new Field[] { _oid };
+            __All = new Field[] { _oid, _oname, _isdel };
         }
 
-        public Column oid { get { return _oid; } }
-        public Column oname { get { return _oname; } }
-        public Column isdel { get { return _isdel; } }
+        public Field oid { get { return _oid; } }
+        public Field oname { get { return _oname; } }
+        public Field isdel { get { return _isdel; } }
 
-        public Column[] PKs()
+        public Field[] PKs()
         {
             return __PKs;
         }
 
-        public Column[] All()
+        public Field[] All()
         {
             return __All;
         }
@@ -79,32 +79,32 @@ namespace SqlExpression.UnitTest
 
     public class BarSchema : SchemaBase<BarSchema>
     {
-        private static Column[] __PKs;
-        private static Column[] __All;
-        private static Column _oid;
-        private static Column _oname;
-        private static Column _isdel;
+        private static Field[] __PKs;
+        private static Field[] __All;
+        private static Field _oid;
+        private static Field _oname;
+        private static Field _isdel;
 
         static BarSchema()
         {
             Table = new Table("bar");
-            _oid = new Column("oid") {  Dataset = new DatasetAlias(Table.Name) };
-            _oname = new Column("oname") {  Dataset = new DatasetAlias(Table.Name) };
-            _isdel = new Column("isdel") {  Dataset = new DatasetAlias(Table.Name) };
-            __PKs = new Column[] { _oid };
-            __All = new Column[] { _oid, _oname, _isdel };
+            _oid = new Field("oid") {  Dataset = new DatasetAlias(Table.Name) };
+            _oname = new Field("oname") {  Dataset = new DatasetAlias(Table.Name) };
+            _isdel = new Field("isdel") {  Dataset = new DatasetAlias(Table.Name) };
+            __PKs = new Field[] { _oid };
+            __All = new Field[] { _oid, _oname, _isdel };
         }
 
-        public Column oid { get { return _oid; } }
-        public Column oname { get { return _oname; } }
-        public Column isdel { get { return _isdel; } }
+        public Field oid { get { return _oid; } }
+        public Field oname { get { return _oname; } }
+        public Field isdel { get { return _isdel; } }
 
-        public Column[] PKs()
+        public Field[] PKs()
         {
             return __PKs;
         }
 
-        public Column[] All()
+        public Field[] All()
         {
             return __All;
         }

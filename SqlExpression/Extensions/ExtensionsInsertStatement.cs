@@ -12,19 +12,19 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static InsertStatement InsertP(this ITable table, IEnumerable<IColumn> columns)
+        public static InsertStatement InsertP(this ITable table, IEnumerable<IField> fields)
         {
-            return InsertVarParam(table, columns);
+            return InsertVarParam(table, fields);
         }
 
-        public static InsertStatement InsertP(this ITable table, params IColumn[] columns)
+        public static InsertStatement InsertP(this ITable table, params IField[] fields)
         {
-            return InsertVarParam(table, columns);
+            return InsertVarParam(table, fields);
         }
 
-        public static InsertStatement InsertP(this ITable table, params Column[] columns)
+        public static InsertStatement InsertP(this ITable table, params Field[] fields)
         {
-            return InsertVarParam(table, columns);
+            return InsertVarParam(table, fields);
         }
 
         #endregion
@@ -34,31 +34,31 @@ namespace SqlExpression
             return new InsertStatement(table);
         }
 
-        public static InsertStatement Insert(this ITable table, IEnumerable<IColumn> columns)
+        public static InsertStatement Insert(this ITable table, IEnumerable<IField> fields)
         {
-            return new InsertStatement(table, columns.ToArray(), null as ICollection);
+            return new InsertStatement(table, fields.ToArray(), null as ICollection);
         }
 
-        public static InsertStatement Insert(this ITable table, params IColumn[] columns)
+        public static InsertStatement Insert(this ITable table, params IField[] fields)
         {
-            return Insert(table, columns.AsEnumerable());
+            return Insert(table, fields.AsEnumerable());
         }
 
-        public static InsertStatement InsertVarParam(this ITable table, IEnumerable<IColumn> columns)
+        public static InsertStatement InsertVarParam(this ITable table, IEnumerable<IField> fields)
         {
-            var _params = columns.Select(col => col.ToParam());
+            var _params = fields.Select(field => field.ToParam());
             ValueCollectionExpression collection = new ValueCollectionExpression(_params.ToArray());
-            return new InsertStatement(table, columns.ToArray(), collection );
+            return new InsertStatement(table, fields.ToArray(), collection );
         }
 
-        public static InsertStatement InsertVarParam(this ITable table, params IColumn[] columns)
+        public static InsertStatement InsertVarParam(this ITable table, params IField[] fields)
         {
-            return InsertVarParam(table, columns.AsEnumerable());
+            return InsertVarParam(table, fields.AsEnumerable());
         }
 
-        public static InsertStatement InsertVarParam(this ITable table, params Column[] columns)
+        public static InsertStatement InsertVarParam(this ITable table, params Field[] fields)
         {
-            return InsertVarParam(table, columns.AsEnumerable());
+            return InsertVarParam(table, fields.AsEnumerable());
         }
 
         #endregion
@@ -83,36 +83,36 @@ namespace SqlExpression
 
         #region ShortCut
 
-        public static IInsertStatement Cols(this IInsertStatement insert, IEnumerable<IColumn> columns)
+        public static IInsertStatement Cols(this IInsertStatement insert, IEnumerable<IField> fields)
         {
-            return Columns(insert, columns);
+            return Columns(insert, fields);
         }
-        public static IInsertStatement Cols(this IInsertStatement insert, params IColumn[] columns)
+        public static IInsertStatement Cols(this IInsertStatement insert, params IField[] fields)
         {
-            return Columns(insert, columns);
+            return Columns(insert, fields);
         }
-        public static IInsertStatement Cols(this IInsertStatement insert, params Column[] columns)
+        public static IInsertStatement Cols(this IInsertStatement insert, params Field[] fields)
         {
-            return Columns(insert, columns);
+            return Columns(insert, fields);
         }
 
         #endregion
 
-        public static IInsertStatement Columns(this IInsertStatement insert, IEnumerable<IColumn> columns)
+        public static IInsertStatement Columns(this IInsertStatement insert, IEnumerable<IField> fields)
         {
-            insert.Columns = columns.ToArray();
+            insert.Fields = fields.ToArray();
             return insert;
         }
 
-        public static IInsertStatement Columns(this IInsertStatement insert, params IColumn[] columns)
+        public static IInsertStatement Columns(this IInsertStatement insert, params IField[] fields)
         {
-            insert.Columns = columns.ToArray();
+            insert.Fields = fields.ToArray();
             return insert;
         }
 
-        public static IInsertStatement Columns(this IInsertStatement insert, params Column[] columns)
+        public static IInsertStatement Columns(this IInsertStatement insert, params Field[] fields)
         {
-            insert.Columns = columns.ToArray();
+            insert.Fields = fields.ToArray();
             return insert;
         }
 
@@ -162,14 +162,14 @@ namespace SqlExpression
 
         public static IInsertStatement Values(this IInsertStatement insert, IEnumerable<ISimpleValue> values)
         {
-            if (insert.Columns == null)
+            if (insert.Fields == null)
             {
                 return insert;
             }
             else
             {
-                values = values.Count() > insert.Columns.Length ? 
-                               values.Take(insert.Columns.Length) : values.Concat(new ISimpleValue[insert.Columns.Length - values.Count()]);
+                values = values.Count() > insert.Fields.Length ? 
+                               values.Take(insert.Fields.Length) : values.Concat(new ISimpleValue[insert.Fields.Length - values.Count()]);
                 IValueCollectionExpression collection = new ValueCollectionExpression(values.ToArray());
 
                 insert.Values = collection;
@@ -197,15 +197,15 @@ namespace SqlExpression
 
         public static IInsertStatement ValuesVarParam(this IInsertStatement insert)
         {
-            if (insert.Columns == null) return insert;
-            var vals = insert.Columns.Select(col => new Param(col.Name) as ISimpleValue);
+            if (insert.Fields == null) return insert;
+            var vals = insert.Fields.Select(field => new Param(field.Name) as ISimpleValue);
 
             return Values(insert, vals);
         }
         public static IInsertStatement ValuesFillNull(this IInsertStatement insert)
         {
-            if (insert.Columns == null) return insert;
-            var vals = insert.Columns.Select(col => new LiteralValue(null) as ISimpleValue);
+            if (insert.Fields == null) return insert;
+            var vals = insert.Fields.Select(field => new LiteralValue(null) as ISimpleValue);
 
             return Values(insert, vals);
         }
@@ -217,71 +217,71 @@ namespace SqlExpression
 
         #region Shortcut
 
-        public static IInsertStatement SetP(this IInsertStatement insert, IColumn column, string param = null)
+        public static IInsertStatement SetP(this IInsertStatement insert, IField field, string param = null)
         {
-            return SetVarParam(insert, column, param);
+            return SetVarParam(insert, field, param);
         }
 
-        public static IInsertStatement SetC(this IInsertStatement insert, IColumn column, string customer)
+        public static IInsertStatement SetC(this IInsertStatement insert, IField field, string customer)
         {
-            return SetVarCustomer(insert, column, customer);
+            return SetVarCustomer(insert, field, customer);
         }
 
-        public static IInsertStatement SetP(this IInsertStatement insert, Column column, string param = null)
+        public static IInsertStatement SetP(this IInsertStatement insert, Field field, string param = null)
         {
-            return SetVarParam(insert, column, param);
+            return SetVarParam(insert, field, param);
         }
 
-        public static IInsertStatement SetC(this IInsertStatement insert, Column column, string customer)
+        public static IInsertStatement SetC(this IInsertStatement insert, Field field, string customer)
         {
-            return SetVarCustomer(insert, column, customer);
+            return SetVarCustomer(insert, field, customer);
         }
 
         #endregion
 
-        public static IInsertStatement Set(this IInsertStatement insert, IColumn column, ISimpleValue value)
+        public static IInsertStatement Set(this IInsertStatement insert, IField field, ISimpleValue value)
         {
             if(!(insert.Values is IValueCollectionExpression))
             {
                 throw new SqlSyntaxException(insert, Error.SetValueError);
             }
-            var cols = insert.Columns?.ToList() ?? new List<IColumn>();
+            var cols = insert.Fields?.ToList() ?? new List<IField>();
             var valCollections = insert.Values as IValueCollectionExpression;
             var vals = valCollections.Values?.ToList() ?? new List<ISimpleValue>();
-            cols.Add(column);
+            cols.Add(field);
             vals.Add(value);
-            insert.Columns = cols.ToArray();
+            insert.Fields = cols.ToArray();
             valCollections.Values = vals.ToArray();
             return insert;
         }
-        public static IInsertStatement Set(this IInsertStatement insert, IColumn column, object value)
+        public static IInsertStatement Set(this IInsertStatement insert, IField field, object value)
         {
-            return Set(insert, column, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
+            return Set(insert, field, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
         }
-        public static IInsertStatement SetVarParam(this IInsertStatement insert, IColumn column, string param = null)
+        public static IInsertStatement SetVarParam(this IInsertStatement insert, IField field, string param = null)
         {
-            return Set(insert, column, column.ToParam(param));
+            return Set(insert, field, field.ToParam(param));
         }
-        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, IColumn column, string customer)
+        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, IField field, string customer)
         {
-            return Set(insert, column, new CustomerExpression(customer));
+            return Set(insert, field, new CustomerExpression(customer));
         }
 
-        public static IInsertStatement Set(this IInsertStatement insert, Column column, ISimpleValue value)
+        public static IInsertStatement Set(this IInsertStatement insert, Field field, ISimpleValue value)
         {
-            return Set(insert, column as IColumn, value);
+            return Set(insert, field as IField, value);
         }
-        public static IInsertStatement Set(this IInsertStatement insert, Column column, object value)
+        public static IInsertStatement Set(this IInsertStatement insert, Field field, object value)
         {
-            return Set(insert, column as IColumn, value);
+            return Set(insert, field as IField, value);
         }
-        public static IInsertStatement SetVarParam(this IInsertStatement insert, Column column, string param = null)
+        public static IInsertStatement SetVarParam(this IInsertStatement insert, Field field, string param = null)
         {
-            return SetVarParam(insert, column as IColumn, param);
+            return SetVarParam(insert, field as IField, param);
         }
-        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, Column column, string customer)
+        public static IInsertStatement SetVarCustomer(this IInsertStatement insert, Field field, string customer)
         {
-            return SetVarCustomer(insert, column as IColumn, customer);
+            return SetVarCustomer(insert, field as IField, customer);
         }
 
         #endregion
