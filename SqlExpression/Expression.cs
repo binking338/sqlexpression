@@ -454,7 +454,7 @@ namespace SqlExpression
                 return Value?.ToString();
             }
         }
-        
+
         #region 隐式转换
 
         public static implicit operator LiteralValue(string value)
@@ -1015,7 +1015,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.SubQueryMissing);
             }
-            if( Alias == null)
+            if (Alias == null)
             {
                 throw new SqlSyntaxException(this, Error.AliasMissing);
             }
@@ -1622,6 +1622,17 @@ namespace SqlExpression
         public LogicExpression(ISimpleValue a, ILogicOperator op, ISimpleValue b)
             : base(a, op, b)
         {
+            if (op == LogicOperator.And)
+            {
+                if (a is ILogicExpression && (a as ILogicExpression).Op == LogicOperator.Or)
+                {
+                    A = new BracketExpression(a);
+                }
+                if (b is ILogicExpression && (b as ILogicExpression).Op == LogicOperator.Or)
+                {
+                    B = new BracketExpression(b);
+                }
+            }
         }
 
         #region 逻辑运算符
@@ -2204,7 +2215,7 @@ namespace SqlExpression
         }
 
         #endregion
-        
+
         #region 逻辑运算符
 
         public static LogicExpression operator &(AggregateFunctionExpression exp1, ISimpleValue exp2)

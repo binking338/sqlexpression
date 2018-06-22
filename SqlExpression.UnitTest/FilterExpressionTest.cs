@@ -141,19 +141,29 @@ namespace SqlExpression.UnitTest
             e = t.oname.Like("%") | t.oid > 1 & t.oid < 100;
             Assert.AreEqual(e.Expression, "test.oname LIKE '%' OR test.oid>1 AND test.oid<100");
 
-
-            // 扩展方法会自动加括号 加括号的规则会有C#语法约束
+            // 根据调用顺序结合AND OR的运算符结合优先级自行决定是否添加括号
             e = (t.oid > 1).And(t.oid < 100).Or(t.oname.Like("%"));
-            Assert.AreEqual(e.Expression, "(test.oid>1 AND test.oid<100) OR test.oname LIKE '%'");
+            Assert.AreEqual(e.Expression, "test.oid>1 AND test.oid<100 OR test.oname LIKE '%'");
 
             e = t.oname.Like("%").Or((t.oid > 1).And(t.oid < 100));
-            Assert.AreEqual(e.Expression, "test.oname LIKE '%' OR (test.oid>1 AND test.oid<100)");
+            Assert.AreEqual(e.Expression, "test.oname LIKE '%' OR test.oid>1 AND test.oid<100");
 
             e = t.oname.Like("%").Or(t.oid > 1).And(t.oid < 100);
             Assert.AreEqual(e.Expression, "(test.oname LIKE '%' OR test.oid>1) AND test.oid<100");
 
 
-            // 运算符表达式不会自动加括号 需要自行决定
+            // 根据C#运算符(& |)优先级自行决定是否添加括号
+            e = (t.oid > 1 | t.oid < 100) & t.oname.Like("%");
+            Assert.AreEqual(e.Expression, "(test.oid>1 OR test.oid<100) AND test.oname LIKE '%'");
+
+            e = t.oname.Like("%") & (t.oid > 1 | t.oid < 100);
+            Assert.AreEqual(e.Expression, "test.oname LIKE '%' AND (test.oid>1 OR test.oid<100)");
+
+            e = t.oid > 1 | t.oid < 100 & t.oname.Like("%");
+            Assert.AreEqual(e.Expression, "test.oid>1 OR test.oid<100 AND test.oname LIKE '%'");
+
+
+            // 显式指定括号
             e = (t.oid > 1 | t.oid < 100).WithBracket() & t.oname.Like("%");
             Assert.AreEqual(e.Expression, "(test.oid>1 OR test.oid<100) AND test.oname LIKE '%'");
 

@@ -247,27 +247,11 @@ namespace SqlExpression
 
         public static LogicExpression And(this ISimpleValue a, ISimpleValue b)
         {
-            if (a is ILogicExpression)
-            {
-                a = WithBracket(a as ILogicExpression);
-            }
-            if (b is ILogicExpression)
-            {
-                b = WithBracket(b as ILogicExpression);
-            }
             return new LogicExpression(a, LogicOperator.And, b);
         }
 
         public static LogicExpression Or(this ISimpleValue a, ISimpleValue b)
         {
-            if (a is ILogicExpression)
-            {
-                a = WithBracket(a as ILogicExpression);
-            }
-            if (b is ILogicExpression)
-            {
-                b = WithBracket(b as ILogicExpression);
-            }
             return new LogicExpression(a, LogicOperator.Or, b);
         }
 
