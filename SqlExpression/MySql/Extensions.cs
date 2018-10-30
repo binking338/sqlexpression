@@ -9,44 +9,6 @@ namespace SqlExpression.MySql
     {
         static Extensions()
         {
-            InnerInitial();
-        }
-
-        private static void InnerInitial()
-        {
-            Table.Handlers[DBType.MySql] = (ex) =>
-            {
-                return string.Format("`{0}`", ex.Name);
-            };
-            Field.Handlers[DBType.MySql] = (exp) =>
-            {
-                if (string.IsNullOrEmpty(exp.Dataset?.Expression))
-                {
-                    return string.Format("`{0}`", exp.Name);
-                }
-                else
-                {
-                    return string.Format("{1}.`{0}`", exp.Name, exp.Dataset.Expression);
-                }
-            };
-            DatasetAlias.Handlers[DBType.MySql] = (exp) =>
-            {
-                return string.Format("`{0}`", exp.Name);
-            };
-            SelectFieldAlias.Handlers[DBType.MySql] = (exp) =>
-            {
-                return string.Format("`{0}`", exp.Name);
-            };
-        }
-
-        public static void EnableDefault()
-        {
-            Expression.DefaultType = DBType.MySql;
-        }
-
-        public static void DisableDefault()
-        {
-            Expression.DefaultType = DBType.Common;
         }
 
         /// <summary>

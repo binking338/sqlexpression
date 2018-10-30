@@ -7,21 +7,6 @@ using System.Threading.Tasks;
 namespace SqlExpression
 {
     /// <summary>
-    /// 数据库类型
-    /// </summary>
-    public enum DBType
-    {
-        /// <summary>
-        /// 通用
-        /// </summary>
-        Common = 0,
-        /// <summary>
-        /// mysql
-        /// </summary>
-        MySql = 1
-    }
-
-    /// <summary>
     /// 排序枚举
     /// </summary>
     public enum OrderEnum
@@ -81,17 +66,6 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 数据集别名
-    /// </summary>
-    public interface IDatasetAlias : IExpression
-    {
-        /// <summary>
-        /// 别名
-        /// </summary>
-        string Name { get; set; }
-    }
-
-    /// <summary>
     /// 列（字段）
     /// </summary>
     public interface IField : ISimpleValue
@@ -102,9 +76,9 @@ namespace SqlExpression
         string Name { get; set; }
 
         /// <summary>
-        /// 所属表
+        /// 所属数据集
         /// </summary>
-        IDatasetAlias Dataset { get; set; }
+        string DatasetAlias { get; set; }
     }
 
     /// <summary>
@@ -142,12 +116,7 @@ namespace SqlExpression
         /// <summary>
         /// 操作数
         /// </summary>
-        ISimpleValue A { get; set; }
-
-        ///// <summary>
-        ///// 是否括号括起来
-        ///// </summary>
-        //bool WithBracket { get; set; }
+        ISimpleValue Value { get; set; }
     }
 
     /// <summary>
@@ -163,17 +132,12 @@ namespace SqlExpression
         /// <summary>
         /// 操作数
         /// </summary>
-        ISimpleValue A { get; set; }
+        ISimpleValue Value1 { get; set; }
 
         /// <summary>
         /// 操作数
         /// </summary>
-        ISimpleValue B { get; set; }
-
-        ///// <summary>
-        ///// 是否括号括起来
-        ///// </summary>
-        //bool WithBracket { get; set; }
+        ISimpleValue Value2 { get; set; }
     }
 
     /// <summary>
@@ -299,7 +263,7 @@ namespace SqlExpression
         /// <summary>
         /// 参数值
         /// </summary>
-        ISimpleValue[] Values { get; set; }
+        IList<ISimpleValue> Values { get; set; }
     }
 
     /// <summary>
@@ -307,7 +271,7 @@ namespace SqlExpression
     /// </summary>
     public interface IValueCollectionExpression : ICollection
     {
-        ISimpleValue[] Values { get; set; }
+        IList<ISimpleValue> Values { get; set; }
     }
 
     /// <summary>
@@ -342,7 +306,7 @@ namespace SqlExpression
         /// <summary>
         /// 别名
         /// </summary>
-        IDatasetAlias Alias { get; set; }
+        string Alias { get; set; }
     }
 
     /// <summary>
@@ -395,7 +359,7 @@ namespace SqlExpression
         /// <summary>
         /// 插入字段
         /// </summary>
-        IField[] Fields { get; set; }
+        IList<IField> Fields { get; set; }
 
         /// <summary>
         /// 插入值
@@ -450,7 +414,7 @@ namespace SqlExpression
         /// <summary>
         /// 字段更新项
         /// </summary>
-        ISetFieldExpression[] SetFields { get; set; }
+        IList<ISetFieldExpression> SetFields { get; set; }
     }
 
     /// <summary>
@@ -475,25 +439,41 @@ namespace SqlExpression
     /// <summary>
     /// select语句
     /// </summary>
-    public interface ISelectStatement : ISqlStatement
+    public interface ISelectStatement : ISingleSelectStatement
     {
         /// <summary>
-        /// 表
+        /// Union项
         /// </summary>
-        IDatasetWithAlias[] Tables { get; set; }
+        IList<IUnionExpression> Unions { get; set; }
 
         /// <summary>
-        /// 查询项列表
+        /// 排序方式
         /// </summary>
-        ISelectItemsExpression Items { get; set; }
+        IOrderByClause OrderBy { get; set; }
+    }
+
+    /// <summary>
+    /// 简单select语句
+    /// </summary>
+    public interface ISingleSelectStatement : ISqlStatement
+    {
+        /// <summary>
+        /// 是否去重
+        /// </summary>
+        bool Distinct { get; set; }
 
         /// <summary>
-        /// 表连接
+        /// 字段列表
         /// </summary>
-        IJoinExpression[] Joins { get; set; }
+        IList<ISelectItemExpression> Fields { get; set; }
 
         /// <summary>
-        /// 过滤条件
+        /// 数据集
+        /// </summary>
+        IFromClause From { get; set; }
+
+        /// <summary>
+        /// 
         /// </summary>
         IWhereClause Where { get; set; }
 
@@ -501,41 +481,8 @@ namespace SqlExpression
         /// 分组方式
         /// </summary>
         IGroupByClause GroupBy { get; set; }
-
-        /// <summary>
-        /// 分组条件
-        /// </summary>
-        IHavingClause Having { get; set; }
-
-        /// <summary>
-        /// 排序方式
-        /// </summary>
-        IOrderByClause OrderBy { get; set; }
     }
-
-    #region UnionStatement
-
-    /// <summary>
-    /// 合并查询语句
-    /// </summary>
-    public interface IUnionStatement : ISqlStatement
-    {
-        /// <summary>
-        /// select语句
-        /// </summary>
-        ISelectStatement Select { get; set; }
-
-        /// <summary>
-        /// union项
-        /// </summary>
-        IUnionExpression[] Unions { get; set; }
-
-        /// <summary>
-        /// 排序方式
-        /// </summary>
-        IOrderByClause OrderBy { get; set; }
-    }
-
+    
     /// <summary>
     /// 合并项
     /// </summary>
@@ -549,26 +496,9 @@ namespace SqlExpression
         /// <summary>
         /// select语句
         /// </summary>
-        ISelectStatement Select { get; set; }
+        ISingleSelectStatement Select { get; set; }
     }
 
-    #endregion
-
-    /// <summary>
-    /// 查询项列表表达式
-    /// </summary>
-    public interface ISelectItemsExpression : IExpression
-    {
-        /// <summary>
-        /// 字段列表
-        /// </summary>
-        ISelectItemExpression[] Fields { get; set; }
-    }
-
-    /// <summary>
-    /// Distinct查询项列表表达式
-    /// </summary>
-    public interface IDistinctSelectItemsExpression : ISelectItemsExpression { }
 
     /// <summary>
     /// 查询项表达式
@@ -583,15 +513,23 @@ namespace SqlExpression
         /// <summary>
         /// 别名
         /// </summary>
-        ISelectFieldAlias Alias { get; set; }
+        string Alias { get; set; }
     }
 
     /// <summary>
-    /// 查询项别名
+    /// 
     /// </summary>
-    public interface ISelectFieldAlias : IValue
+    public interface IFromClause : IExpression
     {
-        string Name { get; set; }
+        /// <summary>
+        /// 表
+        /// </summary>
+        IDatasetWithAlias Table { get; set; }
+
+        /// <summary>
+        /// 表连接
+        /// </summary>
+        IList<IJoinExpression> Joins { get; set; }
     }
 
     /// <summary>
@@ -612,18 +550,7 @@ namespace SqlExpression
         /// <summary>
         /// 连接条件
         /// </summary>
-        IOnClause On { get; set; }
-    }
-
-    /// <summary>
-    /// On子句
-    /// </summary>
-    public interface IOnClause : IExpression
-    {
-        /// <summary>
-        /// 连接条件
-        /// </summary>
-        ISimpleValue Condition { get; set; }
+        ISimpleValue On { get; set; }
     }
 
     /// <summary>
@@ -639,18 +566,12 @@ namespace SqlExpression
         /// <summary>
         /// 分组字段
         /// </summary>
-        ISimpleValue[] Fields { get; set; }
-    }
+        IList<ISimpleValue> Fields { get; set; }
 
-    /// <summary>
-    /// 分组条件
-    /// </summary>
-    public interface IHavingClause : IExpression
-    {
         /// <summary>
         /// 分组条件
         /// </summary>
-        ISimpleValue Filter { get; set; }
+        ISimpleValue Having { get; set; }
     }
 
     /// <summary>
@@ -661,7 +582,7 @@ namespace SqlExpression
         /// <summary>
         /// 字段排序方式
         /// </summary>
-        IOrderExpression[] Orders { get; set; }
+        IList<IOrderExpression> Orders { get; set; }
     }
 
     /// <summary>
@@ -689,7 +610,7 @@ namespace SqlExpression
         /// <summary>
         /// sql数组
         /// </summary>
-        ISqlStatement[] Sqls { get; set; }
+        IList<ISqlStatement> Sqls { get; set; }
     }
 
     #endregion

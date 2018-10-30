@@ -10,11 +10,9 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void Test()
         {
-            MySql.Extensions.EnableDefault();
             var foo = new Foo4MysqlSchema();
             Assert.AreEqual("`foo`.`oid`", foo.oid.Expression);
             Assert.AreEqual("`foo`", foo.As("foo").oid.Dataset.Expression);
-            MySql.Extensions.DisableDefault();
         }
 
         public class Foo4MysqlSchema

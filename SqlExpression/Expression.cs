@@ -8,31 +8,15 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
-    public delegate string ExpressionHandler<Exp>(Exp exp) where Exp : class, IExpression;
-
-    public static class Expression
-    {
-        public static DBType DefaultType { get; set; } = DBType.Common;
-    }
-
     /// <summary>
     /// 表达式抽象类
     /// </summary>
     public abstract class ExpressionBase<Exp> : IExpression
         where Exp : class, IExpression
     {
-        private static Dictionary<DBType, ExpressionHandler<Exp>> handlers = new Dictionary<DBType, ExpressionHandler<Exp>>();
-        public static Dictionary<DBType, ExpressionHandler<Exp>> Handlers
-        {
-            get
-            {
-                return handlers;
-            }
-        }
-
         public ExpressionBase()
         {
-            Type = SqlExpression.Expression.DefaultType;
+
         }
 
         /// <summary>
@@ -42,28 +26,14 @@ namespace SqlExpression
         {
             get
             {
-                Type type = this.GetType();
-                if (Handlers.ContainsKey(Type) && Handlers[Type] != null)
-                {
-                    return Handlers[Type](this as Exp);
-                }
-                return GenExpression();
+                return Build();
             }
-        }
-
-        /// <summary>
-        /// 数据库类型
-        /// </summary>
-        public DBType Type
-        {
-            get;
-            set;
         }
 
         /// <summary>
         /// 构建表达式
         /// </summary>
-        protected abstract string GenExpression();
+        protected abstract string Build();
 
         public override string ToString()
         {
@@ -81,6 +51,7 @@ namespace SqlExpression
                 return false;
             }
         }
+
         public override int GetHashCode()
         {
             return this.Expression?.GetHashCode() ?? 0;
@@ -102,7 +73,11 @@ namespace SqlExpression
         /// </summary>
         public string Name { get; set; }
 
-        protected override string GenExpression()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected override string Build()
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
@@ -132,7 +107,7 @@ namespace SqlExpression
         /// </summary>
         public string Name { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Name == null)
             {
@@ -163,7 +138,7 @@ namespace SqlExpression
         /// </summary>
         public IDatasetAlias Alias { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Table == null)
             {
@@ -201,7 +176,7 @@ namespace SqlExpression
         /// </summary>
         public IDatasetAlias Dataset { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
@@ -430,7 +405,7 @@ namespace SqlExpression
         /// </summary>
         public object Value { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             var valueType = Value?.GetType();
             if (Value == null || Value is DBNull)
@@ -544,7 +519,7 @@ namespace SqlExpression
         /// </summary>
         public string Name { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
@@ -760,7 +735,7 @@ namespace SqlExpression
         /// </summary>
         public ISimpleValue[] Values { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Values == null || Values.Length == 0)
             {
@@ -794,7 +769,7 @@ namespace SqlExpression
         /// </summary>
         public ISelectStatement Query { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Query == null)
             {
@@ -1009,7 +984,7 @@ namespace SqlExpression
         /// </summary>
         public IDatasetAlias Alias { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (SubQuery == null)
             {
@@ -1030,31 +1005,31 @@ namespace SqlExpression
     {
         public UnaryExpression(ISimpleValue a, IUnaryOperator op)
         {
-            A = a;
+            Value = a;
             Op = op;
         }
 
         /// <summary>
         /// 操作数
         /// </summary>
-        public ISimpleValue A { get; set; }
+        public ISimpleValue Value { get; set; }
 
         /// <summary>
         /// 操作符
         /// </summary>
         public IUnaryOperator Op { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Op == null)
             {
                 throw new SqlSyntaxException(this, Error.OperatorMissing);
             }
-            if (A == null)
+            if (Value == null)
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, A.Expression);
+            return string.Format(Op.Format, Value.Expression);
         }
     }
 
@@ -1067,7 +1042,7 @@ namespace SqlExpression
         {
             A = a;
             Op = op;
-            B = b;
+            Value2 = b;
         }
 
         /// <summary>
@@ -1083,9 +1058,9 @@ namespace SqlExpression
         /// <summary>
         /// 操作数
         /// </summary>
-        public ISimpleValue B { get; set; }
+        public ISimpleValue Value2 { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Op == null)
             {
@@ -1095,11 +1070,11 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            if (B == null)
+            if (Value2 == null)
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, A.Expression, B.Expression);
+            return string.Format(Op.Format, A.Expression, Value2.Expression);
         }
     }
 
@@ -1110,27 +1085,27 @@ namespace SqlExpression
     {
         public BracketExpression(ISimpleValue val)
         {
-            A = val;
+            Value = val;
             Op = Operator.Bracket;
         }
 
         /// <summary>
         /// 操作数A
         /// </summary>
-        public ISimpleValue A { get; set; }
+        public ISimpleValue Value { get; set; }
 
         /// <summary>
         /// 操作符
         /// </summary>
         public IUnaryOperator Op { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
-            if (A == null)
+            if (Value == null)
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, A.Expression);
+            return string.Format(Op.Format, Value.Expression);
         }
 
         #region 比较运算符
@@ -1368,7 +1343,7 @@ namespace SqlExpression
 
         public ISubQueryExpression SubQuery { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (SubQuery == null)
             {
@@ -1404,7 +1379,7 @@ namespace SqlExpression
 
         public ISubQueryExpression SubQuery { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (SubQuery == null)
             {
@@ -1446,7 +1421,7 @@ namespace SqlExpression
 
         public ISimpleValue Upper { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Value == null)
             {
@@ -1496,7 +1471,7 @@ namespace SqlExpression
 
         public ISimpleValue Upper { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Value == null)
             {
@@ -1543,7 +1518,7 @@ namespace SqlExpression
 
         public ICollection Collection { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Value == null)
             {
@@ -1586,7 +1561,7 @@ namespace SqlExpression
 
         public ICollection Collection { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Value == null)
             {
@@ -1630,7 +1605,7 @@ namespace SqlExpression
                 }
                 if (b is ILogicExpression && (b as ILogicExpression).Op == LogicOperator.Or)
                 {
-                    B = new BracketExpression(b);
+                    Value2 = new BracketExpression(b);
                 }
             }
         }
@@ -1849,7 +1824,7 @@ namespace SqlExpression
 
         public ISimpleValue[] Values { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Name == null)
             {
@@ -2255,7 +2230,7 @@ namespace SqlExpression
         /// </summary>
         public ISimpleValue Filter { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Filter == null)
             {
@@ -2310,7 +2285,7 @@ namespace SqlExpression
             }
         }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Table == null)
             {
@@ -2361,7 +2336,7 @@ namespace SqlExpression
             }
         }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Table == null)
             {
@@ -2420,7 +2395,7 @@ namespace SqlExpression
             }
         }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Table == null)
             {
@@ -2457,7 +2432,7 @@ namespace SqlExpression
 
         public ISimpleValue Value { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Field == null)
             {
@@ -2482,7 +2457,7 @@ namespace SqlExpression
         }
         public ISetFieldExpression[] SetFields { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (SetFields == null || SetFields.Length == 0)
             {
@@ -2572,7 +2547,7 @@ namespace SqlExpression
             }
         }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Tables == null || Tables.Length == 0)
             {
@@ -2625,7 +2600,7 @@ namespace SqlExpression
             }
         }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Select == null)
             {
@@ -2655,7 +2630,7 @@ namespace SqlExpression
 
         public ISelectStatement Select { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (UnionOp == null)
             {
@@ -2681,7 +2656,7 @@ namespace SqlExpression
 
         public ISelectItemExpression[] Fields { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Fields == null || Fields.Length == 0)
             {
@@ -2703,7 +2678,7 @@ namespace SqlExpression
 
         public ISelectItemExpression[] Fields { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Fields == null || Fields.Length == 0)
             {
@@ -2732,7 +2707,7 @@ namespace SqlExpression
 
         public ISelectFieldAlias Alias { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Field == null)
             {
@@ -2761,7 +2736,7 @@ namespace SqlExpression
 
         public string Name { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Name == null)
             {
@@ -2804,7 +2779,7 @@ namespace SqlExpression
 
         public IOnClause On { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (JoinOp == null)
             {
@@ -2833,7 +2808,7 @@ namespace SqlExpression
         /// </summary>
         public ISimpleValue Condition { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Condition == null)
             {
@@ -2857,7 +2832,7 @@ namespace SqlExpression
 
         public ISimpleValue[] Fields { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Fields == null || Fields.Length == 0)
             {
@@ -2879,7 +2854,7 @@ namespace SqlExpression
 
         public ISimpleValue Filter { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Filter == null)
             {
@@ -2901,7 +2876,7 @@ namespace SqlExpression
 
         public IOrderExpression[] Orders { get; set; }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Orders == null || Orders.Length == 0)
             {
@@ -2926,7 +2901,7 @@ namespace SqlExpression
 
         public OrderEnum Order { get; set; } = OrderEnum.Asc;
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Field == null)
             {
@@ -2984,7 +2959,7 @@ namespace SqlExpression
             }
         }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             if (Sqls == null)
             {
@@ -3016,7 +2991,7 @@ namespace SqlExpression
             }
         }
 
-        protected override string GenExpression()
+        protected override string Build()
         {
             return _expression;
         }
@@ -3102,25 +3077,25 @@ namespace SqlExpression
                 list.AddRange(GetParam(binary.A as IFunctionExpression));
             }
 
-            if (binary.B is ICustomerExpression)
+            if (binary.Value2 is ICustomerExpression)
             {
-                list.AddRange((binary.B as ICustomerExpression).Params());
+                list.AddRange((binary.Value2 as ICustomerExpression).Params());
             }
-            else if (binary.B is IParam)
+            else if (binary.Value2 is IParam)
             {
-                list.Add((binary.B as IParam).Name);
+                list.Add((binary.Value2 as IParam).Name);
             }
-            else if (binary.B is IUnaryExpression)
+            else if (binary.Value2 is IUnaryExpression)
             {
-                list.AddRange(GetParam(binary.B as IUnaryExpression));
+                list.AddRange(GetParam(binary.Value2 as IUnaryExpression));
             }
-            else if (binary.B is IBinaryExpression)
+            else if (binary.Value2 is IBinaryExpression)
             {
-                list.AddRange(GetParam(binary.B as IBinaryExpression));
+                list.AddRange(GetParam(binary.Value2 as IBinaryExpression));
             }
-            else if (binary.B is IFunctionExpression)
+            else if (binary.Value2 is IFunctionExpression)
             {
-                list.AddRange(GetParam(binary.B as IFunctionExpression));
+                list.AddRange(GetParam(binary.Value2 as IFunctionExpression));
             }
 
             return list.Distinct().ToList();
@@ -3129,25 +3104,25 @@ namespace SqlExpression
         private static List<string> GetParam(IUnaryExpression unaray)
         {
             List<string> list = new List<string>();
-            if (unaray.A is ICustomerExpression)
+            if (unaray.Value is ICustomerExpression)
             {
-                list.AddRange((unaray.A as ICustomerExpression).Params());
+                list.AddRange((unaray.Value as ICustomerExpression).Params());
             }
-            else if (unaray.A is IParam)
+            else if (unaray.Value is IParam)
             {
-                list.Add((unaray.A as IParam).Name);
+                list.Add((unaray.Value as IParam).Name);
             }
-            else if (unaray.A is IUnaryExpression)
+            else if (unaray.Value is IUnaryExpression)
             {
-                list.AddRange(GetParam(unaray.A as IUnaryExpression));
+                list.AddRange(GetParam(unaray.Value as IUnaryExpression));
             }
-            else if (unaray.A is IBinaryExpression)
+            else if (unaray.Value is IBinaryExpression)
             {
-                list.AddRange(GetParam(unaray.A as IBinaryExpression));
+                list.AddRange(GetParam(unaray.Value as IBinaryExpression));
             }
-            else if (unaray.A is IFunctionExpression)
+            else if (unaray.Value is IFunctionExpression)
             {
-                list.AddRange(GetParam(unaray.A as IFunctionExpression));
+                list.AddRange(GetParam(unaray.Value as IFunctionExpression));
             }
             return list.Distinct().ToList();
         }
