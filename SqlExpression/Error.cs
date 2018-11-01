@@ -18,14 +18,15 @@ namespace SqlExpression
         public const string FunctionNameMissing = "function name missing";
         public const string FilterMissing = "filter missing";
         public const string TableMissing = "table missing";
+        public const string LeftDatasetMissing = "left dataset missing";
+        public const string RightDatasetMissing = "right dataset missing";
         public const string FieldMissing = "field missing";
         public const string ValueMissing = "value missing";
         public const string FieldsMissing = "fields missing";
         public const string ValuesMissing = "values missing";
         public const string SetClauseMissing = "set clause missing";
         public const string SetClauseFieldsMissing = "set clause fields missing";
-        public const string SelectFieldsMissing = "select fields missing";
-        public const string SelectFieldNameMissing = "select field name missing";
+        public const string SelectItemsMissing = "select items missing";
         public const string GroupByFieldsMissing = "group by fields missing";
         public const string UnionSelectMissing = "union select missing";
         public const string UnionOperatorMissing = "union operator missing";

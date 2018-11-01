@@ -18,11 +18,11 @@ namespace SqlExpression.UnitTest
         static TestSchema()
         {
             Table = new Table("test");
-            _oid = new Field("oid") { Dataset = new DatasetAlias(Table.Name) };
-            _oname = new Field("oname") { Dataset = new DatasetAlias(Table.Name)  };
-            _age = new Field("age") { Dataset = new DatasetAlias(Table.Name) };
-            _gender = new Field("gender") {  Dataset = new DatasetAlias(Table.Name) };
-            _isdel = new Field("isdel") {  Dataset = new DatasetAlias(Table.Name) };
+            _oid = new Field("oid") { DatasetAlias = new DatasetAlias(Table.Name) };
+            _oname = new Field("oname") { DatasetAlias = new DatasetAlias(Table.Name)  };
+            _age = new Field("age") { DatasetAlias = new DatasetAlias(Table.Name) };
+            _gender = new Field("gender") {  DatasetAlias = new DatasetAlias(Table.Name) };
+            _isdel = new Field("isdel") {  DatasetAlias = new DatasetAlias(Table.Name) };
             __PKs = new Field[] { _oid };
             __All = new Field[] { _oid, _oname, _age, _gender, _isdel };
         }
@@ -55,9 +55,9 @@ namespace SqlExpression.UnitTest
         static FooSchema()
         {
             Table = new Table("foo");
-            _oid = new Field("oid") {  Dataset = new DatasetAlias(Table.Name) };
-            _oname = new Field("oname") {  Dataset = new DatasetAlias(Table.Name) };
-            _isdel = new Field("isdel") {  Dataset = new DatasetAlias(Table.Name) };
+            _oid = new Field("oid") {  DatasetAlias = new DatasetAlias(Table.Name) };
+            _oname = new Field("oname") {  DatasetAlias = new DatasetAlias(Table.Name) };
+            _isdel = new Field("isdel") {  DatasetAlias = new DatasetAlias(Table.Name) };
             __PKs = new Field[] { _oid };
             __All = new Field[] { _oid, _oname, _isdel };
         }
@@ -88,9 +88,9 @@ namespace SqlExpression.UnitTest
         static BarSchema()
         {
             Table = new Table("bar");
-            _oid = new Field("oid") {  Dataset = new DatasetAlias(Table.Name) };
-            _oname = new Field("oname") {  Dataset = new DatasetAlias(Table.Name) };
-            _isdel = new Field("isdel") {  Dataset = new DatasetAlias(Table.Name) };
+            _oid = new Field("oid") {  DatasetAlias = new DatasetAlias(Table.Name) };
+            _oname = new Field("oname") {  DatasetAlias = new DatasetAlias(Table.Name) };
+            _isdel = new Field("isdel") {  DatasetAlias = new DatasetAlias(Table.Name) };
             __PKs = new Field[] { _oid };
             __All = new Field[] { _oid, _oname, _isdel };
         }

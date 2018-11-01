@@ -12,7 +12,7 @@ namespace SqlExpression.UnitTest
         {
             var foo = new Foo4MysqlSchema();
             Assert.AreEqual("`foo`.`oid`", foo.oid.Expression);
-            Assert.AreEqual("`foo`", foo.As("foo").oid.Dataset.Expression);
+            Assert.AreEqual("`foo`", foo.As("foo").oid.DatasetAlias.Expression);
         }
 
         public class Foo4MysqlSchema

@@ -299,9 +299,14 @@ namespace SqlExpression
     }
 
     /// <summary>
+    /// 连接的数据集(表带别名\子查询带别名\连接表达式)
+    /// </summary>
+    public interface IDataset : IExpression { }
+
+    /// <summary>
     /// 数据集别名
     /// </summary>
-    public interface IDatasetWithAlias : IExpression
+    public interface IAliasDataset : IDataset
     {
         /// <summary>
         /// 别名
@@ -312,7 +317,7 @@ namespace SqlExpression
     /// <summary>
     /// 表别名
     /// </summary>
-    public interface ITableAliasExpression : IDatasetWithAlias
+    public interface IAliasTableExpression : IAliasDataset
     {
         /// <summary>
         /// 表
@@ -323,7 +328,7 @@ namespace SqlExpression
     /// <summary>
     /// 子查询别名
     /// </summary>
-    public interface ISubQueryAliasExpression : IDatasetWithAlias, ISimpleValue
+    public interface IAliasSubQueryExpression : IAliasDataset, ISimpleValue
     {
         /// <summary>
         /// 数据集
@@ -393,7 +398,7 @@ namespace SqlExpression
         /// <summary>
         /// 表
         /// </summary>
-        ITableAliasExpression Table { get; set; }
+        IAliasTableExpression Table { get; set; }
 
         /// <summary>
         /// 字段赋值子句
@@ -439,12 +444,12 @@ namespace SqlExpression
     /// <summary>
     /// select语句
     /// </summary>
-    public interface ISelectStatement : ISingleSelectStatement
+    public interface ISelectStatement : ISqlStatement
     {
         /// <summary>
-        /// Union项
+        /// 查询语句
         /// </summary>
-        IList<IUnionExpression> Unions { get; set; }
+        IQueryStatement Query { get; set; }
 
         /// <summary>
         /// 排序方式
@@ -453,19 +458,19 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 简单select语句
+    /// 查询语句
     /// </summary>
-    public interface ISingleSelectStatement : ISqlStatement
+    public interface IQueryStatement : ISqlStatement { }
+
+    /// <summary>
+    /// 简单查询语句
+    /// </summary>
+    public interface ISimpleQueryStatement : IQueryStatement
     {
         /// <summary>
-        /// 是否去重
+        /// 返回字段
         /// </summary>
-        bool Distinct { get; set; }
-
-        /// <summary>
-        /// 字段列表
-        /// </summary>
-        IList<ISelectItemExpression> Fields { get; set; }
+        ISelectClause Select { get; set; }
 
         /// <summary>
         /// 数据集
@@ -473,7 +478,7 @@ namespace SqlExpression
         IFromClause From { get; set; }
 
         /// <summary>
-        /// 
+        /// 过滤条件
         /// </summary>
         IWhereClause Where { get; set; }
 
@@ -482,21 +487,43 @@ namespace SqlExpression
         /// </summary>
         IGroupByClause GroupBy { get; set; }
     }
-    
+
     /// <summary>
-    /// 合并项
+    /// 联合查询语句
     /// </summary>
-    public interface IUnionExpression : IExpression
+    public interface IUnionQueryStatement : IQueryStatement
     {
+        /// <summary>
+        /// 查询1
+        /// </summary>
+        IQueryStatement Query1 { get; set; }
+
         /// <summary>
         /// union运算符
         /// </summary>
         IUnionOperator UnionOp { get; set; }
 
         /// <summary>
-        /// select语句
+        /// 查询1
         /// </summary>
-        ISingleSelectStatement Select { get; set; }
+        ISimpleQueryStatement Query2 { get; set; }
+    }
+
+    /// <summary>
+    /// Select子句
+    /// </summary>
+    public interface ISelectClause : IExpression
+    {
+
+        /// <summary>
+        /// 是否去重
+        /// </summary>
+        bool Distinct { get; set; }
+
+        /// <summary>
+        /// 字段列表
+        /// </summary>
+        IList<ISelectItemExpression> Items { get; set; }
     }
 
 
@@ -517,35 +544,35 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 
+    /// From子句
     /// </summary>
     public interface IFromClause : IExpression
     {
         /// <summary>
-        /// 表
+        /// 数据集
         /// </summary>
-        IDatasetWithAlias Table { get; set; }
-
-        /// <summary>
-        /// 表连接
-        /// </summary>
-        IList<IJoinExpression> Joins { get; set; }
+        IDataset Dataset { get; set; }
     }
 
     /// <summary>
-    /// 表连接
+    /// 连接表达式
     /// </summary>
-    public interface IJoinExpression : IExpression
+    public interface IJoinExpression : IDataset
     {
+        /// <summary>
+        /// 左数据集
+        /// </summary>
+        IDataset Left { get; set; }
+
         /// <summary>
         /// 连接运算符
         /// </summary>
         IJoinOperator JoinOp { get; set; }
 
         /// <summary>
-        /// 连接表
+        /// 右数据集
         /// </summary>
-        IDatasetWithAlias Table { get; set; }
+        IDataset Right { get; set; }
 
         /// <summary>
         /// 连接条件
@@ -559,7 +586,7 @@ namespace SqlExpression
     public interface IAggregateFunctionExpression : IFunctionExpression { }
 
     /// <summary>
-    /// 分组子句
+    /// GroupBy分组子句
     /// </summary>
     public interface IGroupByClause : IExpression
     {
@@ -575,7 +602,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 排序子句
+    /// OrderBy排序子句
     /// </summary>
     public interface IOrderByClause : IExpression
     {
