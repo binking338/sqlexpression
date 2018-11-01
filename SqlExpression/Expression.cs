@@ -2431,7 +2431,7 @@ namespace SqlExpression
         {
             if (SetFields == null || SetFields.Count == 0)
             {
-                throw new SqlSyntaxException(this, Error.SetClauseFieldsMissing);
+                throw new SqlSyntaxException(this, Error.SetClauseEmpty);
             }
             return string.Format("SET {0}", SetFields.Join(",", set => set.Expression));
         }
@@ -2465,7 +2465,7 @@ namespace SqlExpression
         {
             if (Query == null)
             {
-                throw new SqlSyntaxException(this, null);
+                throw new SqlSyntaxException(this, Error.QueryMissing);
             }
             if (OrderBy == null)
             {
@@ -2508,6 +2508,7 @@ namespace SqlExpression
                 {
                     _params.AddRange(item.Field.Params());
                 }
+                // todo From
                 if (Where != null) _params.AddRange(Where.Filter.Params());
                 if (GroupBy != null) _params.AddRange(GroupBy.Having.Params());
                 return _params.Distinct();
@@ -2518,13 +2519,15 @@ namespace SqlExpression
         {
             if (Select == null)
             {
-                throw new SqlSyntaxException(this, null);
+                throw new SqlSyntaxException(this, Error.SelectClauseMissing);
             }
             if (From == null)
             {
-                throw new SqlSyntaxException(this, null);
+                throw new SqlSyntaxException(this, Error.FromClauseMissing);
             }
-            return string.Format("{0} {1} {2} {3}", Select.Expression, From.Expression, Where?.Expression, GroupBy?.Expression).TrimEnd();
+            return string.Format("{0} {1}{2}{3}", Select.Expression, From.Expression,
+                Where == null ? string.Empty : " " + Where.Expression,
+                GroupBy == null ? string.Empty : " " + GroupBy?.Expression);
         }
     }
 
@@ -2561,7 +2564,7 @@ namespace SqlExpression
         {
             if (Query1 == null)
             {
-                throw new SqlSyntaxException(this, Error.UnionSelectMissing);
+                throw new SqlSyntaxException(this, Error.UnionQuery1Missing);
             }
             if (UnionOp == null)
             {
@@ -2569,7 +2572,7 @@ namespace SqlExpression
             }
             if (Query2 == null)
             {
-                throw new SqlSyntaxException(this, Error.UnionSelectMissing);
+                throw new SqlSyntaxException(this, Error.UnionQuery2Missing);
             }
             return string.Format("{0} {1} {2}", Query1.Expression, UnionOp, Query2.Expression);
         }
@@ -2596,7 +2599,7 @@ namespace SqlExpression
         {
             if (Items == null || Items.Count == 0)
             {
-                throw new SqlSyntaxException(this, Error.SelectItemsMissing);
+                throw new SqlSyntaxException(this, Error.SelectClauseEmpty);
             }
             if (Distinct)
             {
@@ -2657,7 +2660,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 查询联接
+    /// 查询联接 todo Params
     /// </summary>
     public class JoinExpression : ExpressionBase<JoinExpression>, IJoinExpression
     {
@@ -2725,7 +2728,7 @@ namespace SqlExpression
         {
             if (Fields == null || Fields.Count == 0)
             {
-                throw new SqlSyntaxException(this, Error.GroupByFieldsMissing);
+                throw new SqlSyntaxException(this, Error.GroupByFieldsEmpty);
             }
             if (Having == null)
             {
@@ -2754,7 +2757,7 @@ namespace SqlExpression
         {
             if (Orders == null || Orders.Count == 0)
             {
-                throw new SqlSyntaxException(this, Error.OrderByFieldsMissing);
+                throw new SqlSyntaxException(this, Error.OrderByFieldsMissingEmpty);
             }
             return string.Format("ORDER BY {0}", Orders.Join(",", order => order.Expression));
         }

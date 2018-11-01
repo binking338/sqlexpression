@@ -25,18 +25,19 @@ namespace SqlExpression
         public const string FieldsMissing = "fields missing";
         public const string ValuesMissing = "values missing";
         public const string SetClauseMissing = "set clause missing";
-        public const string SetClauseFieldsMissing = "set clause fields missing";
-        public const string SelectItemsMissing = "select items missing";
-        public const string GroupByFieldsMissing = "group by fields missing";
-        public const string UnionSelectMissing = "union select missing";
+        public const string SetClauseEmpty = "set clause empty";
+        public const string QueryMissing = "query missing";
+        public const string SelectClauseMissing = "select clause missing";
+        public const string SelectClauseEmpty = "select clause empty";
+        public const string FromClauseMissing = "from clause missing";
+        public const string GroupByFieldsEmpty = "group by fields empty";
+        public const string UnionQuery1Missing = "union query1 missing";
+        public const string UnionQuery2Missing = "union query2 missing";
         public const string UnionOperatorMissing = "union operator missing";
-        public const string OrderByFieldsMissing = "order by fields missing";
+        public const string OrderByFieldsMissingEmpty = "order by fields empty";
         public const string SubQueryMissing = "subquery missing";
         public const string AliasMissing = "alias missing";
-        public const string QueryMissing = "query missing";
         public const string BetweenLowerMissing = "between lower missing";
         public const string BetweenUpperMissing = "between upper missing";
-
-        public const string SetValueError = "only IValueCollectionExpression can set ISimpleValue";
     }
 }

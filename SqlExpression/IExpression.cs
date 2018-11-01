@@ -32,6 +32,8 @@ namespace SqlExpression
         /// </summary>
         string Expression { get; }
     }
+    
+    #region BaseExpression
 
     /// <summary>
     /// 值
@@ -284,6 +286,8 @@ namespace SqlExpression
         /// </summary>
         ISelectStatement Query { get; set; }
     }
+
+    #endregion
 
     #region Statement
 
