@@ -120,9 +120,9 @@ namespace SqlExpression
     /// <summary>
     /// 表别名表达式
     /// </summary>
-    public class TableAliasExpression : ExpressionBase<TableAliasExpression>, IAliasTableExpression
+    public class AliasTableExpression : ExpressionBase<AliasTableExpression>, IAliasTableExpression
     {
-        public TableAliasExpression(ITable table, string alias = null)
+        public AliasTableExpression(ITable table, string alias = null)
         {
             Table = table;
             Alias = alias;
@@ -961,17 +961,15 @@ namespace SqlExpression
     /// <summary>
     /// 子查询别名
     /// </summary>
-    public class SubQueryAliasExpression : ExpressionBase<SubQueryAliasExpression>, IAliasSubQueryExpression
+    public class AliasSubQueryExpression : ExpressionBase<AliasSubQueryExpression>, IAliasSubQueryExpression
     {
-        public SubQueryAliasExpression(ISubQueryExpression subquery, string alias = null)
+        public AliasSubQueryExpression(ISelectStatement subquery) : this(new SubQueryExpression(subquery)) { }
+        public AliasSubQueryExpression(ISelectStatement subquery, string alias) : this(new SubQueryExpression(subquery), alias) { }
+        public AliasSubQueryExpression(ISubQueryExpression subquery) : this(subquery, null) { }
+        public AliasSubQueryExpression(ISubQueryExpression subquery, string alias)
         {
             SubQuery = subquery;
             Alias = alias;
-        }
-
-        public SubQueryAliasExpression(ISelectStatement subquery)
-            : this(new SubQueryExpression(subquery))
-        {
         }
 
         /// <summary>
@@ -2444,8 +2442,12 @@ namespace SqlExpression
     /// </summary>
     public class SelectStatement : ExpressionBase<SelectStatement>, ISelectStatement
     {
-        public SelectStatement()
-        { }
+        public SelectStatement(IQueryStatement query) : this(query, null) { }
+        public SelectStatement(IQueryStatement query, IOrderByClause orderBy)
+        {
+            Query = query;
+            OrderBy = orderBy;
+        }
 
         public IQueryStatement Query { get; set; }
 
@@ -2471,7 +2473,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0} {1}", Query.Expression, OrderBy.Expression);
+                return string.Format("{0} {1}", Query.Expression, OrderBy?.Expression).TrimEnd();
             }
         }
     }
@@ -2481,6 +2483,9 @@ namespace SqlExpression
     /// </summary>
     public class SimpleQueryStatement : ExpressionBase<SimpleQueryStatement>, ISimpleQueryStatement
     {
+        public SimpleQueryStatement(ISelectClause select, IFromClause from) : this(select, from, null, null) { }
+        public SimpleQueryStatement(ISelectClause select, IFromClause from, IWhereClause where) : this(select, from, where, null) { }
+        public SimpleQueryStatement(ISelectClause select, IFromClause from, IGroupByClause groupBy) : this(select, from, null, groupBy) { }
         public SimpleQueryStatement(ISelectClause select, IFromClause from, IWhereClause where, IGroupByClause groupBy)
         {
             Select = select;

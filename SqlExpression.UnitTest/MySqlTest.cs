@@ -39,7 +39,7 @@ namespace SqlExpression.UnitTest
             {
                 var datasetAlias = new DatasetAlias(alias);
 
-                TableAlias = new TableAliasExpression(Table, datasetAlias);
+                TableAlias = new AliasTableExpression(Table, datasetAlias);
                 oid = new Field("oid", datasetAlias);
                 oname = new Field("oname", datasetAlias);
                 isdel = new Field("isdel", datasetAlias);
@@ -47,7 +47,7 @@ namespace SqlExpression.UnitTest
                 All = new Field[] { oid, oname, isdel };
             }
 
-            public TableAliasExpression TableAlias { get; protected set; }
+            public AliasTableExpression TableAlias { get; protected set; }
 
             public Field oid { get; protected set; }
             public Field oname { get; protected set; }

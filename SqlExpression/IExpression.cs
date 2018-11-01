@@ -335,9 +335,7 @@ namespace SqlExpression
         /// </summary>
         ISubQueryExpression SubQuery { get; set; }
     }
-
-    #region WhereClause
-
+    
     /// <summary>
     /// where子句
     /// </summary>
@@ -348,8 +346,6 @@ namespace SqlExpression
         /// </summary>
         ISimpleValue Filter { get; set; }
     }
-
-    #endregion
 
     /// <summary>
     /// insert语句
