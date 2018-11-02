@@ -93,69 +93,6 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 数据集别名
-    /// </summary>
-    public class DatasetAlias : ExpressionBase<DatasetAlias>, IAliasDataset
-    {
-        public DatasetAlias(string alias)
-        {
-            Alias = alias;
-        }
-
-        /// <summary>
-        /// 别名
-        /// </summary>
-        public string Alias { get; set; }
-
-        protected override string Build()
-        {
-            if (Alias == null)
-            {
-                throw new SqlSyntaxException(this, Error.AliasNameMissing);
-            }
-            return Alias;
-        }
-    }
-
-    /// <summary>
-    /// 表别名表达式
-    /// </summary>
-    public class AliasTableExpression : ExpressionBase<AliasTableExpression>, IAliasTableExpression
-    {
-        public AliasTableExpression(ITable table, string alias = null)
-        {
-            Table = table;
-            Alias = alias;
-        }
-
-        /// <summary>
-        /// 表
-        /// </summary>
-        public ITable Table { get; set; }
-
-        /// <summary>
-        /// 别名
-        /// </summary>
-        public string Alias { get; set; }
-
-        protected override string Build()
-        {
-            if (Table == null)
-            {
-                throw new SqlSyntaxException(this, Error.TableMissing);
-            }
-            if (string.IsNullOrWhiteSpace(Alias))
-            {
-                return Table.Expression;
-            }
-            else
-            {
-                return string.Format("{0} AS {1}", Table.Expression, Alias);
-            }
-        }
-    }
-
-    /// <summary>
     /// 字段
     /// </summary>
     public class Field : ExpressionBase<Field>, IField
@@ -959,51 +896,13 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 子查询别名
-    /// </summary>
-    public class AliasSubQueryExpression : ExpressionBase<AliasSubQueryExpression>, IAliasSubQueryExpression
-    {
-        public AliasSubQueryExpression(ISelectStatement subquery) : this(new SubQueryExpression(subquery)) { }
-        public AliasSubQueryExpression(ISelectStatement subquery, string alias) : this(new SubQueryExpression(subquery), alias) { }
-        public AliasSubQueryExpression(ISubQueryExpression subquery) : this(subquery, null) { }
-        public AliasSubQueryExpression(ISubQueryExpression subquery, string alias)
-        {
-            SubQuery = subquery;
-            Alias = alias;
-        }
-
-        /// <summary>
-        /// 子查询
-        /// </summary>
-        public ISubQueryExpression SubQuery { get; set; }
-
-        /// <summary>
-        /// 别名
-        /// </summary>
-        public string Alias { get; set; }
-
-        protected override string Build()
-        {
-            if (SubQuery == null)
-            {
-                throw new SqlSyntaxException(this, Error.SubQueryMissing);
-            }
-            if (Alias == null)
-            {
-                throw new SqlSyntaxException(this, Error.AliasMissing);
-            }
-            return string.Format("{0} AS {1}", SubQuery.Expression, Alias);
-        }
-    }
-
-    /// <summary>
     /// 一元表达式
     /// </summary>
     public abstract class UnaryExpression : ExpressionBase<UnaryExpression>, IUnaryExpression
     {
-        public UnaryExpression(ISimpleValue a, IUnaryOperator op)
+        public UnaryExpression(ISimpleValue value, IUnaryOperator op)
         {
-            Value = a;
+            Value = value;
             Op = op;
         }
 
@@ -1332,23 +1231,14 @@ namespace SqlExpression
     /// <summary>
     /// Exists表达式
     /// </summary>
-    public class ExistsExpression : ExpressionBase<ExistsExpression>, IExistsExpression
+    public class ExistsExpression : UnaryExpression, IExistsExpression
     {
-        public ExistsExpression(ISubQueryExpression subquery)
+        public ExistsExpression(ISubQueryExpression subquery) : base(subquery, Operator.Exists)
         {
             SubQuery = subquery;
         }
 
         public ISubQueryExpression SubQuery { get; set; }
-
-        protected override string Build()
-        {
-            if (SubQuery == null)
-            {
-                throw new SqlSyntaxException(this, Error.SubQueryMissing);
-            }
-            return string.Format("EXISTS {0}", SubQuery.Expression);
-        }
 
         #region 逻辑运算符
 
@@ -1368,23 +1258,14 @@ namespace SqlExpression
     /// <summary>
     /// Not Exists表达式
     /// </summary>
-    public class NotExistsExpression : ExpressionBase<NotExistsExpression>, INotExistsExpression
+    public class NotExistsExpression : UnaryExpression, INotExistsExpression
     {
-        public NotExistsExpression(ISubQueryExpression subquery)
+        public NotExistsExpression(ISubQueryExpression subquery) : base(subquery, Operator.NotExists)
         {
             SubQuery = subquery;
         }
 
         public ISubQueryExpression SubQuery { get; set; }
-
-        protected override string Build()
-        {
-            if (SubQuery == null)
-            {
-                throw new SqlSyntaxException(this, Error.SubQueryMissing);
-            }
-            return string.Format("NOT EXISTS {0}", SubQuery.Expression);
-        }
 
         #region 逻辑运算符
 
@@ -1402,11 +1283,51 @@ namespace SqlExpression
     }
 
     /// <summary>
+    /// 三元表达式
+    /// </summary>
+    public class TernaryExpression : ExpressionBase<TernaryExpression>, ITernaryExpression
+    {
+        public TernaryExpression(ITernaryOperator op, ISimpleValue value1, ISimpleValue value2, ISimpleValue value3)
+        {
+            Op = op;
+            Value1 = value1;
+            Value2 = value2;
+            Value3 = value3;
+        }
+
+        public ITernaryOperator Op { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ISimpleValue Value1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ISimpleValue Value2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ISimpleValue Value3 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        protected override string Build()
+        {
+            if (Op == null)
+            {
+                throw new SqlSyntaxException(this, Error.OperatorMissing);
+            }
+            if (Value1 == null)
+            {
+                throw new SqlSyntaxException(this, Error.OperandMissing);
+            }
+            if (Value2 == null)
+            {
+                throw new SqlSyntaxException(this, Error.OperandMissing);
+            }
+            if (Value3 == null)
+            {
+                throw new SqlSyntaxException(this, Error.OperandMissing);
+            }
+            return string.Format(Op.Format, Value1.Expression, Value2.Expression, Value3.Expression);
+        }
+    }
+
+    /// <summary>
     /// Between表达式
     /// </summary>
-    public class BetweenExpression : ExpressionBase<BetweenExpression>, IBetweenExpression
+    public class BetweenExpression : TernaryExpression, IBetweenExpression
     {
-        public BetweenExpression(ISimpleValue value, ISimpleValue lower, ISimpleValue upper)
+        public BetweenExpression(ISimpleValue value, ISimpleValue lower, ISimpleValue upper) : base(Operator.Between, value, lower, upper)
         {
             Value = value;
             Lower = lower;
@@ -1433,7 +1354,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.BetweenUpperMissing);
             }
-            return string.Format("{0} BETWEEN {1} AND {2}", Value.Expression, Lower.Expression, Upper.Expression);
+            return string.Format(Op.Format, Value.Expression, Lower.Expression, Upper.Expression);
         }
 
         #region 逻辑运算符
@@ -1454,9 +1375,9 @@ namespace SqlExpression
     /// <summary>
     /// Not Between表达式
     /// </summary>
-    public class NotBetweenExpression : ExpressionBase<NotBetweenExpression>, INotBetweenExpression
+    public class NotBetweenExpression : TernaryExpression, INotBetweenExpression
     {
-        public NotBetweenExpression(ISimpleValue value, ISimpleValue lower, ISimpleValue upper)
+        public NotBetweenExpression(ISimpleValue value, ISimpleValue lower, ISimpleValue upper) : base(Operator.NotBetween, value, lower, upper)
         {
             Value = value;
             Lower = lower;
@@ -1483,7 +1404,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.BetweenUpperMissing);
             }
-            return string.Format("{0} NOT BETWEEN {1} AND {2}", Value.Expression, Lower.Expression, Upper.Expression);
+            return string.Format(Op.Format, Value.Expression, Lower.Expression, Upper.Expression);
         }
 
         #region 逻辑运算符
@@ -1504,9 +1425,9 @@ namespace SqlExpression
     /// <summary>
     /// In表达式
     /// </summary>
-    public class InExpression : ExpressionBase<InExpression>, IInExpression
+    public class InExpression : BinaryExpression, IInExpression
     {
-        public InExpression(ISimpleValue value, ICollection collection)
+        public InExpression(ISimpleValue value, ICollection collection) : base(value, Operator.In, collection)
         {
             Value = value;
             Collection = collection;
@@ -1526,7 +1447,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.CollectionMissing);
             }
-            return string.Format("{0} IN {1}", Value.Expression, Collection.Expression);
+            return string.Format(Operator.In.Format, Value.Expression, Collection.Expression);
         }
 
         #region 逻辑运算符
@@ -1547,9 +1468,9 @@ namespace SqlExpression
     /// <summary>
     /// Not In表达式
     /// </summary>
-    public class NotInExpression : ExpressionBase<NotInExpression>, INotInExpression
+    public class NotInExpression : BinaryExpression, INotInExpression
     {
-        public NotInExpression(ISimpleValue value, ICollection collection)
+        public NotInExpression(ISimpleValue value, ICollection collection) : base(value, Operator.NotIn, collection)
         {
             Value = value;
             Collection = collection;
@@ -1569,7 +1490,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.CollectionMissing);
             }
-            return string.Format("{0} NOT IN {1}", Value.Expression, Collection.Expression);
+            return string.Format(Operator.NotIn.Format, Value.Expression, Collection.Expression);
         }
 
         #region 逻辑运算符
@@ -2311,7 +2232,7 @@ namespace SqlExpression
             get
             {
                 List<string> list = new List<string>();
-                if (Where != null) list.AddRange(Where.Filter.Params());
+                if (Where != null) list.AddRange(Where.Filter.ResolveParams());
                 return list;
             }
         }
@@ -2349,7 +2270,7 @@ namespace SqlExpression
             get
             {
                 var list = new List<string>();
-                foreach (var item in Set.SetFields)
+                foreach (var item in Set.Sets)
                 {
                     if (item.Value is ICustomerExpression)
                     {
@@ -2360,7 +2281,7 @@ namespace SqlExpression
                         list.Add((item.Value as IParam).Name);
                     }
                 }
-                if (Where != null) list.AddRange(Where.Filter.Params());
+                if (Where != null) list.AddRange(Where.Filter.ResolveParams());
                 return list.Distinct();
             }
         }
@@ -2383,17 +2304,38 @@ namespace SqlExpression
     }
 
     /// <summary>
+    /// 更新赋值子句
+    /// </summary>
+    public class SetClause : ExpressionBase<SetClause>, ISetClause
+    {
+        public SetClause(IList<ISetExpression> sets)
+        {
+            Sets = sets;
+        }
+        public IList<ISetExpression> Sets { get; set; }
+
+        protected override string Build()
+        {
+            if (Sets == null || Sets.Count == 0)
+            {
+                throw new SqlSyntaxException(this, Error.SetClauseEmpty);
+            }
+            return string.Format("SET {0}", Sets.Join(",", set => set.Expression));
+        }
+    }
+
+    /// <summary>
     /// 更新赋值项
     /// </summary>
-    public class SetFieldExpression : ExpressionBase<SetFieldExpression>, ISetFieldExpression
+    public class SetExpression : ExpressionBase<SetExpression>, ISetExpression
     {
-        public SetFieldExpression(IField field, ISimpleValue value)
+        public SetExpression(IField field, ISimpleValue value)
         {
             Field = field;
             Value = value;
         }
 
-        public SetFieldExpression(IField field)
+        public SetExpression(IField field)
             : this(field, new Param(field.Name))
         {
         }
@@ -2417,28 +2359,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 更新赋值子句
-    /// </summary>
-    public class SetClause : ExpressionBase<SetClause>, ISetClause
-    {
-        public SetClause(IList<ISetFieldExpression> sets)
-        {
-            SetFields = sets;
-        }
-        public IList<ISetFieldExpression> SetFields { get; set; }
-
-        protected override string Build()
-        {
-            if (SetFields == null || SetFields.Count == 0)
-            {
-                throw new SqlSyntaxException(this, Error.SetClauseEmpty);
-            }
-            return string.Format("SET {0}", SetFields.Join(",", set => set.Expression));
-        }
-    }
-
-    /// <summary>
-    /// 查询语句
+    /// Select查询语句
     /// </summary>
     public class SelectStatement : ExpressionBase<SelectStatement>, ISelectStatement
     {
@@ -2479,7 +2400,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 简单查询语句
+    /// 简单查询
     /// </summary>
     public class SimpleQueryStatement : ExpressionBase<SimpleQueryStatement>, ISimpleQueryStatement
     {
@@ -2506,11 +2427,11 @@ namespace SqlExpression
                 var _params = new List<string>();
                 foreach (var item in Select.Items)
                 {
-                    _params.AddRange(item.Field.Params());
+                    _params.AddRange(item.Field.ResolveParams());
                 }
-                // todo From
-                if (Where != null) _params.AddRange(Where.Filter.Params());
-                if (GroupBy != null) _params.AddRange(GroupBy.Having.Params());
+                _params.AddRange(From.Dataset.ResolveParams());
+                if (Where != null) _params.AddRange(Where.Filter.ResolveParams());
+                if (GroupBy != null) _params.AddRange(GroupBy.Having.ResolveParams());
                 return _params.Distinct();
             }
         }
@@ -2532,7 +2453,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 合并查询语句
+    /// 合并查询
     /// </summary>
     public class UnionQueryStatement : ExpressionBase<UnionQueryStatement>, IUnionQueryStatement
     {
@@ -2574,9 +2495,11 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.UnionQuery2Missing);
             }
-            return string.Format("{0} {1} {2}", Query1.Expression, UnionOp, Query2.Expression);
+            return string.Format(UnionOp.Format, Query1.Expression, Query2.Expression);
         }
     }
+
+    #region Select
 
     /// <summary>
     /// Select子句
@@ -2659,8 +2582,110 @@ namespace SqlExpression
         }
     }
 
+    #endregion
+
+    #region From
+
     /// <summary>
-    /// 查询联接 todo Params
+    /// From子句
+    /// </summary>
+    public class FromClause : ExpressionBase<FromClause>, IFromClause
+    {
+        public FromClause(IDataset dataset)
+        {
+            Dataset = dataset;
+        }
+
+        public IDataset Dataset { get; set; }
+
+        protected override string Build()
+        {
+            if (Dataset == null)
+            {
+                throw new SqlSyntaxException(this, Error.DatasetMissing);
+            }
+            return string.Format("FROM {0}", Dataset.Expression);
+        }
+    }
+
+    /// <summary>
+    /// 表带别名
+    /// </summary>
+    public class AliasTableExpression : ExpressionBase<AliasTableExpression>, IAliasTableExpression
+    {
+        public AliasTableExpression(ITable table, string alias = null)
+        {
+            Table = table;
+            Alias = alias;
+        }
+
+        /// <summary>
+        /// 表
+        /// </summary>
+        public ITable Table { get; set; }
+
+        /// <summary>
+        /// 别名
+        /// </summary>
+        public string Alias { get; set; }
+
+        protected override string Build()
+        {
+            if (Table == null)
+            {
+                throw new SqlSyntaxException(this, Error.TableMissing);
+            }
+            if (string.IsNullOrWhiteSpace(Alias))
+            {
+                return Table.Expression;
+            }
+            else
+            {
+                return string.Format("{0} AS {1}", Table.Expression, Alias);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 子查询带别名
+    /// </summary>
+    public class AliasSubQueryExpression : ExpressionBase<AliasSubQueryExpression>, IAliasSubQueryExpression
+    {
+        public AliasSubQueryExpression(ISelectStatement subquery) : this(new SubQueryExpression(subquery)) { }
+        public AliasSubQueryExpression(ISelectStatement subquery, string alias) : this(new SubQueryExpression(subquery), alias) { }
+        public AliasSubQueryExpression(ISubQueryExpression subquery) : this(subquery, null) { }
+        public AliasSubQueryExpression(ISubQueryExpression subquery, string alias)
+        {
+            SubQuery = subquery;
+            Alias = alias;
+        }
+
+        /// <summary>
+        /// 子查询
+        /// </summary>
+        public ISubQueryExpression SubQuery { get; set; }
+
+        /// <summary>
+        /// 别名
+        /// </summary>
+        public string Alias { get; set; }
+
+        protected override string Build()
+        {
+            if (SubQuery == null)
+            {
+                throw new SqlSyntaxException(this, Error.SubQueryMissing);
+            }
+            if (Alias == null)
+            {
+                throw new SqlSyntaxException(this, Error.AliasMissing);
+            }
+            return string.Format("{0} AS {1}", SubQuery.Expression, Alias);
+        }
+    }
+
+    /// <summary>
+    /// 查询联接
     /// </summary>
     public class JoinExpression : ExpressionBase<JoinExpression>, IJoinExpression
     {
@@ -2698,17 +2723,19 @@ namespace SqlExpression
             }
             if (On == null)
             {
-                return string.Format("{0} {1} {2}", Right.Expression, JoinOp, Left.Expression);
+                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), Right.Expression, Left.Expression, string.Empty);
             }
             else
             {
-                return string.Format("{0} {1} {2} ON {3}", Right.Expression, JoinOp, Left.Expression, On.Expression);
+                return string.Format(JoinOp.Format, Right.Expression, Left.Expression, On.Expression);
             }
         }
     }
 
+    #endregion
+
     /// <summary>
-    /// 分组子句
+    /// GroupBy分组子句
     /// </summary>
     public class GroupByClause : ExpressionBase<GroupByClause>, IGroupByClause
     {
@@ -2742,7 +2769,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 排序子句
+    /// OrderBy排序子句
     /// </summary>
     public class OrderByClause : ExpressionBase<OrderByClause>, IOrderByClause
     {
@@ -2870,39 +2897,84 @@ namespace SqlExpression
         }
     }
 
-    static class _Extension
+    static class ResolveParamsExtension
     {
         /// <summary>
         /// 获取ISimpleValue参数列表
         /// </summary>
         /// <param name="simpleValue"></param>
         /// <returns></returns>
-        public static IEnumerable<string> Params(this ISimpleValue simpleValue)
+        public static IEnumerable<string> ResolveParams(this ISimpleValue simpleValue)
         {
-            if (simpleValue is ICustomerExpression)
+            var _params = new List<string>();
+            if (simpleValue is IParam)
+            {
+                return new List<string>() { (simpleValue as IParam).Name };
+            }
+            else if (simpleValue is ICustomerExpression)
             {
                 return (simpleValue as ICustomerExpression).ResolveParams();
             }
             else if (simpleValue is IBinaryExpression)
             {
-                return ResolveParams(simpleValue as IBinaryExpression);
+                var binary = simpleValue as IBinaryExpression;
+                _params.AddRange(binary.Value1.ResolveParams());
+                _params.AddRange(binary.Value2.ResolveParams());
             }
             else if (simpleValue is IUnaryExpression)
             {
-                return ResolveParams(simpleValue as IUnaryExpression);
+                var unary = simpleValue as IUnaryExpression;
+                _params.AddRange(unary.Value.ResolveParams());
+            }
+            else if (simpleValue is ITernaryExpression)
+            {
+                var ternary = simpleValue as ITernaryExpression;
+                _params.AddRange(ternary.Value1.ResolveParams());
+                _params.AddRange(ternary.Value2.ResolveParams());
+                _params.AddRange(ternary.Value3.ResolveParams());
             }
             else if (simpleValue is IFunctionExpression)
             {
-                return ResolveParams(simpleValue as IFunctionExpression);
+                var function = simpleValue as IFunctionExpression;
+                foreach (var value in function.Values)
+                {
+                    _params.AddRange(value.ResolveParams());
+                }
             }
-            else if (simpleValue is IParam)
+            else if (simpleValue is ISubQueryExpression)
             {
-                return new List<string>() { (simpleValue as IParam).Name };
+                return (simpleValue as ISubQueryExpression).Query.Params;
             }
-            else
+            else if (simpleValue is IValueCollectionExpression)
             {
-                return new List<string>();
+                foreach (var val in (simpleValue as IValueCollectionExpression).Values)
+                {
+                    _params.AddRange(val.ResolveParams());
+                }
             }
+            else if (simpleValue is IAliasSubQueryExpression)
+            {
+                _params.AddRange((simpleValue as IAliasSubQueryExpression).SubQuery.ResolveParams());
+            }
+            return _params.Distinct();
+        }
+
+        public static IEnumerable<string> ResolveParams(this IDataset dataset)
+        {
+            var _params = new List<string>();
+
+            if (dataset is IAliasSubQueryExpression)
+            {
+                _params.AddRange((dataset as ISimpleValue).ResolveParams());
+            }
+            else if (dataset is IJoinExpression)
+            {
+                var join = dataset as IJoinExpression;
+                _params.AddRange(join.Left.ResolveParams());
+                _params.AddRange(join.Right.ResolveParams());
+                _params.AddRange(join.On.ResolveParams());
+            }
+            return _params.Distinct();
         }
 
         /// <summary>
@@ -2917,109 +2989,6 @@ namespace SqlExpression
             foreach (Match match in matchs)
             {
                 list.Add(match.Value);
-            }
-            return list.Distinct().ToList();
-        }
-
-        private static List<string> ResolveParams(IBinaryExpression binary)
-        {
-            List<string> list = new List<string>();
-            if (binary.Value1 is ICustomerExpression)
-            {
-                list.AddRange((binary.Value1 as ICustomerExpression).ResolveParams());
-            }
-            else if (binary.Value1 is IParam)
-            {
-                list.Add((binary.Value1 as IParam).Name);
-            }
-            else if (binary.Value1 is IUnaryExpression)
-            {
-                list.AddRange(ResolveParams(binary.Value1 as IUnaryExpression));
-            }
-            else if (binary.Value1 is IBinaryExpression)
-            {
-                list.AddRange(ResolveParams(binary.Value1 as IBinaryExpression));
-            }
-            else if (binary.Value1 is IFunctionExpression)
-            {
-                list.AddRange(ResolveParams(binary.Value1 as IFunctionExpression));
-            }
-
-            if (binary.Value2 is ICustomerExpression)
-            {
-                list.AddRange((binary.Value2 as ICustomerExpression).ResolveParams());
-            }
-            else if (binary.Value2 is IParam)
-            {
-                list.Add((binary.Value2 as IParam).Name);
-            }
-            else if (binary.Value2 is IUnaryExpression)
-            {
-                list.AddRange(ResolveParams(binary.Value2 as IUnaryExpression));
-            }
-            else if (binary.Value2 is IBinaryExpression)
-            {
-                list.AddRange(ResolveParams(binary.Value2 as IBinaryExpression));
-            }
-            else if (binary.Value2 is IFunctionExpression)
-            {
-                list.AddRange(ResolveParams(binary.Value2 as IFunctionExpression));
-            }
-
-            return list.Distinct().ToList();
-        }
-
-        private static List<string> ResolveParams(IUnaryExpression unaray)
-        {
-            List<string> list = new List<string>();
-            if (unaray.Value is ICustomerExpression)
-            {
-                list.AddRange((unaray.Value as ICustomerExpression).ResolveParams());
-            }
-            else if (unaray.Value is IParam)
-            {
-                list.Add((unaray.Value as IParam).Name);
-            }
-            else if (unaray.Value is IUnaryExpression)
-            {
-                list.AddRange(ResolveParams(unaray.Value as IUnaryExpression));
-            }
-            else if (unaray.Value is IBinaryExpression)
-            {
-                list.AddRange(ResolveParams(unaray.Value as IBinaryExpression));
-            }
-            else if (unaray.Value is IFunctionExpression)
-            {
-                list.AddRange(ResolveParams(unaray.Value as IFunctionExpression));
-            }
-            return list.Distinct().ToList();
-        }
-
-        private static List<string> ResolveParams(IFunctionExpression function)
-        {
-            List<string> list = new List<string>();
-            foreach (var value in function.Values)
-            {
-                if (value is ICustomerExpression)
-                {
-                    list.AddRange((value as ICustomerExpression).ResolveParams());
-                }
-                else if (value is IParam)
-                {
-                    list.Add((value as IParam).Name);
-                }
-                else if (value is IUnaryExpression)
-                {
-                    list.AddRange(ResolveParams(value as IUnaryExpression));
-                }
-                else if (value is IBinaryExpression)
-                {
-                    list.AddRange(ResolveParams(value as IBinaryExpression));
-                }
-                else if (value is IFunctionExpression)
-                {
-                    list.AddRange(ResolveParams(value as IFunctionExpression));
-                }
             }
             return list.Distinct().ToList();
         }

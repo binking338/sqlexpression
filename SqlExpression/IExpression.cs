@@ -54,12 +54,12 @@ namespace SqlExpression
     /// <summary>
     /// 值列表
     /// </summary>
-    public interface ICollection : IValue { }
+    public interface ICollection : ISimpleValue { }
 
     /// <summary>
     /// 表
     /// </summary>
-    public interface ITable : IExpression
+    public interface ITable : IDataset
     {
         /// <summary>
         /// 表名
@@ -140,6 +140,29 @@ namespace SqlExpression
         /// 操作数
         /// </summary>
         ISimpleValue Value2 { get; set; }
+    }
+
+    public interface ITernaryExpression : ISimpleValue
+    {
+        /// <summary>
+        /// 操作符
+        /// </summary>
+        ITernaryOperator Op { get; set; }
+
+        /// <summary>
+        /// 操作数
+        /// </summary>
+        ISimpleValue Value1 { get; set; }
+
+        /// <summary>
+        /// 操作数
+        /// </summary>
+        ISimpleValue Value2 { get; set; }
+
+        /// <summary>
+        /// 操作数
+        /// </summary>
+        ISimpleValue Value3 { get; set; }
     }
 
     /// <summary>
@@ -279,7 +302,7 @@ namespace SqlExpression
     /// <summary>
     /// 子查询
     /// </summary>
-    public interface ISubQueryExpression : ICollection, ISimpleValue
+    public interface ISubQueryExpression : ICollection
     {
         /// <summary>
         /// 子查询语句
@@ -319,7 +342,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 表别名
+    /// 表带别名
     /// </summary>
     public interface IAliasTableExpression : IAliasDataset
     {
@@ -330,7 +353,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 子查询别名
+    /// 子查询带别名
     /// </summary>
     public interface IAliasSubQueryExpression : IAliasDataset, ISimpleValue
     {
@@ -419,13 +442,13 @@ namespace SqlExpression
         /// <summary>
         /// 字段更新项
         /// </summary>
-        IList<ISetFieldExpression> SetFields { get; set; }
+        IList<ISetExpression> Sets { get; set; }
     }
 
     /// <summary>
     /// 字段更新项
     /// </summary>
-    public interface ISetFieldExpression : IExpression
+    public interface ISetExpression : IExpression
     {
         /// <summary>
         /// 更新字段
@@ -442,12 +465,12 @@ namespace SqlExpression
     #region SelectStatement
 
     /// <summary>
-    /// select语句
+    /// Select查询语句
     /// </summary>
     public interface ISelectStatement : ISqlStatement
     {
         /// <summary>
-        /// 查询语句
+        /// 查询
         /// </summary>
         IQueryStatement Query { get; set; }
 
@@ -458,12 +481,12 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 查询语句
+    /// 查询
     /// </summary>
     public interface IQueryStatement : ISqlStatement { }
 
     /// <summary>
-    /// 简单查询语句
+    /// 简单查询
     /// </summary>
     public interface ISimpleQueryStatement : IQueryStatement
     {
@@ -489,7 +512,7 @@ namespace SqlExpression
     }
 
     /// <summary>
-    /// 联合查询语句
+    /// 合并查询
     /// </summary>
     public interface IUnionQueryStatement : IQueryStatement
     {

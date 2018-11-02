@@ -37,7 +37,7 @@ namespace SqlExpression.UnitTest
 
             public Foo4MysqlSchema(string alias)
             {
-                var datasetAlias = new DatasetAlias(alias);
+                var datasetAlias = new AliasDataset(alias);
 
                 TableAlias = new AliasTableExpression(Table, datasetAlias);
                 oid = new Field("oid", datasetAlias);

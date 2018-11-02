@@ -18,6 +18,7 @@ namespace SqlExpression
         public const string FunctionNameMissing = "function name missing";
         public const string FilterMissing = "filter missing";
         public const string TableMissing = "table missing";
+        public const string DatasetMissing = "dataset missing";
         public const string LeftDatasetMissing = "left dataset missing";
         public const string RightDatasetMissing = "right dataset missing";
         public const string FieldMissing = "field missing";

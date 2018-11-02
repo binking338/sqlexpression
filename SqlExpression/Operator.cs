@@ -44,6 +44,8 @@ namespace SqlExpression
     /// </summary>
     public interface IArithmeticOperator : IBinaryOperator { }
 
+    public interface ITernaryOperator : IOperator { }
+
     /// <summary>
     /// 合并操作符
     /// </summary>
@@ -65,12 +67,12 @@ namespace SqlExpression
         public static ComparisonOperator GtOrEq = new ComparisonOperator(">=");
         public static ComparisonOperator Lt = new ComparisonOperator("<");
         public static ComparisonOperator LtOrEq = new ComparisonOperator("<=");
-        public static ComparisonOperator In = new ComparisonOperator(" IN ");
-        public static ComparisonOperator NotIn = new ComparisonOperator(" NOT IN ");
-        public static ComparisonOperator Like = new ComparisonOperator(" LIKE ");
-        public static ComparisonOperator NotLike = new ComparisonOperator(" NOT LIKE ");
-        public static ComparisonOperator Is = new ComparisonOperator(" IS ");
-        public static ComparisonOperator IsNot = new ComparisonOperator(" IS NOT ");
+        public static ComparisonOperator In = new ComparisonOperator("IN", "{0} IN {1}");
+        public static ComparisonOperator NotIn = new ComparisonOperator("NOT IN", "{0} NOT IN {1}");
+        public static ComparisonOperator Like = new ComparisonOperator("LIKE", "{0} LIKE {1}");
+        public static ComparisonOperator NotLike = new ComparisonOperator("NOT LIKE", "{0} NOT LIKE {1}");
+        public static ComparisonOperator Is = new ComparisonOperator("IS", "{0} IS {1}");
+        public static ComparisonOperator IsNot = new ComparisonOperator("IS NOT", " IS NOT {1}");
         public static UnaryComparisonOperator IsNull = new UnaryComparisonOperator("IS NULL", "{0} IS NULL");
         public static UnaryComparisonOperator IsNotNull = new UnaryComparisonOperator("IS NOT NULL", "{0} IS NOT NULL");
         public static UnaryComparisonOperator IsTrue = new UnaryComparisonOperator("IS TRUE", "{0} IS TRUE");
@@ -79,9 +81,14 @@ namespace SqlExpression
         public static UnaryComparisonOperator IsNotFalse = new UnaryComparisonOperator("IS NOT FALSE", "{0} IS NOT FALSE");
 
         public static UnaryOperator Bracket = new UnaryOperator("()", "({0})");
+        public static UnaryOperator Exists = new UnaryOperator("EXISTS", "EXISTS {0}");
+        public static UnaryOperator NotExists = new UnaryOperator("NOT EXISTS", "NOT EXISTS {0}");
 
-        public static LogicOperator Or = new LogicOperator(" OR ");
-        public static LogicOperator And = new LogicOperator(" AND ");
+        public static TernaryOperator Between = new TernaryOperator("BETWEEN", "{0} BETWEEN {1} AND {2}");
+        public static TernaryOperator NotBetween = new TernaryOperator("NOT BETWEEN", "{0} NOT BETWEEN {1} AND {2}");
+
+        public static LogicOperator Or = new LogicOperator("OR", "{0} OR {1}");
+        public static LogicOperator And = new LogicOperator("AND", "{0} AND {1}");
 
         public static ArithmeticOperator Add = new ArithmeticOperator("+");
         public static ArithmeticOperator Sub = new ArithmeticOperator("-");
@@ -89,13 +96,13 @@ namespace SqlExpression
         public static ArithmeticOperator Div = new ArithmeticOperator("/");
         public static ArithmeticOperator Mod = new ArithmeticOperator("%");
 
-        public static UnionOperator Union = new UnionOperator("UNION");
-        public static UnionOperator UnionAll = new UnionOperator("UNION ALL");
+        public static UnionOperator Union = new UnionOperator("UNION", "{0} UNION {1}");
+        public static UnionOperator UnionAll = new UnionOperator("UNION ALL", "{0} UNION ALL {1}");
 
-        public static JoinOperator InnerJoin = new JoinOperator("INNER JOIN");
-        public static JoinOperator LeftJoin = new JoinOperator("LEFT JOIN");
-        public static JoinOperator RightJoin = new JoinOperator("RIGHT JOIN");
-        public static JoinOperator FullJoin = new JoinOperator("FULL JOIN");
+        public static JoinOperator InnerJoin = new JoinOperator("INNER JOIN", "{0} INNER JOIN {1} ON {2}");
+        public static JoinOperator LeftJoin = new JoinOperator("LEFT JOIN", "{0} LEFT JOIN  {1} ON {2}");
+        public static JoinOperator RightJoin = new JoinOperator("RIGHT JOIN", "{0} RIGHT JOIN  {1} ON {2}");
+        public static JoinOperator FullJoin = new JoinOperator("FULL JOIN", "{0} FULL JOIN  {1} ON {2}");
 
         public Operator(string literal, string format)
         {
@@ -132,11 +139,13 @@ namespace SqlExpression
     public class BinaryOperator : Operator, IBinaryOperator
     {
         public BinaryOperator(string literal) : base(literal, string.Format("{{0}}{0}{{1}}", literal)) { }
+        public BinaryOperator(string literal, string format) : base(literal, format) { }
     }
 
     public class ComparisonOperator : BinaryOperator, IComparisonOperator
     {
         public ComparisonOperator(string literal) : base(literal) { }
+        public ComparisonOperator(string literal, string format) : base(literal, format) { }
     }
 
     public class UnaryComparisonOperator : UnaryOperator, IUnaryComparisonOperator
@@ -147,6 +156,7 @@ namespace SqlExpression
     public class LogicOperator : BinaryOperator, ILogicOperator
     {
         public LogicOperator(string literal) : base(literal) { }
+        public LogicOperator(string literal, string format) : base(literal, format) { }
     }
 
     public class ArithmeticOperator : BinaryOperator, IArithmeticOperator
@@ -154,13 +164,18 @@ namespace SqlExpression
         public ArithmeticOperator(string literal) : base(literal) { }
     }
 
-    public class UnionOperator : Operator, IUnionOperator
+    public class TernaryOperator : Operator, ITernaryOperator
     {
-        public UnionOperator(string literal) : base(literal, literal) { }
+        public TernaryOperator(string literal, string format) : base(literal, format) { }
     }
 
-    public class JoinOperator : Operator, IJoinOperator
+    public class UnionOperator : BinaryOperator, IUnionOperator
     {
-        public JoinOperator(string literal) : base(literal, literal) { }
+        public UnionOperator(string literal, string format) : base(literal, format) { }
+    }
+
+    public class JoinOperator : TernaryOperator, IJoinOperator
+    {
+        public JoinOperator(string literal, string format) : base(literal, format) { }
     }
 }
