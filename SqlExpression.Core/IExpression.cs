@@ -670,22 +670,22 @@ namespace SqlExpression
     /// <summary>
     /// 自定义值表达式
     /// </summary>
-    public interface ICustomerValue : IValue { }
+    public interface ICustomValue : IValue { }
 
     /// <summary>
     /// 自定义简单值表达式
     /// </summary>
-    public interface ICustomerSimpleValue : ISimpleValue { }
+    public interface ICustomSimpleValue : ISimpleValue { }
 
     /// <summary>
     /// 自定义sql语句
     /// </summary>
-    public interface ICustomerSqlStatement : ISqlStatement { }
+    public interface ICustomSqlStatement : ISqlStatement { }
 
     /// <summary>
     /// 自定义表达式
     /// </summary>
-    public interface ICustomerExpression : IExpression, ICustomerValue, ICustomerSimpleValue, ICustomerSqlStatement { }
+    public interface ICustomExpression : IExpression, ICustomValue, ICustomSimpleValue, ICustomSqlStatement { }
 
     #endregion
 }

@@ -11,6 +11,16 @@ namespace SqlExpression.MySql
         {
         }
 
+        public static void EnableDialect()
+        {
+            Expression.NameQuotationMark = "`";
+        }
+
+        public static void DisableDialect()
+        {
+            Expression.NameQuotationMark = string.Empty;
+        }
+
         /// <summary>
         /// 返回分页sql语句
         /// </summary>

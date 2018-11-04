@@ -8,12 +8,19 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
+    public static class Expression
+    {
+        public static string NameQuotationMark { get; set; } = string.Empty;
+        public static string ParamMark { get; set; } = "@";
+    }
+
     /// <summary>
     /// 表达式抽象类
     /// </summary>
     public abstract class ExpressionBase<Exp> : IExpression
         where Exp : class, IExpression
     {
+
         public ExpressionBase()
         {
 
@@ -83,7 +90,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableNameMissing);
             }
-            return Name;
+            return string.Format("{1}{0}{1}", Name, SqlExpression.Expression.NameQuotationMark);
         }
 
         public static implicit operator Table(string name)
@@ -125,7 +132,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{1}.{0}", Name, DatasetAlias);
+                return string.Format("{2}{1}{2}.{2}{0}{2}", Name, DatasetAlias, SqlExpression.Expression.NameQuotationMark);
             }
         }
 
@@ -462,7 +469,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ParamNameMissing);
             }
-            return string.Format("@{0}", Name);
+            return string.Format("{0}{1}", Name, SqlExpression.Expression.ParamMark);
         }
 
         #region 比较运算符
@@ -2182,7 +2189,7 @@ namespace SqlExpression
             get
             {
                 List<string> list = new List<string>();
-                if (Values is ICustomerExpression) list.AddRange((Values as ICustomerExpression).Params);
+                if (Values is ICustomExpression) list.AddRange((Values as ICustomExpression).Params);
                 else if (Values is IValueCollectionExpression)
                 {
                     foreach (var val in (Values as IValueCollectionExpression).Values)
@@ -2272,9 +2279,9 @@ namespace SqlExpression
                 var list = new List<string>();
                 foreach (var item in Set.Sets)
                 {
-                    if (item.Value is ICustomerExpression)
+                    if (item.Value is ICustomExpression)
                     {
-                        list.AddRange((item.Value as ICustomerExpression).Params);
+                        list.AddRange((item.Value as ICustomExpression).Params);
                     }
                     else if (item.Value is IParam)
                     {
@@ -2526,11 +2533,11 @@ namespace SqlExpression
             }
             if (Distinct)
             {
-                return string.Format("DISTINCT {0}", Items.Join(",", s => s.Expression));
+                return string.Format("SELECT DISTINCT {0}", Items.Join(",", s => s.Expression));
             }
             else
             {
-                return Items.Join(",", s => s.Expression);
+                return string.Format("SELECT {0}", Items.Join(",", s => s.Expression));
             }
         }
     }
@@ -2566,7 +2573,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0} AS {1}", Field.Expression, Alias);
+                return string.Format("{0} AS {2}{1}{2}", Field.Expression, Alias, SqlExpression.Expression.NameQuotationMark);
             }
         }
     }
@@ -2641,7 +2648,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0} AS {1}", Table.Expression, Alias);
+                return string.Format("{0} AS {2}{1}{2}", Table.Expression, Alias, SqlExpression.Expression.NameQuotationMark);
             }
         }
     }
@@ -2680,7 +2687,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.AliasMissing);
             }
-            return string.Format("{0} AS {1}", SubQuery.Expression, Alias);
+            return string.Format("{0} AS {2}{1}{2}", SubQuery.Expression, Alias, SqlExpression.Expression.NameQuotationMark);
         }
     }
 
@@ -2689,9 +2696,9 @@ namespace SqlExpression
     /// </summary>
     public class JoinExpression : ExpressionBase<JoinExpression>, IJoinExpression
     {
-        public JoinExpression(IAliasDataset left, IJoinOperator joinOp, IAliasDataset right) : this(left, joinOp, right, null) { }
+        public JoinExpression(IDataset left, IJoinOperator joinOp, IDataset right) : this(left, joinOp, right, null) { }
 
-        public JoinExpression(IAliasDataset left, IJoinOperator joinOp, IAliasDataset right, ISimpleValue on)
+        public JoinExpression(IDataset left, IJoinOperator joinOp, IDataset right, ISimpleValue on)
         {
             Left = left;
             JoinOp = joinOp;
@@ -2723,11 +2730,11 @@ namespace SqlExpression
             }
             if (On == null)
             {
-                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), Right.Expression, Left.Expression, string.Empty);
+                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), Left.Expression, Right.Expression, string.Empty);
             }
             else
             {
-                return string.Format(JoinOp.Format, Right.Expression, Left.Expression, On.Expression);
+                return string.Format(JoinOp.Format, Left.Expression, Right.Expression, On.Expression);
             }
         }
     }
@@ -2870,10 +2877,10 @@ namespace SqlExpression
     /// <summary>
     /// 自定义表达式
     /// </summary>
-    public class CustomerExpression : ExpressionBase<CustomerExpression>, ICustomerExpression
+    public class CustomExpression : ExpressionBase<CustomExpression>, ICustomExpression
     {
         string _expression;
-        public CustomerExpression(string expression)
+        public CustomExpression(string expression)
         {
             _expression = expression;
         }
@@ -2891,9 +2898,9 @@ namespace SqlExpression
             return _expression;
         }
 
-        public static implicit operator CustomerExpression(string expression)
+        public static implicit operator CustomExpression(string expression)
         {
-            return new CustomerExpression(expression);
+            return new CustomExpression(expression);
         }
     }
 
@@ -2911,9 +2918,9 @@ namespace SqlExpression
             {
                 return new List<string>() { (simpleValue as IParam).Name };
             }
-            else if (simpleValue is ICustomerExpression)
+            else if (simpleValue is ICustomExpression)
             {
-                return (simpleValue as ICustomerExpression).ResolveParams();
+                return (simpleValue as ICustomExpression).ResolveParams();
             }
             else if (simpleValue is IBinaryExpression)
             {
@@ -2980,12 +2987,12 @@ namespace SqlExpression
         /// <summary>
         /// 获取自定义表达式参数列表
         /// </summary>
-        /// <param name="customer"></param>
+        /// <param name="custom"></param>
         /// <returns></returns>
-        public static List<string> ResolveParams(this ICustomerExpression customer)
+        public static List<string> ResolveParams(this ICustomExpression custom)
         {
             var list = new List<string>();
-            var matchs = Regex.Matches(customer.Expression, "(?<=@)[_a-zA-Z]+[_a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)");
+            var matchs = Regex.Matches(custom.Expression, "(?<=@)[_a-zA-Z]+[_a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)");
             foreach (Match match in matchs)
             {
                 list.Add(match.Value);

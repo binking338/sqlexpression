@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SqlExpression.Core\SqlExpression.Core.csproj" />
+    <ProjectReference Include="..\SqlExpression.Extension\SqlExpression.Extension.csproj" />
   </ItemGroup>
 
 </Project>

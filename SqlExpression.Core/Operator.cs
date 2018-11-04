@@ -97,8 +97,10 @@ namespace SqlExpression
         public static ArithmeticOperator Mod = new ArithmeticOperator("%");
 
         public static UnionOperator Union = new UnionOperator("UNION", "{0} UNION {1}");
+        public static UnionOperator UnionDistinct = new UnionOperator("UNION DISTINCT", "{0} UNION DISTINCT {1}");
         public static UnionOperator UnionAll = new UnionOperator("UNION ALL", "{0} UNION ALL {1}");
 
+        public static JoinOperator Join = new JoinOperator("JOIN", "{0} JOIN {1} ON {2}");
         public static JoinOperator InnerJoin = new JoinOperator("INNER JOIN", "{0} INNER JOIN {1} ON {2}");
         public static JoinOperator LeftJoin = new JoinOperator("LEFT JOIN", "{0} LEFT JOIN  {1} ON {2}");
         public static JoinOperator RightJoin = new JoinOperator("RIGHT JOIN", "{0} RIGHT JOIN  {1} ON {2}");
