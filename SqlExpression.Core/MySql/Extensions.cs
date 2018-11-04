@@ -40,7 +40,7 @@ namespace SqlExpression.MySql
         /// <returns></returns>
         public static string Count(this ISelectStatement select)
         {
-            return string.Format("SELECT COUNT(1) FROM ({0}) AS __totalcount__", select.Expression);
+            return string.Format("SELECT COUNT(*) FROM ({0}) AS __totalcount__", select.Expression);
         }
 
         /// <summary>
