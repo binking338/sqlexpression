@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SqlExpression.UnitTest.Scheme;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +12,7 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void SimpleStatement()
         {
-            var foo = new Foo();
+            var foo = Db.Foo;
             var exp = foo
                 .Select(foo.GetAllFields())
                 .Where(foo.Name == "hero");
@@ -26,8 +25,8 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void JoinStatement()
         {
-            var foo = new Foo();
-            var bar = new Bar();
+            var foo = Db.Foo;
+            var bar = Db.Bar;
             var exp = foo.Join(bar).On(foo.Name == bar.Name)
                 .Select(foo.GetAllFields())
                 .Where(foo.Name == "hero");

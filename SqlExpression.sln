@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlExpression.Core", "SqlEx
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlExpression.Extension", "SqlExpression.Extension\SqlExpression.Extension.csproj", "{2D66EBFB-377D-42E3-BA51-A7F565C0AB1D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlExpression.Extension.Dapper", "SqlExpression.Extension.Dapper\SqlExpression.Extension.Dapper.csproj", "{7B653442-1708-4759-B230-832D18ACF13E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{2D66EBFB-377D-42E3-BA51-A7F565C0AB1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D66EBFB-377D-42E3-BA51-A7F565C0AB1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D66EBFB-377D-42E3-BA51-A7F565C0AB1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B653442-1708-4759-B230-832D18ACF13E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B653442-1708-4759-B230-832D18ACF13E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B653442-1708-4759-B230-832D18ACF13E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B653442-1708-4759-B230-832D18ACF13E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

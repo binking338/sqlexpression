@@ -3,22 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SqlExpression.MySql
+namespace SqlExpression.Extension.Dialect
 {
-    public static class Extensions
+    public static class Mysql
     {
-        static Extensions()
-        {
-        }
-
         public static void EnableDialect()
         {
-            Expression.NameQuotationMark = "`";
+            Expression.OpenQuotationMark = "`";
+            Expression.CloseQuotationMark = "`";
         }
 
         public static void DisableDialect()
         {
-            Expression.NameQuotationMark = string.Empty;
+            Expression.OpenQuotationMark = string.Empty;
+            Expression.CloseQuotationMark = string.Empty;
         }
 
         /// <summary>

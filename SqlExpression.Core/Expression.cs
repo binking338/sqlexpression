@@ -10,7 +10,8 @@ namespace SqlExpression
 {
     public static class Expression
     {
-        public static string NameQuotationMark { get; set; } = string.Empty;
+        public static string OpenQuotationMark { get; set; } = string.Empty;
+        public static string CloseQuotationMark { get; set; } = string.Empty;
         public static string ParamMark { get; set; } = "@";
     }
 
@@ -90,7 +91,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableNameMissing);
             }
-            return string.Format("{1}{0}{1}", Name, SqlExpression.Expression.NameQuotationMark);
+            return string.Format("{1}{0}{2}", Name, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
         }
 
         public static implicit operator Table(string name)
@@ -132,7 +133,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{2}{1}{2}.{2}{0}{2}", Name, DatasetAlias, SqlExpression.Expression.NameQuotationMark);
+                return string.Format("{2}{1}{3}.{2}{0}{3}", Name, DatasetAlias, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
             }
         }
 
@@ -2573,7 +2574,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{2}", Field.Expression, Alias, SqlExpression.Expression.NameQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Field.Expression, Alias, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
             }
         }
     }
@@ -2648,7 +2649,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{2}", Table.Expression, Alias, SqlExpression.Expression.NameQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Table.Expression, Alias, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
             }
         }
     }
@@ -2687,7 +2688,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.AliasMissing);
             }
-            return string.Format("{0} AS {2}{1}{2}", SubQuery.Expression, Alias, SqlExpression.Expression.NameQuotationMark);
+            return string.Format("{0} AS {2}{1}{3}", SubQuery.Expression, Alias, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
         }
     }
 

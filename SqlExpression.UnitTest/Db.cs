@@ -1,11 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using SqlExpression;
 using SqlExpression.Extension;
-using System.Linq;
+using SqlExpression.UnitTest.Schema;
 
-namespace SqlExpression.UnitTest.Scheme
+namespace SqlExpression.UnitTest
+{
+    public static class Db
+    {
+        public static Foo Foo { get; set; } = new Foo();
+        public static Bar Bar { get; set; } = new Bar();
+    }
+}
+
+namespace SqlExpression.UnitTest.Schema
 {
     public abstract class _SchemaExpression<T> : IAliasTableExpression
         where T : class
@@ -43,7 +53,7 @@ namespace SqlExpression.UnitTest.Scheme
                 }
                 else
                 {
-                    return string.Format("{0} AS {2}{1}{2}", (this as IAliasTableExpression).Table.Expression, (this as IAliasTableExpression).Alias, Expression.NameQuotationMark);
+                    return string.Format("{0} AS {2}{1}{3}", (this as IAliasTableExpression).Table.Expression, (this as IAliasTableExpression).Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
                 }
             }
         }
@@ -56,7 +66,6 @@ namespace SqlExpression.UnitTest.Scheme
 
     public class Foo : _SchemaExpression<Foo>
     {
-
         public Foo(string alias = "foo")
         {
             (this as IAliasTableExpression).Alias = alias == "foo" ? null : alias;
@@ -86,7 +95,6 @@ namespace SqlExpression.UnitTest.Scheme
 
     public class Bar : _SchemaExpression<Bar>
     {
-
         public Bar(string alias = "bar")
         {
             (this as IAliasTableExpression).Alias = alias == "bar" ? null : alias;
