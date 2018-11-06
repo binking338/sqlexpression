@@ -42,7 +42,12 @@ namespace SqlExpression.Extension
 
         public static AliasSubQueryExpression As(this ISelectStatement select, string alias)
         {
-            return new AliasSubQueryExpression(new SubQueryExpression(select), alias);
+            return new AliasSubQueryExpression(new SubQueryExpression(select.Query), alias);
+        }
+
+        public static AliasSubQueryExpression As(this IQueryStatement query, string alias)
+        {
+            return new AliasSubQueryExpression(new SubQueryExpression(query), alias);
         }
 
         public static SelectItemExpression As(this ISimpleValue val, string alias)
@@ -252,12 +257,12 @@ namespace SqlExpression.Extension
 
         public static LogicExpression And(this ISimpleValue a, ISimpleValue b)
         {
-            return new LogicExpression(a, LogicOperator.And, b);
+            return new LogicExpression(a, Operator.And, b);
         }
 
         public static LogicExpression Or(this ISimpleValue a, ISimpleValue b)
         {
-            return new LogicExpression(a, LogicOperator.Or, b);
+            return new LogicExpression(a, Operator.Or, b);
         }
 
         #endregion
@@ -388,12 +393,22 @@ namespace SqlExpression.Extension
 
         public static InExpression In(this ISimpleValue field, ISelectStatement select)
         {
-            return new InExpression(field, new SubQueryExpression(select));
+            return new InExpression(field, new SubQueryExpression(select.Query));
         }
 
         public static NotInExpression NotIn(this ISimpleValue field, ISelectStatement select)
         {
-            return new NotInExpression(field, new SubQueryExpression(select));
+            return new NotInExpression(field, new SubQueryExpression(select.Query));
+        }
+
+        public static InExpression In(this ISimpleValue field, IQueryStatement query)
+        {
+            return new InExpression(field, new SubQueryExpression(query));
+        }
+
+        public static NotInExpression NotIn(this ISimpleValue field, IQueryStatement query)
+        {
+            return new NotInExpression(field, new SubQueryExpression(query));
         }
 
         public static ComparisonExpression EqVarParam(this ISimpleValue field, string param = null)
@@ -401,7 +416,7 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(param))
             {
                 if (field is IField) param = (field as IField).Name;
-                else throw new ArgumentNullException("param");
+                else throw new ArgumentNullException(nameof(param));
             }
             return field.Eq(new Param(param));
         }
@@ -411,7 +426,7 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(param))
             {
                 if (field is IField) param = (field as IField).Name;
-                else throw new ArgumentNullException("param");
+                else throw new ArgumentNullException(nameof(param));
             }
             return field.Neq(new Param(param));
         }
@@ -421,7 +436,7 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(param))
             {
                 if (field is IField) param = (field as IField).Name;
-                else throw new ArgumentNullException("param");
+                else throw new ArgumentNullException(nameof(param));
             }
             return field.Gt(new Param(param));
         }
@@ -431,7 +446,7 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(param))
             {
                 if (field is IField) param = (field as IField).Name;
-                else throw new ArgumentNullException("param");
+                else throw new ArgumentNullException(nameof(param));
             }
             return field.GtOrEq(new Param(param));
         }
@@ -441,7 +456,7 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(param))
             {
                 if (field is IField) param = (field as IField).Name;
-                else throw new ArgumentNullException("param");
+                else throw new ArgumentNullException(nameof(param));
             }
             return field.Lt(new Param(param));
         }
@@ -451,7 +466,7 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(param))
             {
                 if (field is IField) param = (field as IField).Name;
-                else throw new ArgumentNullException("param");
+                else throw new ArgumentNullException(nameof(param));
             }
             return field.LtOrEq(new Param(param));
         }
@@ -461,7 +476,7 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(param))
             {
                 if (field is IField) param = (field as IField).Name;
-                else throw new ArgumentNullException("param");
+                else throw new ArgumentNullException(nameof(param));
             }
             return field.Like(new Param(param));
         }
@@ -471,7 +486,7 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(param))
             {
                 if (field is IField) param = (field as IField).Name;
-                else throw new ArgumentNullException("param");
+                else throw new ArgumentNullException(nameof(param));
             }
             return field.NotLike(new Param(param));
         }
@@ -488,12 +503,12 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(paramLower))
             {
                 if (field is IField) paramLower = (field as IField).Name + "Lower";
-                else throw new ArgumentNullException("paramLower");
+                else throw new ArgumentNullException(nameof(paramLower));
             }
             if (string.IsNullOrWhiteSpace(paramUpper))
             {
                 if (field is IField) paramUpper = (field as IField).Name + "Upper";
-                else throw new ArgumentNullException("paramUpper");
+                else throw new ArgumentNullException(nameof(paramUpper));
             }
             return new BetweenExpression(field, new Param(paramLower), new Param(paramUpper));
         }
@@ -510,12 +525,12 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(paramLower))
             {
                 if (field is IField) paramLower = (field as IField).Name + "Lower";
-                else throw new ArgumentNullException("paramLower");
+                else throw new ArgumentNullException(nameof(paramLower));
             }
             if (string.IsNullOrWhiteSpace(paramUpper))
             {
                 if (field is IField) paramUpper = (field as IField).Name + "Upper";
-                else throw new ArgumentNullException("paramUpper");
+                else throw new ArgumentNullException(nameof(paramUpper));
             }
             return new NotBetweenExpression(field, new Param(paramLower), new Param(paramUpper));
         }

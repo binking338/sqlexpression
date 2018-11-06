@@ -43,17 +43,17 @@ namespace SqlExpression.UnitTest.Schema
         }
 
         #region IAliasTableExpression
-        string IExpression.Expression
+        string IExpression.Exp
         {
             get
             {
                 if (string.IsNullOrEmpty((this as IAliasTableExpression).Alias))
                 {
-                    return (this as IAliasTableExpression).Table.Expression;
+                    return (this as IAliasTableExpression).Table.Exp;
                 }
                 else
                 {
-                    return string.Format("{0} AS {2}{1}{3}", (this as IAliasTableExpression).Table.Expression, (this as IAliasTableExpression).Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+                    return string.Format("{0} AS {2}{1}{3}", (this as IAliasTableExpression).Table.Exp, (this as IAliasTableExpression).Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
                 }
             }
         }

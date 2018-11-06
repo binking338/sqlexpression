@@ -8,21 +8,17 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
-    public static class Expression
-    {
-        public static string OpenQuotationMark { get; set; } = string.Empty;
-        public static string CloseQuotationMark { get; set; } = string.Empty;
-        public static string ParamMark { get; set; } = "@";
-    }
 
     /// <summary>
     /// 表达式抽象类
     /// </summary>
-    public abstract class ExpressionBase<Exp> : IExpression
-        where Exp : class, IExpression
+    public abstract class Expression : IExpression
     {
+        public static string OpenQuotationMark { get; set; } = string.Empty;
+        public static string CloseQuotationMark { get; set; } = string.Empty;
+        public static string ParamMark { get; set; } = "@";
 
-        public ExpressionBase()
+        public Expression()
         {
 
         }
@@ -30,7 +26,7 @@ namespace SqlExpression
         /// <summary>
         /// 表达式
         /// </summary>
-        public string Expression
+        public string Exp
         {
             get
             {
@@ -45,14 +41,14 @@ namespace SqlExpression
 
         public override string ToString()
         {
-            return Expression;
+            return Build();
         }
 
         public override bool Equals(object obj)
         {
             if (obj is IExpression)
             {
-                return (obj as IExpression).Expression == this.Expression;
+                return (obj as IExpression).Exp == this.Exp;
             }
             else
             {
@@ -62,14 +58,14 @@ namespace SqlExpression
 
         public override int GetHashCode()
         {
-            return this.Expression?.GetHashCode() ?? 0;
+            return this.Exp?.GetHashCode() ?? 0;
         }
     }
 
     /// <summary>
     /// 表
     /// </summary>
-    public class Table : ExpressionBase<Table>, ITable
+    public class Table : Expression, ITable
     {
         public Table(string name)
         {
@@ -91,7 +87,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableNameMissing);
             }
-            return string.Format("{1}{0}{2}", Name, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
+            return string.Format("{1}{0}{2}", Name, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
         }
 
         public static implicit operator Table(string name)
@@ -103,7 +99,7 @@ namespace SqlExpression
     /// <summary>
     /// 字段
     /// </summary>
-    public class Field : ExpressionBase<Field>, IField
+    public class Field : Expression, IField
     {
         public Field(string name, string dataset = null)
         {
@@ -133,7 +129,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{2}{1}{3}.{2}{0}{3}", Name, DatasetAlias, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
+                return string.Format("{2}{1}{3}.{2}{0}{3}", Name, DatasetAlias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
             }
         }
 
@@ -327,7 +323,7 @@ namespace SqlExpression
     /// <summary>
     /// 字面值
     /// </summary>
-    public class LiteralValue : ExpressionBase<LiteralValue>, ILiteralValue
+    public class LiteralValue : Expression, ILiteralValue
     {
         public LiteralValue(object value)
         {
@@ -452,7 +448,7 @@ namespace SqlExpression
     /// <summary>
     /// 参数
     /// </summary>
-    public class Param : ExpressionBase<Param>, IParam
+    public class Param : Expression, IParam
     {
         public Param(string param)
         {
@@ -470,7 +466,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ParamNameMissing);
             }
-            return string.Format("{0}{1}", Name, SqlExpression.Expression.ParamMark);
+            return string.Format("{0}{1}", Name, Expression.ParamMark);
         }
 
         #region 比较运算符
@@ -668,7 +664,7 @@ namespace SqlExpression
     /// <summary>
     /// 集合（In|Insert）
     /// </summary>
-    public class ValueCollectionExpression : ExpressionBase<ValueCollectionExpression>, IValueCollectionExpression
+    public class ValueCollectionExpression : Expression, IValueCollectionExpression
     {
         public ValueCollectionExpression(IList<ISimpleValue> values)
         {
@@ -686,7 +682,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.CollectionValuesMissing);
             }
-            return string.Format("({0})", Values.Join(",", exp => exp.Expression));
+            return string.Format("({0})", Values.Join(",", exp => exp.Exp));
         }
 
         #region 隐式转换
@@ -702,9 +698,9 @@ namespace SqlExpression
     /// <summary>
     /// 子查询表达式
     /// </summary>
-    public class SubQueryExpression : ExpressionBase<SubQueryExpression>, ISubQueryExpression
+    public class SubQueryExpression : Expression, ISubQueryExpression
     {
-        public SubQueryExpression(ISelectStatement query)
+        public SubQueryExpression(IQueryStatement query)
         {
             Query = query;
         }
@@ -712,7 +708,7 @@ namespace SqlExpression
         /// <summary>
         /// 查询语句
         /// </summary>
-        public ISelectStatement Query { get; set; }
+        public IQueryStatement Query { get; set; }
 
         protected override string Build()
         {
@@ -720,7 +716,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.QueryMissing);
             }
-            return string.Format("({0})", Query.Expression);
+            return string.Format("({0})", Query.Exp);
         }
 
         #region 比较运算符
@@ -886,7 +882,17 @@ namespace SqlExpression
 
         #region 隐式转换
 
-        public static implicit operator SubQueryExpression(SelectStatement query)
+        public static implicit operator SubQueryExpression(SelectStatement select)
+        {
+            return new SubQueryExpression(select.Query);
+        }
+
+        public static implicit operator SubQueryExpression(SimpleQueryStatement query)
+        {
+            return new SubQueryExpression(query);
+        }
+
+        public static implicit operator SubQueryExpression(UnionQueryStatement query)
         {
             return new SubQueryExpression(query);
         }
@@ -906,7 +912,7 @@ namespace SqlExpression
     /// <summary>
     /// 一元表达式
     /// </summary>
-    public abstract class UnaryExpression : ExpressionBase<UnaryExpression>, IUnaryExpression
+    public class UnaryExpression : Expression, IUnaryExpression
     {
         public UnaryExpression(ISimpleValue value, IUnaryOperator op)
         {
@@ -934,14 +940,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, Value.Expression);
+            return string.Format(Op.Format, Value.Exp);
         }
     }
 
     /// <summary>
     /// 二元表达式
     /// </summary>
-    public abstract class BinaryExpression : ExpressionBase<BinaryExpression>, IBinaryExpression
+    public class BinaryExpression : Expression, IBinaryExpression
     {
         public BinaryExpression(ISimpleValue a, IBinaryOperator op, ISimpleValue b)
         {
@@ -979,14 +985,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, Value1.Expression, Value2.Expression);
+            return string.Format(Op.Format, Value1.Exp, Value2.Exp);
         }
     }
 
     /// <summary>
     /// 括号表达式
     /// </summary>
-    public class BracketExpression : ExpressionBase<BracketExpression>, IUnaryExpression
+    public class BracketExpression : Expression, IUnaryExpression
     {
         public BracketExpression(ISimpleValue val)
         {
@@ -1010,7 +1016,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, Value.Expression);
+            return string.Format(Op.Format, Value.Exp);
         }
 
         #region 比较运算符
@@ -1293,7 +1299,7 @@ namespace SqlExpression
     /// <summary>
     /// 三元表达式
     /// </summary>
-    public class TernaryExpression : ExpressionBase<TernaryExpression>, ITernaryExpression
+    public class TernaryExpression : Expression, ITernaryExpression
     {
         public TernaryExpression(ITernaryOperator op, ISimpleValue value1, ISimpleValue value2, ISimpleValue value3)
         {
@@ -1326,7 +1332,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, Value1.Expression, Value2.Expression, Value3.Expression);
+            return string.Format(Op.Format, Value1.Exp, Value2.Exp, Value3.Exp);
         }
     }
 
@@ -1362,7 +1368,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.BetweenUpperMissing);
             }
-            return string.Format(Op.Format, Value.Expression, Lower.Expression, Upper.Expression);
+            return string.Format(Op.Format, Value.Exp, Lower.Exp, Upper.Exp);
         }
 
         #region 逻辑运算符
@@ -1412,7 +1418,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.BetweenUpperMissing);
             }
-            return string.Format(Op.Format, Value.Expression, Lower.Expression, Upper.Expression);
+            return string.Format(Op.Format, Value.Exp, Lower.Exp, Upper.Exp);
         }
 
         #region 逻辑运算符
@@ -1455,7 +1461,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.CollectionMissing);
             }
-            return string.Format(Operator.In.Format, Value.Expression, Collection.Expression);
+            return string.Format(Operator.In.Format, Value.Exp, Collection.Exp);
         }
 
         #region 逻辑运算符
@@ -1498,7 +1504,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.CollectionMissing);
             }
-            return string.Format(Operator.NotIn.Format, Value.Expression, Collection.Expression);
+            return string.Format(Operator.NotIn.Format, Value.Exp, Collection.Exp);
         }
 
         #region 逻辑运算符
@@ -1738,7 +1744,7 @@ namespace SqlExpression
     /// <summary>
     /// 函数表达式
     /// </summary>
-    public class FunctionExpression : ExpressionBase<FunctionExpression>, IFunctionExpression
+    public class FunctionExpression : Expression, IFunctionExpression
     {
         public FunctionExpression(string name, IList<ISimpleValue> values)
         {
@@ -1757,7 +1763,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.FunctionNameMissing);
             }
-            return string.Format("{0}({1})", Name, Values == null ? string.Empty : Values.Join(",", v => v.Expression));
+            return string.Format("{0}({1})", Name, Values == null ? string.Empty : Values.Join(",", v => v.Exp));
         }
 
         #region 比较运算符
@@ -2145,7 +2151,7 @@ namespace SqlExpression
     /// <summary>
     /// 筛选条件子句 
     /// </summary>
-    public class WhereClause : ExpressionBase<WhereClause>, IWhereClause
+    public class WhereClause : Expression, IWhereClause
     {
         public WhereClause(ISimpleValue filter)
         {
@@ -2163,14 +2169,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.FilterMissing);
             }
-            return string.Format("WHERE {0}", Filter.Expression);
+            return string.Format("WHERE {0}", Filter.Exp);
         }
     }
 
     /// <summary>
     /// 插入语句
     /// </summary>
-    public class InsertStatement : ExpressionBase<InsertStatement>, IInsertStatement
+    public class InsertStatement : Expression, IInsertStatement
     {
         public InsertStatement(ITable table, IList<IField> fields, ICollection values)
         {
@@ -2216,14 +2222,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ValuesMissing);
             }
-            return string.Format("INSERT INTO {0}({1}) VALUES{2}", Table.Expression, Fields.Join(",", p => p.Expression), Values.Expression);
+            return string.Format("INSERT INTO {0}({1}) VALUES{2}", Table.Exp, Fields.Join(",", p => p.Exp), Values.Exp);
         }
     }
 
     /// <summary>
     /// 删除语句
     /// </summary>
-    public class DeleteStatement : ExpressionBase<DeleteStatement>, IDeleteStatement
+    public class DeleteStatement : Expression, IDeleteStatement
     {
         public DeleteStatement(ITable table, IWhereClause where)
         {
@@ -2251,14 +2257,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableMissing);
             }
-            return string.Format("DELETE FROM {0} {1}", Table.Expression, Where?.Expression).TrimEnd();
+            return string.Format("DELETE FROM {0} {1}", Table.Exp, Where?.Exp).TrimEnd();
         }
     }
 
     /// <summary>
     /// 更新语句
     /// </summary>
-    public class UpdateStatement : ExpressionBase<UpdateStatement>, IUpdateStatement
+    public class UpdateStatement : Expression, IUpdateStatement
     {
         public UpdateStatement(IAliasTableExpression table, ISetClause set, IWhereClause where)
         {
@@ -2305,16 +2311,16 @@ namespace SqlExpression
                 throw new SqlSyntaxException(this, Error.SetClauseMissing);
             }
             return string.Format("UPDATE {0} {1} {2}",
-                Table.Expression,
-                Set.Expression,
-                Where?.Expression).TrimEnd();
+                Table.Exp,
+                Set.Exp,
+                Where?.Exp).TrimEnd();
         }
     }
 
     /// <summary>
     /// 更新赋值子句
     /// </summary>
-    public class SetClause : ExpressionBase<SetClause>, ISetClause
+    public class SetClause : Expression, ISetClause
     {
         public SetClause(IList<ISetExpression> sets)
         {
@@ -2328,14 +2334,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.SetClauseEmpty);
             }
-            return string.Format("SET {0}", Sets.Join(",", set => set.Expression));
+            return string.Format("SET {0}", Sets.Join(",", set => set.Exp));
         }
     }
 
     /// <summary>
     /// 更新赋值项
     /// </summary>
-    public class SetExpression : ExpressionBase<SetExpression>, ISetExpression
+    public class SetExpression : Expression, ISetExpression
     {
         public SetExpression(IField field, ISimpleValue value)
         {
@@ -2362,14 +2368,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ValueMissing);
             }
-            return string.Format("{0}={1}", Field.Expression, Value.Expression);
+            return string.Format("{0}={1}", Field.Exp, Value.Exp);
         }
     }
 
     /// <summary>
     /// Select查询语句
     /// </summary>
-    public class SelectStatement : ExpressionBase<SelectStatement>, ISelectStatement
+    public class SelectStatement : Expression, ISelectStatement
     {
         public SelectStatement(IQueryStatement query) : this(query, null) { }
         public SelectStatement(IQueryStatement query, IOrderByClause orderBy)
@@ -2398,11 +2404,11 @@ namespace SqlExpression
             }
             if (OrderBy == null)
             {
-                return Query.Expression;
+                return Query.Exp;
             }
             else
             {
-                return string.Format("{0} {1}", Query.Expression, OrderBy?.Expression).TrimEnd();
+                return string.Format("{0} {1}", Query.Exp, OrderBy?.Exp).TrimEnd();
             }
         }
     }
@@ -2410,8 +2416,9 @@ namespace SqlExpression
     /// <summary>
     /// 简单查询
     /// </summary>
-    public class SimpleQueryStatement : ExpressionBase<SimpleQueryStatement>, ISimpleQueryStatement
+    public class SimpleQueryStatement : Expression, ISimpleQueryStatement
     {
+        public SimpleQueryStatement(ISelectClause select) : this(select, null, null, null) { }
         public SimpleQueryStatement(ISelectClause select, IFromClause from) : this(select, from, null, null) { }
         public SimpleQueryStatement(ISelectClause select, IFromClause from, IWhereClause where) : this(select, from, where, null) { }
         public SimpleQueryStatement(ISelectClause select, IFromClause from, IGroupByClause groupBy) : this(select, from, null, groupBy) { }
@@ -2454,16 +2461,16 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.FromClauseMissing);
             }
-            return string.Format("{0} {1}{2}{3}", Select.Expression, From.Expression,
-                Where == null ? string.Empty : " " + Where.Expression,
-                GroupBy == null ? string.Empty : " " + GroupBy?.Expression);
+            return string.Format("{0} {1}{2}{3}", Select.Exp, From.Exp,
+                Where == null ? string.Empty : " " + Where.Exp,
+                GroupBy == null ? string.Empty : " " + GroupBy?.Exp);
         }
     }
 
     /// <summary>
     /// 合并查询
     /// </summary>
-    public class UnionQueryStatement : ExpressionBase<UnionQueryStatement>, IUnionQueryStatement
+    public class UnionQueryStatement : Expression, IUnionQueryStatement
     {
         public UnionQueryStatement(IQueryStatement query1, IUnionOperator unionOp, ISimpleQueryStatement query2)
         {
@@ -2503,7 +2510,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.UnionQuery2Missing);
             }
-            return string.Format(UnionOp.Format, Query1.Expression, Query2.Expression);
+            return string.Format(UnionOp.Format, Query1.Exp, Query2.Exp);
         }
     }
 
@@ -2512,7 +2519,7 @@ namespace SqlExpression
     /// <summary>
     /// Select子句
     /// </summary>
-    public class SelectClause : ExpressionBase<SelectClause>, ISelectClause
+    public class SelectClause : Expression, ISelectClause
     {
         public SelectClause(IList<ISelectItemExpression> items) : this(items, false) { }
 
@@ -2534,11 +2541,11 @@ namespace SqlExpression
             }
             if (Distinct)
             {
-                return string.Format("SELECT DISTINCT {0}", Items.Join(",", s => s.Expression));
+                return string.Format("SELECT DISTINCT {0}", Items.Join(",", s => s.Exp));
             }
             else
             {
-                return string.Format("SELECT {0}", Items.Join(",", s => s.Expression));
+                return string.Format("SELECT {0}", Items.Join(",", s => s.Exp));
             }
         }
     }
@@ -2546,7 +2553,7 @@ namespace SqlExpression
     /// <summary>
     /// 查询项表达式
     /// </summary>
-    public class SelectItemExpression : ExpressionBase<SelectItemExpression>, ISelectItemExpression
+    public class SelectItemExpression : Expression, ISelectItemExpression
     {
         public SelectItemExpression(ISimpleValue field, string alias)
         {
@@ -2570,11 +2577,11 @@ namespace SqlExpression
             }
             if (string.IsNullOrWhiteSpace(Alias))
             {
-                return Field.Expression;
+                return Field.Exp;
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{3}", Field.Expression, Alias, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Field.Exp, Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
             }
         }
     }
@@ -2597,7 +2604,7 @@ namespace SqlExpression
     /// <summary>
     /// From子句
     /// </summary>
-    public class FromClause : ExpressionBase<FromClause>, IFromClause
+    public class FromClause : Expression, IFromClause
     {
         public FromClause(IDataset dataset)
         {
@@ -2612,14 +2619,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.DatasetMissing);
             }
-            return string.Format("FROM {0}", Dataset.Expression);
+            return string.Format("FROM {0}", Dataset.Exp);
         }
     }
 
     /// <summary>
     /// 表带别名
     /// </summary>
-    public class AliasTableExpression : ExpressionBase<AliasTableExpression>, IAliasTableExpression
+    public class AliasTableExpression : Expression, IAliasTableExpression
     {
         public AliasTableExpression(ITable table, string alias = null)
         {
@@ -2645,11 +2652,11 @@ namespace SqlExpression
             }
             if (string.IsNullOrWhiteSpace(Alias))
             {
-                return Table.Expression;
+                return Table.Exp;
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{3}", Table.Expression, Alias, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Table.Exp, Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
             }
         }
     }
@@ -2657,14 +2664,15 @@ namespace SqlExpression
     /// <summary>
     /// 子查询带别名
     /// </summary>
-    public class AliasSubQueryExpression : ExpressionBase<AliasSubQueryExpression>, IAliasSubQueryExpression
+    public class AliasSubQueryExpression : Expression, IAliasSubQueryExpression
     {
-        public AliasSubQueryExpression(ISelectStatement subquery) : this(new SubQueryExpression(subquery)) { }
-        public AliasSubQueryExpression(ISelectStatement subquery, string alias) : this(new SubQueryExpression(subquery), alias) { }
+        public AliasSubQueryExpression(IQueryStatement subquery) : this(new SubQueryExpression(subquery)) { }
+        public AliasSubQueryExpression(IQueryStatement subquery, string alias) : this(new SubQueryExpression(subquery), alias) { }
         public AliasSubQueryExpression(ISubQueryExpression subquery) : this(subquery, null) { }
         public AliasSubQueryExpression(ISubQueryExpression subquery, string alias)
         {
             SubQuery = subquery;
+            Field = subquery;
             Alias = alias;
         }
 
@@ -2672,6 +2680,11 @@ namespace SqlExpression
         /// 子查询
         /// </summary>
         public ISubQueryExpression SubQuery { get; set; }
+
+        /// <summary>
+        /// 字段
+        /// </summary>
+        public ISimpleValue Field { get; set; }
 
         /// <summary>
         /// 别名
@@ -2688,14 +2701,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.AliasMissing);
             }
-            return string.Format("{0} AS {2}{1}{3}", SubQuery.Expression, Alias, SqlExpression.Expression.OpenQuotationMark, SqlExpression.Expression.CloseQuotationMark);
+            return string.Format("{0} AS {2}{1}{3}", SubQuery.Exp, Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
         }
     }
 
     /// <summary>
     /// 查询联接
     /// </summary>
-    public class JoinExpression : ExpressionBase<JoinExpression>, IJoinExpression
+    public class JoinExpression : Expression, IJoinExpression
     {
         public JoinExpression(IDataset left, IJoinOperator joinOp, IDataset right) : this(left, joinOp, right, null) { }
 
@@ -2731,11 +2744,11 @@ namespace SqlExpression
             }
             if (On == null)
             {
-                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), Left.Expression, Right.Expression, string.Empty);
+                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), Left.Exp, Right.Exp, string.Empty);
             }
             else
             {
-                return string.Format(JoinOp.Format, Left.Expression, Right.Expression, On.Expression);
+                return string.Format(JoinOp.Format, Left.Exp, Right.Exp, On.Exp);
             }
         }
     }
@@ -2745,7 +2758,7 @@ namespace SqlExpression
     /// <summary>
     /// GroupBy分组子句
     /// </summary>
-    public class GroupByClause : ExpressionBase<GroupByClause>, IGroupByClause
+    public class GroupByClause : Expression, IGroupByClause
     {
         public GroupByClause(IList<ISimpleValue> fields) : this(fields, null) { }
 
@@ -2767,11 +2780,11 @@ namespace SqlExpression
             }
             if (Having == null)
             {
-                return string.Format("GROUP BY {0}", Fields.Join(",", val => val.Expression));
+                return string.Format("GROUP BY {0}", Fields.Join(",", val => val.Exp));
             }
             else
             {
-                return string.Format("GROUP BY {0} HAVING {1}", Fields.Join(",", val => val.Expression), Having.Expression);
+                return string.Format("GROUP BY {0} HAVING {1}", Fields.Join(",", val => val.Exp), Having.Exp);
             }
         }
     }
@@ -2779,7 +2792,7 @@ namespace SqlExpression
     /// <summary>
     /// OrderBy排序子句
     /// </summary>
-    public class OrderByClause : ExpressionBase<OrderByClause>, IOrderByClause
+    public class OrderByClause : Expression, IOrderByClause
     {
         public OrderByClause(IList<IOrderExpression> orders)
         {
@@ -2794,14 +2807,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OrderByFieldsMissingEmpty);
             }
-            return string.Format("ORDER BY {0}", Orders.Join(",", order => order.Expression));
+            return string.Format("ORDER BY {0}", Orders.Join(",", order => order.Exp));
         }
     }
 
     /// <summary>
     /// 排序项
     /// </summary>
-    public class OrderExpression : ExpressionBase<OrderExpression>, IOrderExpression
+    public class OrderExpression : Expression, IOrderExpression
     {
         public OrderExpression(ISimpleValue field) : this(field, OrderEnum.Asc) { }
 
@@ -2821,14 +2834,14 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.FieldMissing);
             }
-            return string.Format("{0} {1}", Field.Expression, Order == OrderEnum.Asc ? "ASC" : "DESC");
+            return string.Format("{0} {1}", Field.Exp, Order == OrderEnum.Asc ? "ASC" : "DESC");
         }
     }
 
     /// <summary>
     /// 批量Sql语句
     /// </summary>
-    public class BatchSqlStatement : ExpressionBase<BatchSqlStatement>, IBatchSqlStatement
+    public class BatchSqlStatement : Expression, IBatchSqlStatement
     {
         public BatchSqlStatement(IList<ISqlStatement> sqls)
         {
@@ -2870,7 +2883,7 @@ namespace SqlExpression
             }
             else
             {
-                return Sqls.Where(sql => !string.IsNullOrWhiteSpace(sql?.Expression)).Join(";", sql => sql.Expression);
+                return Sqls.Where(sql => !string.IsNullOrWhiteSpace(sql?.Exp)).Join(";", sql => sql.Exp);
             }
         }
     }
@@ -2878,7 +2891,7 @@ namespace SqlExpression
     /// <summary>
     /// 自定义表达式
     /// </summary>
-    public class CustomExpression : ExpressionBase<CustomExpression>, ICustomExpression
+    public class CustomExpression : Expression, ICustomExpression
     {
         string _expression;
         public CustomExpression(string expression)
@@ -2962,7 +2975,7 @@ namespace SqlExpression
             }
             else if (simpleValue is IAliasSubQueryExpression)
             {
-                _params.AddRange((simpleValue as IAliasSubQueryExpression).SubQuery.ResolveParams());
+                _params.AddRange(((simpleValue as IAliasSubQueryExpression).SubQuery as ISimpleValue).ResolveParams());
             }
             return _params.Distinct();
         }
@@ -2971,7 +2984,11 @@ namespace SqlExpression
         {
             var _params = new List<string>();
 
-            if (dataset is IAliasSubQueryExpression)
+            if(dataset is ISubQueryExpression)
+            {
+                _params.AddRange((dataset as ISimpleValue).ResolveParams());
+            }
+            else if (dataset is IAliasSubQueryExpression)
             {
                 _params.AddRange((dataset as ISimpleValue).ResolveParams());
             }
@@ -2993,7 +3010,7 @@ namespace SqlExpression
         public static List<string> ResolveParams(this ICustomExpression custom)
         {
             var list = new List<string>();
-            var matchs = Regex.Matches(custom.Expression, "(?<=@)[_a-zA-Z]+[_a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)");
+            var matchs = Regex.Matches(custom.Exp, "(?<=@)[_a-zA-Z]+[_a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)");
             foreach (Match match in matchs)
             {
                 list.Add(match.Value);

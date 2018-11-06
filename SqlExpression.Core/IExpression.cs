@@ -30,7 +30,7 @@ namespace SqlExpression
         /// <summary>
         /// 表达式文本
         /// </summary>
-        string Expression { get; }
+        string Exp { get; }
     }
     
     #region BaseExpression
@@ -302,12 +302,12 @@ namespace SqlExpression
     /// <summary>
     /// 子查询
     /// </summary>
-    public interface ISubQueryExpression : ICollection
+    public interface ISubQueryExpression : ICollection, IDataset
     {
         /// <summary>
         /// 子查询语句
         /// </summary>
-        ISelectStatement Query { get; set; }
+        IQueryStatement Query { get; set; }
     }
 
     #endregion
@@ -355,7 +355,7 @@ namespace SqlExpression
     /// <summary>
     /// 子查询带别名
     /// </summary>
-    public interface IAliasSubQueryExpression : IAliasDataset, ISimpleValue
+    public interface IAliasSubQueryExpression : IAliasDataset, ISelectItemExpression
     {
         /// <summary>
         /// 数据集
