@@ -22,6 +22,16 @@ namespace SqlExpression.Extension
             return SelectVarCustom(dataset, customs);
         }
 
+        public static ISimpleQueryStatement SelectC(this ISimpleQueryStatement query, IEnumerable<string> customs)
+        {
+            return SelectVarCustom(query, customs);
+        }
+
+        public static ISimpleQueryStatement SelectC(this ISimpleQueryStatement query, params string[] customs)
+        {
+            return SelectVarCustom(query, customs);
+        }
+
         #endregion
 
         public static SimpleQueryStatement Select(this IDataset dataset, IEnumerable<ISelectItemExpression> items)
@@ -52,6 +62,37 @@ namespace SqlExpression.Extension
         public static SimpleQueryStatement SelectVarCustom(this IDataset dataset, params string[] customs)
         {
             return SelectVarCustom(dataset, customs.AsEnumerable());
+        }
+
+        public static ISimpleQueryStatement Select(this ISimpleQueryStatement query, IEnumerable<ISelectItemExpression> items)
+        {
+            query.Select = new SelectClause(items.ToList());
+            return query;
+        }
+
+        public static ISimpleQueryStatement Select(this ISimpleQueryStatement query, params ISelectItemExpression[] items)
+        {
+            return Select(query, items.Cast<ISelectItemExpression>());
+        }
+
+        public static ISimpleQueryStatement Select(this ISimpleQueryStatement query, IEnumerable<ISimpleValue> items)
+        {
+            return Select(query, items.Select(item => new SelectItemExpression(item, null) as ISelectItemExpression));
+        }
+
+        public static ISimpleQueryStatement Select(this ISimpleQueryStatement query, params ISimpleValue[] items)
+        {
+            return Select(query, items.AsEnumerable());
+        }
+
+        public static ISimpleQueryStatement SelectVarCustom(this ISimpleQueryStatement query, IEnumerable<string> customs)
+        {
+            return Select(query, customs.Select(c => new SelectItemExpression(new CustomExpression(c), null) as ISelectItemExpression));
+        }
+
+        public static ISimpleQueryStatement SelectVarCustom(this ISimpleQueryStatement query, params string[] customs)
+        {
+            return SelectVarCustom(query, customs.AsEnumerable());
         }
 
         #endregion
@@ -122,6 +163,11 @@ namespace SqlExpression.Extension
             return WhereVarCustom(select, customFilter);
         }
         #endregion
+
+        public static ISimpleQueryStatement Where(this IDataset dataset, ISimpleValue filter)
+        {
+            return new SimpleQueryStatement(null, new FromClause(dataset), new WhereClause(filter));
+        }
 
         public static ISimpleQueryStatement Where(this ISimpleQueryStatement select, ISimpleValue filter)
         {
