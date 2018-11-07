@@ -43,18 +43,15 @@ namespace SqlExpression.UnitTest.Schema
         }
 
         #region IAliasTableExpression
-        string IExpression.Exp
+        public override string ToString()
         {
-            get
+            if (string.IsNullOrEmpty((this as IAliasTableExpression).Alias))
             {
-                if (string.IsNullOrEmpty((this as IAliasTableExpression).Alias))
-                {
-                    return (this as IAliasTableExpression).Table.Exp;
-                }
-                else
-                {
-                    return string.Format("{0} AS {2}{1}{3}", (this as IAliasTableExpression).Table.Exp, (this as IAliasTableExpression).Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
-                }
+                return (this as IAliasTableExpression).Table.ToString();
+            }
+            else
+            {
+                return string.Format("{0} AS {2}{1}{3}", (this as IAliasTableExpression).Table.ToString(), (this as IAliasTableExpression).Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
             }
         }
 

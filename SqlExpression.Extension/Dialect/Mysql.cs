@@ -233,7 +233,7 @@ namespace SqlExpression.Extension.Dialect
                 }
                 else
                 {
-                    return string.Format("{0} {1}", base.Build(), Limit.Exp);
+                    return string.Format("{0} {1}", base.Build(), Limit.ToString());
                 }
             }
         }
@@ -253,6 +253,10 @@ namespace SqlExpression.Extension.Dialect
                 Limit = limit;
             }
 
+            /// <summary>
+            /// Gets or sets the limit.
+            /// </summary>
+            /// <value>The limit.</value>
             public LimitExpression Limit { get; set; }
 
             protected override string Build()
@@ -263,7 +267,7 @@ namespace SqlExpression.Extension.Dialect
                 }
                 else
                 {
-                    return string.Format("{0} {1}", base.Build(), Limit.Exp);
+                    return string.Format("{0} {1}", base.Build(), Limit.ToString());
                 }
             }
         }
@@ -279,6 +283,10 @@ namespace SqlExpression.Extension.Dialect
                 Limit = limit;
             }
 
+            /// <summary>
+            /// Gets or sets the limit.
+            /// </summary>
+            /// <value>The limit.</value>
             public LimitExpression Limit { get; set; }
 
             protected override string Build()
@@ -289,7 +297,7 @@ namespace SqlExpression.Extension.Dialect
                 }
                 else
                 {
-                    return string.Format("{0} {1}", base.Build(), Limit.Exp);
+                    return string.Format("{0} {1}", base.Build(), Limit.ToString());
                 }
             }
         }

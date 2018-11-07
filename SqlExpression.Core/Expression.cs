@@ -24,17 +24,6 @@ namespace SqlExpression
         }
 
         /// <summary>
-        /// 表达式
-        /// </summary>
-        public string Exp
-        {
-            get
-            {
-                return Build();
-            }
-        }
-
-        /// <summary>
         /// 构建表达式
         /// </summary>
         protected abstract string Build();
@@ -48,7 +37,7 @@ namespace SqlExpression
         {
             if (obj is IExpression)
             {
-                return (obj as IExpression).Exp == this.Exp;
+                return (obj as IExpression).ToString() == this.ToString();
             }
             else
             {
@@ -58,7 +47,7 @@ namespace SqlExpression
 
         public override int GetHashCode()
         {
-            return this.Exp?.GetHashCode() ?? 0;
+            return this.ToString()?.GetHashCode() ?? 0;
         }
     }
 
@@ -682,7 +671,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.CollectionValuesMissing);
             }
-            return string.Format("({0})", Values.Join(",", exp => exp.Exp));
+            return string.Format("({0})", Values.Join(",", exp => exp.ToString()));
         }
 
         #region 隐式转换
@@ -716,7 +705,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.QueryMissing);
             }
-            return string.Format("({0})", Query.Exp);
+            return string.Format("({0})", Query.ToString());
         }
 
         #region 比较运算符
@@ -940,7 +929,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, Value.Exp);
+            return string.Format(Op.Format, Value.ToString());
         }
     }
 
@@ -985,7 +974,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, Value1.Exp, Value2.Exp);
+            return string.Format(Op.Format, Value1.ToString(), Value2.ToString());
         }
     }
 
@@ -1016,7 +1005,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, Value.Exp);
+            return string.Format(Op.Format, Value.ToString());
         }
 
         #region 比较运算符
@@ -1332,7 +1321,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OperandMissing);
             }
-            return string.Format(Op.Format, Value1.Exp, Value2.Exp, Value3.Exp);
+            return string.Format(Op.Format, Value1.ToString(), Value2.ToString(), Value3.ToString());
         }
     }
 
@@ -1368,7 +1357,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.BetweenUpperMissing);
             }
-            return string.Format(Op.Format, Value.Exp, Lower.Exp, Upper.Exp);
+            return string.Format(Op.Format, Value.ToString(), Lower.ToString(), Upper.ToString());
         }
 
         #region 逻辑运算符
@@ -1418,7 +1407,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.BetweenUpperMissing);
             }
-            return string.Format(Op.Format, Value.Exp, Lower.Exp, Upper.Exp);
+            return string.Format(Op.Format, Value.ToString(), Lower.ToString(), Upper.ToString());
         }
 
         #region 逻辑运算符
@@ -1461,7 +1450,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.CollectionMissing);
             }
-            return string.Format(Operator.In.Format, Value.Exp, Collection.Exp);
+            return string.Format(Operator.In.Format, Value.ToString(), Collection.ToString());
         }
 
         #region 逻辑运算符
@@ -1504,7 +1493,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.CollectionMissing);
             }
-            return string.Format(Operator.NotIn.Format, Value.Exp, Collection.Exp);
+            return string.Format(Operator.NotIn.Format, Value.ToString(), Collection.ToString());
         }
 
         #region 逻辑运算符
@@ -1763,7 +1752,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.FunctionNameMissing);
             }
-            return string.Format("{0}({1})", Name, Values == null ? string.Empty : Values.Join(",", v => v.Exp));
+            return string.Format("{0}({1})", Name, Values == null ? string.Empty : Values.Join(",", v => v.ToString()));
         }
 
         #region 比较运算符
@@ -2169,7 +2158,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.FilterMissing);
             }
-            return string.Format("WHERE {0}", Filter.Exp);
+            return string.Format("WHERE {0}", Filter.ToString());
         }
     }
 
@@ -2222,7 +2211,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ValuesMissing);
             }
-            return string.Format("INSERT INTO {0}({1}) VALUES{2}", Table.Exp, Fields.Join(",", p => p.Exp), Values.Exp);
+            return string.Format("INSERT INTO {0}({1}) VALUES{2}", Table.ToString(), Fields.Join(",", p => p.ToString()), Values.ToString());
         }
     }
 
@@ -2257,7 +2246,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableMissing);
             }
-            return string.Format("DELETE FROM {0} {1}", Table.Exp, Where?.Exp).TrimEnd();
+            return string.Format("DELETE FROM {0} {1}", Table.ToString(), Where?.ToString()).TrimEnd();
         }
     }
 
@@ -2311,9 +2300,9 @@ namespace SqlExpression
                 throw new SqlSyntaxException(this, Error.SetClauseMissing);
             }
             return string.Format("UPDATE {0} {1} {2}",
-                Table.Exp,
-                Set.Exp,
-                Where?.Exp).TrimEnd();
+                Table.ToString(),
+                Set.ToString(),
+                Where?.ToString()).TrimEnd();
         }
     }
 
@@ -2334,7 +2323,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.SetClauseEmpty);
             }
-            return string.Format("SET {0}", Sets.Join(",", set => set.Exp));
+            return string.Format("SET {0}", Sets.Join(",", set => set.ToString()));
         }
     }
 
@@ -2368,7 +2357,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ValueMissing);
             }
-            return string.Format("{0}={1}", Field.Exp, Value.Exp);
+            return string.Format("{0}={1}", Field.ToString(), Value.ToString());
         }
     }
 
@@ -2404,11 +2393,11 @@ namespace SqlExpression
             }
             if (OrderBy == null)
             {
-                return Query.Exp;
+                return Query.ToString();
             }
             else
             {
-                return string.Format("{0} {1}", Query.Exp, OrderBy?.Exp).TrimEnd();
+                return string.Format("{0} {1}", Query.ToString(), OrderBy?.ToString()).TrimEnd();
             }
         }
     }
@@ -2461,9 +2450,9 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.FromClauseMissing);
             }
-            return string.Format("{0} {1}{2}{3}", Select.Exp, From.Exp,
-                Where == null ? string.Empty : " " + Where.Exp,
-                GroupBy == null ? string.Empty : " " + GroupBy?.Exp);
+            return string.Format("{0} {1}{2}{3}", Select.ToString(), From.ToString(),
+                Where == null ? string.Empty : " " + Where.ToString(),
+                GroupBy == null ? string.Empty : " " + GroupBy?.ToString());
         }
     }
 
@@ -2510,7 +2499,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.UnionQuery2Missing);
             }
-            return string.Format(UnionOp.Format, Query1.Exp, Query2.Exp);
+            return string.Format(UnionOp.Format, Query1.ToString(), Query2.ToString());
         }
     }
 
@@ -2541,11 +2530,11 @@ namespace SqlExpression
             }
             if (Distinct)
             {
-                return string.Format("SELECT DISTINCT {0}", Items.Join(",", s => s.Exp));
+                return string.Format("SELECT DISTINCT {0}", Items.Join(",", s => s.ToString()));
             }
             else
             {
-                return string.Format("SELECT {0}", Items.Join(",", s => s.Exp));
+                return string.Format("SELECT {0}", Items.Join(",", s => s.ToString()));
             }
         }
     }
@@ -2577,11 +2566,11 @@ namespace SqlExpression
             }
             if (string.IsNullOrWhiteSpace(Alias))
             {
-                return Field.Exp;
+                return Field.ToString();
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{3}", Field.Exp, Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Field.ToString(), Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
             }
         }
     }
@@ -2619,7 +2608,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.DatasetMissing);
             }
-            return string.Format("FROM {0}", Dataset.Exp);
+            return string.Format("FROM {0}", Dataset.ToString());
         }
     }
 
@@ -2652,11 +2641,11 @@ namespace SqlExpression
             }
             if (string.IsNullOrWhiteSpace(Alias))
             {
-                return Table.Exp;
+                return Table.ToString();
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{3}", Table.Exp, Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Table.ToString(), Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
             }
         }
     }
@@ -2701,7 +2690,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.AliasMissing);
             }
-            return string.Format("{0} AS {2}{1}{3}", SubQuery.Exp, Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+            return string.Format("{0} AS {2}{1}{3}", SubQuery.ToString(), Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
         }
     }
 
@@ -2744,11 +2733,11 @@ namespace SqlExpression
             }
             if (On == null)
             {
-                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), Left.Exp, Right.Exp, string.Empty);
+                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), Left.ToString(), Right.ToString(), string.Empty);
             }
             else
             {
-                return string.Format(JoinOp.Format, Left.Exp, Right.Exp, On.Exp);
+                return string.Format(JoinOp.Format, Left.ToString(), Right.ToString(), On.ToString());
             }
         }
     }
@@ -2780,11 +2769,11 @@ namespace SqlExpression
             }
             if (Having == null)
             {
-                return string.Format("GROUP BY {0}", Fields.Join(",", val => val.Exp));
+                return string.Format("GROUP BY {0}", Fields.Join(",", val => val.ToString()));
             }
             else
             {
-                return string.Format("GROUP BY {0} HAVING {1}", Fields.Join(",", val => val.Exp), Having.Exp);
+                return string.Format("GROUP BY {0} HAVING {1}", Fields.Join(",", val => val.ToString()), Having.ToString());
             }
         }
     }
@@ -2807,7 +2796,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.OrderByFieldsMissingEmpty);
             }
-            return string.Format("ORDER BY {0}", Orders.Join(",", order => order.Exp));
+            return string.Format("ORDER BY {0}", Orders.Join(",", order => order.ToString()));
         }
     }
 
@@ -2834,7 +2823,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.FieldMissing);
             }
-            return string.Format("{0} {1}", Field.Exp, Order == OrderEnum.Asc ? "ASC" : "DESC");
+            return string.Format("{0} {1}", Field.ToString(), Order == OrderEnum.Asc ? "ASC" : "DESC");
         }
     }
 
@@ -2883,7 +2872,7 @@ namespace SqlExpression
             }
             else
             {
-                return Sqls.Where(sql => !string.IsNullOrWhiteSpace(sql?.Exp)).Join(";", sql => sql.Exp);
+                return Sqls.Where(sql => !string.IsNullOrWhiteSpace(sql?.ToString())).Join(";", sql => sql.ToString());
             }
         }
     }
@@ -3010,7 +2999,7 @@ namespace SqlExpression
         public static List<string> ResolveParams(this ICustomExpression custom)
         {
             var list = new List<string>();
-            var matchs = Regex.Matches(custom.Exp, "(?<=@)[_a-zA-Z]+[_a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)");
+            var matchs = Regex.Matches(custom.ToString(), "(?<=@)[_a-zA-Z]+[_a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)");
             foreach (Match match in matchs)
             {
                 list.Add(match.Value);

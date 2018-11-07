@@ -27,10 +27,6 @@ namespace SqlExpression
     /// </summary>
     public interface IExpression
     {
-        /// <summary>
-        /// 表达式文本
-        /// </summary>
-        string Exp { get; }
     }
     
     #region BaseExpression
