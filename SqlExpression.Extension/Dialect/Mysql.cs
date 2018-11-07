@@ -170,7 +170,12 @@ namespace SqlExpression.Extension.Dialect
             return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new UnaryExpression(new SubQueryExpression(query), Operator.Exists)).As("__exists__") }));
         }
 
-        public static BatchSqlStatement ReturnId(this IInsertStatement insert)
+        /// <summary>
+        /// 返回插入的自增Key
+        /// </summary>
+        /// <returns>The identifier.</returns>
+        /// <param name="insert">Insert.</param>
+        public static BatchSqlStatement WithReturnId(this IInsertStatement insert)
         {
             return new BatchSqlStatement(new List<ISqlStatement>() { insert, new CustomExpression("SELECT LAST_INSERT_ID()") });
         }
