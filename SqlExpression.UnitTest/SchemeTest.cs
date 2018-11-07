@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using SqlExpression.Extension;
+using System.Linq;
 
 namespace SqlExpression.UnitTest
 {
@@ -22,6 +23,10 @@ namespace SqlExpression.UnitTest
                 .Where(foo.Name == "hero")
                 .Select(foo.GetAllFieldsMapping());
             Assert.AreEqual("SELECT foo.id AS Id,foo.name AS Name,foo.age AS Age,foo.gender AS Gender,foo.isdel AS Isdel FROM foo WHERE foo.name='hero'", exp.ToString());
+
+            exp = foo
+                .Where(foo.Name == "hero")
+                .Select(foo.GetAllFields(), foo.GetAllFields());
 
             exp = foo
                 .Select(foo.GetAllFields())

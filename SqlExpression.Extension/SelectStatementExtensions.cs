@@ -12,7 +12,7 @@ namespace SqlExpression.Extension
 
         #region ShortCut
 
-        public static SimpleQueryStatement SelectC(this IDataset dataset, IEnumerable<string> customs)
+        public static SimpleQueryStatement SelectC(this IDataset dataset, params IEnumerable<string>[] customs)
         {
             return SelectVarCustom(dataset, customs);
         }
@@ -22,7 +22,7 @@ namespace SqlExpression.Extension
             return SelectVarCustom(dataset, customs);
         }
 
-        public static ISimpleQueryStatement SelectC(this ISimpleQueryStatement query, IEnumerable<string> customs)
+        public static ISimpleQueryStatement SelectC(this ISimpleQueryStatement query, params IEnumerable<string>[] customs)
         {
             return SelectVarCustom(query, customs);
         }
@@ -34,9 +34,10 @@ namespace SqlExpression.Extension
 
         #endregion
 
-        public static SimpleQueryStatement Select(this IDataset dataset, IEnumerable<ISelectItemExpression> items)
+        public static SimpleQueryStatement Select(this IDataset dataset, params IEnumerable<ISelectItemExpression>[] items)
         {
-            return new SimpleQueryStatement(new SelectClause(items.ToList()), new FromClause(dataset));
+            var flatenItems = items.Aggregate((IEnumerable<ISelectItemExpression> a, IEnumerable<ISelectItemExpression> b) => a.Concat(b));
+            return new SimpleQueryStatement(new SelectClause(flatenItems.ToList()), new FromClause(dataset));
         }
 
         public static SimpleQueryStatement Select(this IDataset dataset, params ISelectItemExpression[] items)
@@ -44,9 +45,10 @@ namespace SqlExpression.Extension
             return Select(dataset, items.Cast<ISelectItemExpression>());
         }
 
-        public static SimpleQueryStatement Select(this IDataset dataset, IEnumerable<ISimpleValue> items)
+        public static SimpleQueryStatement Select(this IDataset dataset, params IEnumerable<ISimpleValue>[] items)
         {
-            return Select(dataset, items.Select(item => new SelectItemExpression(item, null) as ISelectItemExpression));
+            var flatenItems = items.Aggregate((IEnumerable<ISimpleValue> a, IEnumerable<ISimpleValue> b) => a.Concat(b));
+            return Select(dataset, flatenItems.Select(item => new SelectItemExpression(item, null) as ISelectItemExpression));
         }
 
         public static SimpleQueryStatement Select(this IDataset dataset, params ISimpleValue[] items)
@@ -54,9 +56,10 @@ namespace SqlExpression.Extension
             return Select(dataset, items.AsEnumerable());
         }
 
-        public static SimpleQueryStatement SelectVarCustom(this IDataset dataset, IEnumerable<string> customs)
+        public static SimpleQueryStatement SelectVarCustom(this IDataset dataset,params IEnumerable<string>[] customs)
         {
-            return Select(dataset, customs.Select(c => new SelectItemExpression(new CustomExpression(c), null) as ISelectItemExpression));
+            var flatenItems = customs.Aggregate((IEnumerable<string> a, IEnumerable<string> b) => a.Concat(b));
+            return Select(dataset, flatenItems.Select(c => new SelectItemExpression(new CustomExpression(c), null) as ISelectItemExpression));
         }
 
         public static SimpleQueryStatement SelectVarCustom(this IDataset dataset, params string[] customs)
@@ -64,9 +67,10 @@ namespace SqlExpression.Extension
             return SelectVarCustom(dataset, customs.AsEnumerable());
         }
 
-        public static ISimpleQueryStatement Select(this ISimpleQueryStatement query, IEnumerable<ISelectItemExpression> items)
+        public static ISimpleQueryStatement Select(this ISimpleQueryStatement query, params IEnumerable<ISelectItemExpression>[] items)
         {
-            query.Select = new SelectClause(items.ToList());
+            var flatenItems = items.Aggregate((IEnumerable<ISelectItemExpression> a, IEnumerable<ISelectItemExpression> b) => a.Concat(b));
+            query.Select = new SelectClause(flatenItems.ToList());
             return query;
         }
 
@@ -75,9 +79,10 @@ namespace SqlExpression.Extension
             return Select(query, items.Cast<ISelectItemExpression>());
         }
 
-        public static ISimpleQueryStatement Select(this ISimpleQueryStatement query, IEnumerable<ISimpleValue> items)
+        public static ISimpleQueryStatement Select(this ISimpleQueryStatement query, params IEnumerable<ISimpleValue>[] items)
         {
-            return Select(query, items.Select(item => new SelectItemExpression(item, null) as ISelectItemExpression));
+            var flatenItems = items.Aggregate((IEnumerable<ISimpleValue> a, IEnumerable<ISimpleValue> b) => a.Concat(b));
+            return Select(query, flatenItems.Select(item => new SelectItemExpression(item, null) as ISelectItemExpression));
         }
 
         public static ISimpleQueryStatement Select(this ISimpleQueryStatement query, params ISimpleValue[] items)
@@ -85,9 +90,10 @@ namespace SqlExpression.Extension
             return Select(query, items.AsEnumerable());
         }
 
-        public static ISimpleQueryStatement SelectVarCustom(this ISimpleQueryStatement query, IEnumerable<string> customs)
+        public static ISimpleQueryStatement SelectVarCustom(this ISimpleQueryStatement query, params IEnumerable<string>[] customs)
         {
-            return Select(query, customs.Select(c => new SelectItemExpression(new CustomExpression(c), null) as ISelectItemExpression));
+            var flatenCustoms = customs.Aggregate((IEnumerable<string> a, IEnumerable<string> b) => a.Concat(b));
+            return Select(query, flatenCustoms.Select(c => new SelectItemExpression(new CustomExpression(c), null) as ISelectItemExpression));
         }
 
         public static ISimpleQueryStatement SelectVarCustom(this ISimpleQueryStatement query, params string[] customs)
@@ -164,7 +170,7 @@ namespace SqlExpression.Extension
         }
         #endregion
 
-        public static ISimpleQueryStatement Where(this IDataset dataset, ISimpleValue filter)
+        public static SimpleQueryStatement Where(this IDataset dataset, ISimpleValue filter)
         {
             return new SimpleQueryStatement(null, new FromClause(dataset), new WhereClause(filter));
         }
