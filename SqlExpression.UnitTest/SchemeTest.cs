@@ -16,7 +16,7 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void SimpleStatement()
         {
-            var foo = Db.Foo;
+            var foo = TestDb.Foo;
             var exp = foo
                 .Where(foo.Name == "hero")
                 .Select(foo.All());
@@ -40,8 +40,8 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void JoinStatement()
         {
-            var foo = Db.Foo;
-            var bar = Db.Bar;
+            var foo = TestDb.Foo;
+            var bar = TestDb.Bar;
             var exp = foo.Join(bar).On(foo.Name == bar.Name)
                 .Where(foo.Name == "hero")
                 .Select(foo.All());

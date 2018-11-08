@@ -8,7 +8,7 @@ using SqlExpression.UnitTest.Schema;
 
 namespace SqlExpression.UnitTest
 {
-    public static class Db
+    public static class TestDb
     {
         public static Foo Foo { get; set; } = new Foo();
         public static Bar Bar { get; set; } = new Bar();

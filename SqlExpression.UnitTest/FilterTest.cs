@@ -21,7 +21,7 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void ComparisonExpression()
         {
-            var t = Db.Foo;
+            var t = TestDb.Foo;
             IExpression e = null;
 
             var val = 1000;
@@ -88,8 +88,24 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void ComparisonExpressionVarParam()
         {
-            var t = Db.Foo;
+            var t = TestDb.Foo;
             IExpression e = null;
+
+            e = t.Id == t.Id.ToParam();
+            Assert.AreEqual(e.ToString(), "foo.id=@id");
+
+            e = t.Id > t.Id.ToParam();
+            Assert.AreEqual(e.ToString(), "foo.id>@id");
+
+            e = t.Id < t.Id.ToParam();
+            Assert.AreEqual(e.ToString(), "foo.id<@id");
+
+            e = t.Id >= t.Id.ToParam();
+            Assert.AreEqual(e.ToString(), "foo.id>=@id");
+
+            e = t.Id <= t.Id.ToParam();
+            Assert.AreEqual(e.ToString(), "foo.id<=@id");
+
 
             e = t.Id.EqVarParam();
             Assert.AreEqual(e.ToString(), "foo.id=@id");
@@ -105,6 +121,7 @@ namespace SqlExpression.UnitTest
 
             e = t.Id.LtOrEqVarParam();
             Assert.AreEqual(e.ToString(), "foo.id<=@id");
+
 
             e = t.Name.LikeVarParam();
             Assert.AreEqual(e.ToString(), "foo.name LIKE @name");
@@ -125,7 +142,7 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void LogicExpression()
         {
-            var t = Db.Foo;
+            var t = TestDb.Foo;
             IExpression e = null;
 
             e = t.Id > 1 & t.Id < 100;
