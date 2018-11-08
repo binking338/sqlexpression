@@ -455,7 +455,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ParamNameMissing);
             }
-            return string.Format("{0}{1}", Name, Expression.ParamMark);
+            return string.Format("{1}{0}", Name, Expression.ParamMark);
         }
 
         #region 比较运算符
@@ -1298,10 +1298,10 @@ namespace SqlExpression
             Value3 = value3;
         }
 
-        public ITernaryOperator Op { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ISimpleValue Value1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ISimpleValue Value2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ISimpleValue Value3 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ITernaryOperator Op { get; set; }
+        public ISimpleValue Value1 { get; set; }
+        public ISimpleValue Value2 { get; set; }
+        public ISimpleValue Value3 { get; set; }
 
         protected override string Build()
         {
