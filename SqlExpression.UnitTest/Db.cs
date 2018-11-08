@@ -21,19 +21,24 @@ namespace SqlExpression.UnitTest.Schema
         where T : class
     {
         protected Field[] _allFields = null;
-        protected Field[] _primaryKey = null;
-        protected SelectItemExpression[] _selectItems = null;
-        public Field[] GetAllFields()
+        protected Field[] _pkFields = null;
+        protected SelectItemExpression[] _allItems = null;
+        protected SelectItemExpression[] _pkItems = null;
+        public Field[] All()
         {
             return _allFields;
         }
-        public Field[] GetPrimaryKey()
+        public Field[] PK()
         {
-            return _primaryKey;
+            return _pkFields;
         }
-        public SelectItemExpression[] GetAllFieldsMapping()
+        public SelectItemExpression[] AllMapped()
         {
-            return _selectItems;
+            return _allItems;
+        }
+        public SelectItemExpression[] PKMapped()
+        {
+            return _pkItems;
         }
 
         public T As(string alias)
@@ -75,8 +80,10 @@ namespace SqlExpression.UnitTest.Schema
             Isdel = new Field("isdel", alias);
 
             _allFields = new Field[] { Id, Name, Age, Gender, Isdel };
-            _primaryKey = new Field[] { Id };
-            _selectItems = new SelectItemExpression[] { Id.As("Id"), Name.As("Name"), Age.As("Age"), Gender.As("Gender"), Isdel.As("Isdel") };
+            _pkFields = new Field[] { Id };
+            _allItems = new SelectItemExpression[] { Id.As("Id"), Name.As("Name"), Age.As("Age"), Gender.As("Gender"), Isdel.As("Isdel") };
+            _pkItems = new SelectItemExpression[] { Id.As("Id") };
+
         }
 
         public Field Id { get; set; }
@@ -104,8 +111,9 @@ namespace SqlExpression.UnitTest.Schema
             Isdel = new Field("isdel", alias);
 
             _allFields = new Field[] { Id, Name, Age, Gender, Isdel };
-            _primaryKey = new Field[] { Id };
-            _selectItems = new SelectItemExpression[] { Id.As("Id"), Name.As("Name"), Age.As("Age"), Gender.As("Gender"), Isdel.As("Isdel") };
+            _pkFields = new Field[] { Id };
+            _allItems = new SelectItemExpression[] { Id.As("Id"), Name.As("Name"), Age.As("Age"), Gender.As("Gender"), Isdel.As("Isdel") };
+            _pkItems = new SelectItemExpression[] { Id.As("Id") };
         }
 
         public Field Id { get; set; }
