@@ -147,7 +147,7 @@ namespace SqlExpression.UnitTest
             Assert.AreEqual(e.ToString(), "foo.name LIKE '%' OR foo.id>1 AND foo.id<100");
 
 
-            #region 根据调用顺序结合AND OR的运算符结合优先级自行决定是否添加括号
+            #region 根据调用顺序自动决定是否添加括号（结合SQL中 AND OR 的优先级）
             e = (t.Id > 1).And(t.Id < 100).Or(t.Name.Like("%"));
             Assert.AreEqual(e.ToString(), "foo.id>1 AND foo.id<100 OR foo.name LIKE '%'");
 
@@ -158,7 +158,7 @@ namespace SqlExpression.UnitTest
             Assert.AreEqual(e.ToString(), "(foo.name LIKE '%' OR foo.id>1) AND foo.id<100");
             #endregion
 
-            #region  根据C#运算符(& |)优先级自行决定是否添加括号
+            #region  根据C#表达式自动决定是否添加括号（结合运算符 & | 的优先级）
             e = (t.Id > 1 | t.Id < 100) & t.Name.Like("%");
             Assert.AreEqual(e.ToString(), "(foo.id>1 OR foo.id<100) AND foo.name LIKE '%'");
 
@@ -170,13 +170,13 @@ namespace SqlExpression.UnitTest
             #endregion
 
             #region 显式指定括号
-            e = (t.Id > 1 | t.Id < 100).WithBracket() & t.Name.Like("%");
+            e = (t.Id > 1 | t.Id < 100).Bracket() & t.Name.Like("%");
             Assert.AreEqual(e.ToString(), "(foo.id>1 OR foo.id<100) AND foo.name LIKE '%'");
 
-            e = t.Id > 1 | (t.Id < 100 & t.Name.Like("%")).WithBracket();
+            e = t.Id > 1 | (t.Id < 100 & t.Name.Like("%")).Bracket();
             Assert.AreEqual(e.ToString(), "foo.id>1 OR (foo.id<100 AND foo.name LIKE '%')");
 
-            e = (t.Name.Like("%") | t.Id > 1).WithBracket() & t.Id < 100;
+            e = (t.Name.Like("%") | t.Id > 1).Bracket() & t.Id < 100;
             Assert.AreEqual(e.ToString(), "(foo.name LIKE '%' OR foo.id>1) AND foo.id<100");
             #endregion
         }

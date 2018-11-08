@@ -16,13 +16,7 @@ namespace SqlExpression.Extension
             return new BatchSqlStatement(sqls.ToArray());
         }
 
-        public static BracketExpression WithB<T>(this T exp)
-            where T : ISimpleValue
-        {
-            return WithBracket(exp);
-        }
-
-        public static BracketExpression WithBracket<T>(this T exp)
+        public static BracketExpression Bracket<T>(this T exp)
             where T : ISimpleValue
         {
             return new BracketExpression(exp);
