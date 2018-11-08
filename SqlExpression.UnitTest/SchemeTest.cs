@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace SqlExpression.UnitTest
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [TestClass]
     public class SchemeTest
     {
