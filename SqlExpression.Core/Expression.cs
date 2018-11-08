@@ -441,6 +441,10 @@ namespace SqlExpression
     {
         public Param(string param)
         {
+            if (param.StartsWith(Expression.ParamMark))
+            {
+                param = param.Substring(Expression.ParamMark.Length);
+            }
             Name = param;
         }
 
@@ -2973,7 +2977,7 @@ namespace SqlExpression
         {
             var _params = new List<string>();
 
-            if(dataset is ISubQueryExpression)
+            if (dataset is ISubQueryExpression)
             {
                 _params.AddRange((dataset as ISimpleValue).ResolveParams());
             }
