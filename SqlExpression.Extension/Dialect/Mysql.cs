@@ -132,7 +132,7 @@ namespace SqlExpression.Extension.Dialect
         /// <returns></returns>
         public static SimpleQueryStatement Count(this ISelectStatement select)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Field("*")).As("__totalcount__") }),
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Column("*")).As("__totalcount__") }),
                                             new FromClause(new SubQueryExpression(select.Query)));
         }
 
@@ -144,7 +144,7 @@ namespace SqlExpression.Extension.Dialect
         /// <returns></returns>
         public static SimpleQueryStatement Count(this IQueryStatement query)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Field("*")).As("__totalcount__") }),
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Column("*")).As("__totalcount__") }),
                                             new FromClause(new SubQueryExpression(query)));
         }
 
@@ -175,7 +175,7 @@ namespace SqlExpression.Extension.Dialect
         /// </summary>
         /// <returns>The identifier.</returns>
         /// <param name="insert">Insert.</param>
-        public static BatchSqlStatement WithReturnId(this IInsertStatement insert)
+        public static BatchSqlStatement ReturnId(this IInsertStatement insert)
         {
             return new BatchSqlStatement(new List<ISqlStatement>() { insert, new CustomExpression("SELECT LAST_INSERT_ID()") });
         }

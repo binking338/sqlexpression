@@ -225,21 +225,21 @@ namespace SqlExpression.Extension
         #region GroupBy
 
         #region Shortcut
-        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, IEnumerable<IField> fields)
+        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, IEnumerable<IColumn> columns)
         {
-            return GroupBy(select, fields);
+            return GroupBy(select, columns);
         }
-        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, params IField[] fields)
+        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, params IColumn[] columns)
         {
-            return GroupBy(select, fields);
+            return GroupBy(select, columns);
         }
-        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, IEnumerable<string> fields)
+        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, IEnumerable<string> columns)
         {
-            return GroupBy(select, fields);
+            return GroupBy(select, columns);
         }
-        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, params string[] fields)
+        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, params string[] columns)
         {
-            return GroupBy(select, fields);
+            return GroupBy(select, columns);
         }
         public static ISimpleQueryStatement H(this ISimpleQueryStatement select, ISimpleValue filter)
         {
@@ -251,26 +251,26 @@ namespace SqlExpression.Extension
         }
         #endregion
 
-        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, IEnumerable<IField> fields)
+        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, IEnumerable<IColumn> columns)
         {
-            select.GroupBy = new GroupByClause(fields.Cast<ISimpleValue>().ToList());
+            select.GroupBy = new GroupByClause(columns.Cast<ISimpleValue>().ToList());
             return select;
         }
 
-        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, params IField[] fields)
+        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, params IColumn[] columns)
         {
-            return GroupBy(select, fields.AsEnumerable());
+            return GroupBy(select, columns.AsEnumerable());
         }
 
-        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, IEnumerable<string> fields)
+        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, IEnumerable<string> columns)
         {
-            return GroupBy(select, fields.Select(field => new Field(field) as IField));
+            return GroupBy(select, columns.Select(column => new Column(column) as IColumn));
         }
 
         public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, params string[]
-            fields)
+            columns)
         {
-            return GroupBy(select, fields.AsEnumerable());
+            return GroupBy(select, columns.AsEnumerable());
         }
 
         public static ISimpleQueryStatement Having(this ISimpleQueryStatement select, ISimpleValue filter)
