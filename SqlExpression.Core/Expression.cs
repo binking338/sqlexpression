@@ -633,7 +633,7 @@ namespace SqlExpression
 
         public static implicit operator Param(Column column)
         {
-            return new Param(column.Name);
+            return new Param(Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(column.Name) : column.Name);
         }
 
         #endregion
@@ -2344,7 +2344,7 @@ namespace SqlExpression
         }
 
         public SetExpression(IColumn column)
-            : this(column, new Param(column.Name))
+            : this(column, new Param(Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(column.Name) : column.Name))
         {
         }
 

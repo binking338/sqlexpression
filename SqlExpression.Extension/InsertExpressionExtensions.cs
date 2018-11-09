@@ -182,7 +182,7 @@ namespace SqlExpression.Extension
         public static IInsertStatement ValuesVarParam(this IInsertStatement insert)
         {
             if (insert.Columns == null) return insert;
-            var vals = insert.Columns.Select(column => new Param(column.Name) as ISimpleValue);
+            var vals = insert.Columns.Select(column => column.ToParam() as ISimpleValue);
 
             return Values(insert, vals);
         }

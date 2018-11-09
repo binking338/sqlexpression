@@ -327,8 +327,7 @@ namespace SqlExpression.Extension
 
         public static ISetExpression ValueVarParam(this ISetExpression setItem, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = setItem.Column.Name;
-            setItem.Value = new Param(param);
+            setItem.Value = setItem.Column.ToParam(param);
             return setItem;
         }
 

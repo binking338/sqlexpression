@@ -79,7 +79,7 @@ namespace SqlExpression.Extension
                 param = column.Name;
                 if(Expression.Column2ParamContractHandler != null)
                 {
-                    param = Expression.Column2ParamContractHandler(param);
+                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
                 }
             }
             return new Param(param);
@@ -416,7 +416,11 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (column is IColumn) param = (column as IColumn).Name;
+                if (column is IColumn)
+                {
+                    param = (column as IColumn).Name;
+                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                }
                 else throw new ArgumentNullException(nameof(param));
             }
             return column.Eq(new Param(param));
@@ -426,7 +430,11 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (column is IColumn) param = (column as IColumn).Name;
+                if (column is IColumn)
+                {
+                    param = (column as IColumn).Name;
+                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                }
                 else throw new ArgumentNullException(nameof(param));
             }
             return column.Neq(new Param(param));
@@ -436,7 +444,11 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (column is IColumn) param = (column as IColumn).Name;
+                if (column is IColumn)
+                {
+                    param = (column as IColumn).Name;
+                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                }
                 else throw new ArgumentNullException(nameof(param));
             }
             return column.Gt(new Param(param));
@@ -446,7 +458,11 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (column is IColumn) param = (column as IColumn).Name;
+                if (column is IColumn)
+                {
+                    param = (column as IColumn).Name;
+                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                }
                 else throw new ArgumentNullException(nameof(param));
             }
             return column.GtOrEq(new Param(param));
@@ -456,7 +472,11 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (column is IColumn) param = (column as IColumn).Name;
+                if (column is IColumn)
+                {
+                    param = (column as IColumn).Name;
+                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                }
                 else throw new ArgumentNullException(nameof(param));
             }
             return column.Lt(new Param(param));
@@ -466,7 +486,11 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (column is IColumn) param = (column as IColumn).Name;
+                if (column is IColumn)
+                {
+                    param = (column as IColumn).Name;
+                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                }
                 else throw new ArgumentNullException(nameof(param));
             }
             return column.LtOrEq(new Param(param));
@@ -476,7 +500,11 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (column is IColumn) param = (column as IColumn).Name;
+                if (column is IColumn)
+                {
+                    param = (column as IColumn).Name;
+                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                }
                 else throw new ArgumentNullException(nameof(param));
             }
             return column.Like(new Param(param));
@@ -486,7 +514,11 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(param))
             {
-                if (column is IColumn) param = (column as IColumn).Name;
+                if (column is IColumn)
+                {
+                    param = (column as IColumn).Name;
+                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                }
                 else throw new ArgumentNullException(nameof(param));
             }
             return column.NotLike(new Param(param));
@@ -503,12 +535,20 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(paramLower))
             {
-                if (column is IColumn) paramLower = (column as IColumn).Name + "Lower";
+                if (column is IColumn)
+                {
+                    paramLower = paramLower ?? (column as IColumn).Name + "Lower";
+                    paramLower = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(paramLower) : paramLower;
+                }
                 else throw new ArgumentNullException(nameof(paramLower));
             }
             if (string.IsNullOrWhiteSpace(paramUpper))
             {
-                if (column is IColumn) paramUpper = (column as IColumn).Name + "Upper";
+                if (column is IColumn)
+                {
+                    paramUpper = paramUpper ?? (column as IColumn).Name + "Upper";
+                    paramUpper = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(paramUpper) : paramUpper;
+                }
                 else throw new ArgumentNullException(nameof(paramUpper));
             }
             return new BetweenExpression(column, new Param(paramLower), new Param(paramUpper));
@@ -525,12 +565,20 @@ namespace SqlExpression.Extension
         {
             if (string.IsNullOrWhiteSpace(paramLower))
             {
-                if (column is IColumn) paramLower = (column as IColumn).Name + "Lower";
+                if (column is IColumn)
+                {
+                    paramLower = paramLower ?? (column as IColumn).Name + "Lower";
+                    paramLower = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(paramLower) : paramLower;
+                }
                 else throw new ArgumentNullException(nameof(paramLower));
             }
             if (string.IsNullOrWhiteSpace(paramUpper))
             {
-                if (column is IColumn) paramUpper = (column as IColumn).Name + "Upper";
+                if (column is IColumn)
+                {
+                    paramUpper = paramUpper ?? (column as IColumn).Name + "Upper";
+                    paramUpper = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(paramUpper) : paramUpper;
+                }
                 else throw new ArgumentNullException(nameof(paramUpper));
             }
             return new NotBetweenExpression(column, new Param(paramLower), new Param(paramUpper));
