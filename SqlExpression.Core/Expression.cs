@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SqlExpression
@@ -14,9 +15,12 @@ namespace SqlExpression
     /// </summary>
     public abstract class Expression : IExpression
     {
-        public static string OpenQuotationMark { get; set; } = string.Empty;
-        public static string CloseQuotationMark { get; set; } = string.Empty;
-        public static string ParamMark { get; set; } = "@";
+        private static ThreadLocal<string> threadLocalOpenQuotationMark = new ThreadLocal<string>(() => string.Empty);
+        private static ThreadLocal<string> threadLocalCloseQuotationMark = new ThreadLocal<string>(() => string.Empty);
+        private static ThreadLocal<string> threadLocalParamMark = new ThreadLocal<string>(() => "@");
+        public static string OpenQuotationMark { get { return threadLocalOpenQuotationMark.Value; } set { threadLocalOpenQuotationMark.Value = value; } }
+        public static string CloseQuotationMark { get { return threadLocalCloseQuotationMark.Value; } set { threadLocalCloseQuotationMark.Value = value; } }
+        public static string ParamMark { get { return threadLocalParamMark.Value; } set { threadLocalParamMark.Value = value; } }
 
         public Expression()
         {
