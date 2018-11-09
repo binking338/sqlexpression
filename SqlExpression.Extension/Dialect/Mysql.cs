@@ -175,7 +175,7 @@ namespace SqlExpression.Extension.Dialect
         /// </summary>
         /// <returns>The identifier.</returns>
         /// <param name="insert">Insert.</param>
-        public static BatchSqlStatement WithReturnId(this IInsertStatement insert)
+        public static BatchSqlStatement ReturnId(this IInsertStatement insert)
         {
             return new BatchSqlStatement(new List<ISqlStatement>() { insert, new CustomExpression("SELECT LAST_INSERT_ID()") });
         }
