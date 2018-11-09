@@ -17,6 +17,7 @@ namespace SqlExpression
         public static string OpenQuotationMark { get; set; } = string.Empty;
         public static string CloseQuotationMark { get; set; } = string.Empty;
         public static string ParamMark { get; set; } = "@";
+        public static Func<string, string> Column2ParamContractHandler { get; set; }
 
         public Expression()
         {

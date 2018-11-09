@@ -74,7 +74,14 @@ namespace SqlExpression.Extension
 
         public static Param ToParam(this IColumn column, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = column.Name;
+            if (string.IsNullOrWhiteSpace(param))
+            {
+                param = column.Name;
+                if(Expression.Column2ParamContractHandler != null)
+                {
+                    param = Expression.Column2ParamContractHandler(param);
+                }
+            }
             return new Param(param);
         }
 
