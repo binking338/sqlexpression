@@ -88,9 +88,9 @@ namespace SqlExpression
     /// <summary>
     /// 字段
     /// </summary>
-    public class Field : Expression, IField
+    public class Column : Expression, IColumn
     {
-        public Field(string name, string dataset = null)
+        public Column(string name, string dataset = null)
         {
             Name = name;
             DatasetAlias = dataset;
@@ -110,7 +110,7 @@ namespace SqlExpression
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
-                throw new SqlSyntaxException(this, Error.FieldNameMissing);
+                throw new SqlSyntaxException(this, Error.ColumnNameMissing);
             }
             if (DatasetAlias == null)
             {
@@ -124,159 +124,159 @@ namespace SqlExpression
 
         #region 比较运算符
 
-        public static ComparisonExpression operator ==(Field field, ISimpleValue val)
+        public static ComparisonExpression operator ==(Column column, ISimpleValue val)
         {
-            return new ComparisonExpression(field, Operator.Eq, val);
+            return new ComparisonExpression(column, Operator.Eq, val);
         }
-        public static ComparisonExpression operator !=(Field field, ISimpleValue val)
+        public static ComparisonExpression operator !=(Column column, ISimpleValue val)
         {
-            return new ComparisonExpression(field, Operator.Neq, val);
+            return new ComparisonExpression(column, Operator.Neq, val);
         }
-        public static ComparisonExpression operator >(Field field, ISimpleValue val)
+        public static ComparisonExpression operator >(Column column, ISimpleValue val)
         {
-            return new ComparisonExpression(field, Operator.Gt, val);
+            return new ComparisonExpression(column, Operator.Gt, val);
         }
-        public static ComparisonExpression operator <(Field field, ISimpleValue val)
+        public static ComparisonExpression operator <(Column column, ISimpleValue val)
         {
-            return new ComparisonExpression(field, Operator.Lt, val);
+            return new ComparisonExpression(column, Operator.Lt, val);
         }
-        public static ComparisonExpression operator >=(Field field, ISimpleValue val)
+        public static ComparisonExpression operator >=(Column column, ISimpleValue val)
         {
-            return new ComparisonExpression(field, Operator.GtOrEq, val);
+            return new ComparisonExpression(column, Operator.GtOrEq, val);
         }
-        public static ComparisonExpression operator <=(Field field, ISimpleValue val)
+        public static ComparisonExpression operator <=(Column column, ISimpleValue val)
         {
-            return new ComparisonExpression(field, Operator.LtOrEq, val);
-        }
-
-        public static ComparisonExpression operator ==(Field field, LiteralValue val)
-        {
-            return new ComparisonExpression(field, Operator.Eq, val);
-        }
-        public static ComparisonExpression operator !=(Field field, LiteralValue val)
-        {
-            return new ComparisonExpression(field, Operator.Neq, val);
-        }
-        public static ComparisonExpression operator >(Field field, LiteralValue val)
-        {
-            return new ComparisonExpression(field, Operator.Gt, val);
-        }
-        public static ComparisonExpression operator <(Field field, LiteralValue val)
-        {
-            return new ComparisonExpression(field, Operator.Lt, val);
-        }
-        public static ComparisonExpression operator >=(Field field, LiteralValue val)
-        {
-            return new ComparisonExpression(field, Operator.GtOrEq, val);
-        }
-        public static ComparisonExpression operator <=(Field field, LiteralValue val)
-        {
-            return new ComparisonExpression(field, Operator.LtOrEq, val);
+            return new ComparisonExpression(column, Operator.LtOrEq, val);
         }
 
-        public static ComparisonExpression operator ==(LiteralValue val, Field field)
+        public static ComparisonExpression operator ==(Column column, LiteralValue val)
         {
-            return new ComparisonExpression(val, Operator.Eq, field);
+            return new ComparisonExpression(column, Operator.Eq, val);
         }
-        public static ComparisonExpression operator !=(LiteralValue val, Field field)
+        public static ComparisonExpression operator !=(Column column, LiteralValue val)
         {
-            return new ComparisonExpression(val, Operator.Neq, field);
+            return new ComparisonExpression(column, Operator.Neq, val);
         }
-        public static ComparisonExpression operator >(LiteralValue val, Field field)
+        public static ComparisonExpression operator >(Column column, LiteralValue val)
         {
-            return new ComparisonExpression(val, Operator.Gt, field);
+            return new ComparisonExpression(column, Operator.Gt, val);
         }
-        public static ComparisonExpression operator <(LiteralValue val, Field field)
+        public static ComparisonExpression operator <(Column column, LiteralValue val)
         {
-            return new ComparisonExpression(val, Operator.Lt, field);
+            return new ComparisonExpression(column, Operator.Lt, val);
         }
-        public static ComparisonExpression operator >=(LiteralValue val, Field field)
+        public static ComparisonExpression operator >=(Column column, LiteralValue val)
         {
-            return new ComparisonExpression(val, Operator.GtOrEq, field);
+            return new ComparisonExpression(column, Operator.GtOrEq, val);
         }
-        public static ComparisonExpression operator <=(LiteralValue val, Field field)
+        public static ComparisonExpression operator <=(Column column, LiteralValue val)
         {
-            return new ComparisonExpression(val, Operator.LtOrEq, field);
+            return new ComparisonExpression(column, Operator.LtOrEq, val);
+        }
+
+        public static ComparisonExpression operator ==(LiteralValue val, Column column)
+        {
+            return new ComparisonExpression(val, Operator.Eq, column);
+        }
+        public static ComparisonExpression operator !=(LiteralValue val, Column column)
+        {
+            return new ComparisonExpression(val, Operator.Neq, column);
+        }
+        public static ComparisonExpression operator >(LiteralValue val, Column column)
+        {
+            return new ComparisonExpression(val, Operator.Gt, column);
+        }
+        public static ComparisonExpression operator <(LiteralValue val, Column column)
+        {
+            return new ComparisonExpression(val, Operator.Lt, column);
+        }
+        public static ComparisonExpression operator >=(LiteralValue val, Column column)
+        {
+            return new ComparisonExpression(val, Operator.GtOrEq, column);
+        }
+        public static ComparisonExpression operator <=(LiteralValue val, Column column)
+        {
+            return new ComparisonExpression(val, Operator.LtOrEq, column);
         }
 
         #endregion
 
         #region 算术运算符
 
-        public static ArithmeticExpression operator +(Field field, ISimpleValue val)
+        public static ArithmeticExpression operator +(Column column, ISimpleValue val)
         {
-            return new ArithmeticExpression(field, Operator.Add, val);
+            return new ArithmeticExpression(column, Operator.Add, val);
         }
-        public static ArithmeticExpression operator -(Field field, ISimpleValue val)
+        public static ArithmeticExpression operator -(Column column, ISimpleValue val)
         {
-            return new ArithmeticExpression(field, Operator.Sub, val);
+            return new ArithmeticExpression(column, Operator.Sub, val);
         }
-        public static ArithmeticExpression operator *(Field field, ISimpleValue val)
+        public static ArithmeticExpression operator *(Column column, ISimpleValue val)
         {
-            return new ArithmeticExpression(field, Operator.Mul, val);
+            return new ArithmeticExpression(column, Operator.Mul, val);
         }
-        public static ArithmeticExpression operator /(Field field, ISimpleValue val)
+        public static ArithmeticExpression operator /(Column column, ISimpleValue val)
         {
-            return new ArithmeticExpression(field, Operator.Div, val);
+            return new ArithmeticExpression(column, Operator.Div, val);
         }
-        public static ArithmeticExpression operator %(Field field, ISimpleValue val)
+        public static ArithmeticExpression operator %(Column column, ISimpleValue val)
         {
-            return new ArithmeticExpression(field, Operator.Mod, val);
-        }
-
-        public static ArithmeticExpression operator +(Field field, LiteralValue val)
-        {
-            return new ArithmeticExpression(field, Operator.Add, val);
-        }
-        public static ArithmeticExpression operator -(Field field, LiteralValue val)
-        {
-            return new ArithmeticExpression(field, Operator.Sub, val);
-        }
-        public static ArithmeticExpression operator *(Field field, LiteralValue val)
-        {
-            return new ArithmeticExpression(field, Operator.Mul, val);
-        }
-        public static ArithmeticExpression operator /(Field field, LiteralValue val)
-        {
-            return new ArithmeticExpression(field, Operator.Div, val);
-        }
-        public static ArithmeticExpression operator %(Field field, LiteralValue val)
-        {
-            return new ArithmeticExpression(field, Operator.Mod, val);
+            return new ArithmeticExpression(column, Operator.Mod, val);
         }
 
+        public static ArithmeticExpression operator +(Column column, LiteralValue val)
+        {
+            return new ArithmeticExpression(column, Operator.Add, val);
+        }
+        public static ArithmeticExpression operator -(Column column, LiteralValue val)
+        {
+            return new ArithmeticExpression(column, Operator.Sub, val);
+        }
+        public static ArithmeticExpression operator *(Column column, LiteralValue val)
+        {
+            return new ArithmeticExpression(column, Operator.Mul, val);
+        }
+        public static ArithmeticExpression operator /(Column column, LiteralValue val)
+        {
+            return new ArithmeticExpression(column, Operator.Div, val);
+        }
+        public static ArithmeticExpression operator %(Column column, LiteralValue val)
+        {
+            return new ArithmeticExpression(column, Operator.Mod, val);
+        }
 
-        public static ArithmeticExpression operator +(LiteralValue val, Field field)
+
+        public static ArithmeticExpression operator +(LiteralValue val, Column column)
         {
-            return new ArithmeticExpression(val, Operator.Add, field);
+            return new ArithmeticExpression(val, Operator.Add, column);
         }
-        public static ArithmeticExpression operator -(LiteralValue val, Field field)
+        public static ArithmeticExpression operator -(LiteralValue val, Column column)
         {
-            return new ArithmeticExpression(val, Operator.Sub, field);
+            return new ArithmeticExpression(val, Operator.Sub, column);
         }
-        public static ArithmeticExpression operator *(LiteralValue val, Field field)
+        public static ArithmeticExpression operator *(LiteralValue val, Column column)
         {
-            return new ArithmeticExpression(val, Operator.Mul, field);
+            return new ArithmeticExpression(val, Operator.Mul, column);
         }
-        public static ArithmeticExpression operator /(LiteralValue val, Field field)
+        public static ArithmeticExpression operator /(LiteralValue val, Column column)
         {
-            return new ArithmeticExpression(val, Operator.Div, field);
+            return new ArithmeticExpression(val, Operator.Div, column);
         }
-        public static ArithmeticExpression operator %(LiteralValue val, Field field)
+        public static ArithmeticExpression operator %(LiteralValue val, Column column)
         {
-            return new ArithmeticExpression(val, Operator.Mod, field);
+            return new ArithmeticExpression(val, Operator.Mod, column);
         }
 
         #endregion
 
         #region 逻辑运算符
 
-        public static LogicExpression operator &(Field exp1, ISimpleValue exp2)
+        public static LogicExpression operator &(Column exp1, ISimpleValue exp2)
         {
             return new LogicExpression(exp1, Operator.And, exp2);
         }
 
-        public static LogicExpression operator |(Field exp1, ISimpleValue exp2)
+        public static LogicExpression operator |(Column exp1, ISimpleValue exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
@@ -285,18 +285,18 @@ namespace SqlExpression
 
         #region 隐式转换
 
-        public static implicit operator Field(string field)
+        public static implicit operator Column(string column)
         {
-            return new Field(field);
+            return new Column(column);
         }
 
         #endregion
 
         public override bool Equals(object obj)
         {
-            if (obj is Field)
+            if (obj is Column)
             {
-                return (obj as Field).Name == this.Name;
+                return (obj as Column).Name == this.Name;
             }
             else
             {
@@ -630,9 +630,9 @@ namespace SqlExpression
             return new Param(param);
         }
 
-        public static implicit operator Param(Field field)
+        public static implicit operator Param(Column column)
         {
-            return new Param(field.Name);
+            return new Param(column.Name);
         }
 
         #endregion
@@ -1936,29 +1936,29 @@ namespace SqlExpression
     /// </summary>
     public class AggregateFunctionExpression : FunctionExpression, IAggregateFunctionExpression
     {
-        public static AggregateFunctionExpression Count(ISimpleValue field)
+        public static AggregateFunctionExpression Count(ISimpleValue column)
         {
-            return new AggregateFunctionExpression("COUNT", field);
+            return new AggregateFunctionExpression("COUNT", column);
         }
 
-        public static AggregateFunctionExpression Sum(ISimpleValue field)
+        public static AggregateFunctionExpression Sum(ISimpleValue column)
         {
-            return new AggregateFunctionExpression("SUM", field);
+            return new AggregateFunctionExpression("SUM", column);
         }
 
-        public static AggregateFunctionExpression Avg(ISimpleValue field)
+        public static AggregateFunctionExpression Avg(ISimpleValue column)
         {
-            return new AggregateFunctionExpression("AVG", field);
+            return new AggregateFunctionExpression("AVG", column);
         }
 
-        public static AggregateFunctionExpression Max(ISimpleValue field)
+        public static AggregateFunctionExpression Max(ISimpleValue column)
         {
-            return new AggregateFunctionExpression("MAX", field);
+            return new AggregateFunctionExpression("MAX", column);
         }
 
-        public static AggregateFunctionExpression Min(ISimpleValue field)
+        public static AggregateFunctionExpression Min(ISimpleValue column)
         {
-            return new AggregateFunctionExpression("MIN", field);
+            return new AggregateFunctionExpression("MIN", column);
         }
 
         public AggregateFunctionExpression(string name, ISimpleValue value)
@@ -2171,16 +2171,16 @@ namespace SqlExpression
     /// </summary>
     public class InsertStatement : Expression, IInsertStatement
     {
-        public InsertStatement(ITable table, IList<IField> fields, ICollection values)
+        public InsertStatement(ITable table, IList<IColumn> columns, ICollection values)
         {
             Table = table;
-            Fields = fields;
+            Columns = columns;
             Values = values;
         }
 
         public ITable Table { get; set; }
 
-        public IList<IField> Fields { get; set; }
+        public IList<IColumn> Columns { get; set; }
 
         public ICollection Values { get; set; }
 
@@ -2207,15 +2207,15 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableMissing);
             }
-            if (Fields == null || Fields.Count == 0)
+            if (Columns == null || Columns.Count == 0)
             {
-                throw new SqlSyntaxException(this, Error.FieldsMissing);
+                throw new SqlSyntaxException(this, Error.ColumnsMissing);
             }
             if (Values == null)
             {
                 throw new SqlSyntaxException(this, Error.ValuesMissing);
             }
-            return string.Format("INSERT INTO {0}({1}) VALUES{2}", Table.ToString(), Fields.Join(",", p => p.ToString()), Values.ToString());
+            return string.Format("INSERT INTO {0}({1}) VALUES{2}", Table.ToString(), Columns.Join(",", p => p.ToString()), Values.ToString());
         }
     }
 
@@ -2336,32 +2336,32 @@ namespace SqlExpression
     /// </summary>
     public class SetExpression : Expression, ISetExpression
     {
-        public SetExpression(IField field, ISimpleValue value)
+        public SetExpression(IColumn column, ISimpleValue value)
         {
-            Field = field;
+            Column = column;
             Value = value;
         }
 
-        public SetExpression(IField field)
-            : this(field, new Param(field.Name))
+        public SetExpression(IColumn column)
+            : this(column, new Param(column.Name))
         {
         }
 
-        public IField Field { get; set; }
+        public IColumn Column { get; set; }
 
         public ISimpleValue Value { get; set; }
 
         protected override string Build()
         {
-            if (Field == null)
+            if (Column == null)
             {
-                throw new SqlSyntaxException(this, Error.FieldMissing);
+                throw new SqlSyntaxException(this, Error.ColumnMissing);
             }
             if (Value == null)
             {
                 throw new SqlSyntaxException(this, Error.ValueMissing);
             }
-            return string.Format("{0}={1}", Field.ToString(), Value.ToString());
+            return string.Format("{0}={1}", Column.ToString(), Value.ToString());
         }
     }
 
@@ -2435,7 +2435,7 @@ namespace SqlExpression
                 var _params = new List<string>();
                 foreach (var item in Select.Items)
                 {
-                    _params.AddRange(item.Field.ResolveParams());
+                    _params.AddRange(item.Column.ResolveParams());
                 }
                 _params.AddRange(From.Dataset.ResolveParams());
                 if (Where != null) _params.AddRange(Where.Filter.ResolveParams());
@@ -2548,33 +2548,33 @@ namespace SqlExpression
     /// </summary>
     public class SelectItemExpression : Expression, ISelectItemExpression
     {
-        public SelectItemExpression(ISimpleValue field, string alias)
+        public SelectItemExpression(ISimpleValue column, string alias)
         {
-            if (field is ISelectItemExpression)
+            if (column is ISelectItemExpression)
             {
-                throw new ArgumentException(nameof(field));
+                throw new ArgumentException(nameof(column));
             }
-            Field = field;
+            Column = column;
             Alias = alias;
         }
 
-        public ISimpleValue Field { get; set; }
+        public ISimpleValue Column { get; set; }
 
         public string Alias { get; set; }
 
         protected override string Build()
         {
-            if (Field == null)
+            if (Column == null)
             {
-                throw new SqlSyntaxException(this, Error.FieldMissing);
+                throw new SqlSyntaxException(this, Error.ColumnMissing);
             }
             if (string.IsNullOrWhiteSpace(Alias))
             {
-                return Field.ToString();
+                return Column.ToString();
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{3}", Field.ToString(), Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Column.ToString(), Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
             }
         }
     }
@@ -2582,9 +2582,9 @@ namespace SqlExpression
     /// <summary>
     /// 所有项 *
     /// </summary>
-    public class AllFieldssExpression : Field
+    public class AllColumnsExpression : Column
     {
-        public AllFieldssExpression(string dataset)
+        public AllColumnsExpression(string dataset)
             : base("*", dataset)
         {
         }
@@ -2665,7 +2665,7 @@ namespace SqlExpression
         public AliasSubQueryExpression(ISubQueryExpression subquery, string alias)
         {
             SubQuery = subquery;
-            Field = subquery;
+            Column = subquery;
             Alias = alias;
         }
 
@@ -2677,7 +2677,7 @@ namespace SqlExpression
         /// <summary>
         /// 字段
         /// </summary>
-        public ISimpleValue Field { get; set; }
+        public ISimpleValue Column { get; set; }
 
         /// <summary>
         /// 别名
@@ -2753,31 +2753,31 @@ namespace SqlExpression
     /// </summary>
     public class GroupByClause : Expression, IGroupByClause
     {
-        public GroupByClause(IList<ISimpleValue> fields) : this(fields, null) { }
+        public GroupByClause(IList<ISimpleValue> columns) : this(columns, null) { }
 
-        public GroupByClause(IList<ISimpleValue> fields, ISimpleValue having)
+        public GroupByClause(IList<ISimpleValue> columns, ISimpleValue having)
         {
-            Fields = fields;
+            Columns = columns;
             Having = having;
         }
 
-        public IList<ISimpleValue> Fields { get; set; }
+        public IList<ISimpleValue> Columns { get; set; }
 
         public ISimpleValue Having { get; set; }
 
         protected override string Build()
         {
-            if (Fields == null || Fields.Count == 0)
+            if (Columns == null || Columns.Count == 0)
             {
-                throw new SqlSyntaxException(this, Error.GroupByFieldsEmpty);
+                throw new SqlSyntaxException(this, Error.GroupByColumnsEmpty);
             }
             if (Having == null)
             {
-                return string.Format("GROUP BY {0}", Fields.Join(",", val => val.ToString()));
+                return string.Format("GROUP BY {0}", Columns.Join(",", val => val.ToString()));
             }
             else
             {
-                return string.Format("GROUP BY {0} HAVING {1}", Fields.Join(",", val => val.ToString()), Having.ToString());
+                return string.Format("GROUP BY {0} HAVING {1}", Columns.Join(",", val => val.ToString()), Having.ToString());
             }
         }
     }
@@ -2798,7 +2798,7 @@ namespace SqlExpression
         {
             if (Orders == null || Orders.Count == 0)
             {
-                throw new SqlSyntaxException(this, Error.OrderByFieldsMissingEmpty);
+                throw new SqlSyntaxException(this, Error.OrderByColumnsMissingEmpty);
             }
             return string.Format("ORDER BY {0}", Orders.Join(",", order => order.ToString()));
         }
@@ -2809,25 +2809,25 @@ namespace SqlExpression
     /// </summary>
     public class OrderExpression : Expression, IOrderExpression
     {
-        public OrderExpression(ISimpleValue field) : this(field, OrderEnum.Asc) { }
+        public OrderExpression(ISimpleValue column) : this(column, OrderEnum.Asc) { }
 
-        public OrderExpression(ISimpleValue field, OrderEnum order)
+        public OrderExpression(ISimpleValue column, OrderEnum order)
         {
-            Field = field;
+            Column = column;
             Order = order;
         }
 
-        public ISimpleValue Field { get; set; }
+        public ISimpleValue Column { get; set; }
 
         public OrderEnum Order { get; set; } = OrderEnum.Asc;
 
         protected override string Build()
         {
-            if (Field == null)
+            if (Column == null)
             {
-                throw new SqlSyntaxException(this, Error.FieldMissing);
+                throw new SqlSyntaxException(this, Error.ColumnMissing);
             }
-            return string.Format("{0} {1}", Field.ToString(), Order == OrderEnum.Asc ? "ASC" : "DESC");
+            return string.Format("{0} {1}", Column.ToString(), Order == OrderEnum.Asc ? "ASC" : "DESC");
         }
     }
 

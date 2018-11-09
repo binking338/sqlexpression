@@ -132,7 +132,7 @@ namespace SqlExpression.Extension.Dialect
         /// <returns></returns>
         public static SimpleQueryStatement Count(this ISelectStatement select)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Field("*")).As("__totalcount__") }),
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Column("*")).As("__totalcount__") }),
                                             new FromClause(new SubQueryExpression(select.Query)));
         }
 
@@ -144,7 +144,7 @@ namespace SqlExpression.Extension.Dialect
         /// <returns></returns>
         public static SimpleQueryStatement Count(this IQueryStatement query)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Field("*")).As("__totalcount__") }),
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Column("*")).As("__totalcount__") }),
                                             new FromClause(new SubQueryExpression(query)));
         }
 

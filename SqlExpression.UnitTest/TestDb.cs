@@ -20,17 +20,17 @@ namespace SqlExpression.UnitTest.Schema
     public abstract class _SchemaExpression<T> : IAliasTableExpression
         where T : class
     {
-        protected Field[] _allFields = null;
-        protected Field[] _pkFields = null;
+        protected Column[] _allColumns = null;
+        protected Column[] _pkColumns = null;
         protected SelectItemExpression[] _allItems = null;
         protected SelectItemExpression[] _pkItems = null;
-        public Field[] All()
+        public Column[] All()
         {
-            return _allFields;
+            return _allColumns;
         }
-        public Field[] PK()
+        public Column[] PK()
         {
-            return _pkFields;
+            return _pkColumns;
         }
         public SelectItemExpression[] AllMapped()
         {
@@ -73,28 +73,28 @@ namespace SqlExpression.UnitTest.Schema
             (this as IAliasTableExpression).Alias = alias == "foo" ? null : alias;
             (this as IAliasTableExpression).Table = new Table("foo");
 
-            Id = new Field("id", alias);
-            Name = new Field("name", alias);
-            Age = new Field("age", alias);
-            Gender = new Field("gender", alias);
-            Isdel = new Field("isdel", alias);
+            Id = new Column("id", alias);
+            Name = new Column("name", alias);
+            Age = new Column("age", alias);
+            Gender = new Column("gender", alias);
+            Isdel = new Column("isdel", alias);
 
-            _allFields = new Field[] { Id, Name, Age, Gender, Isdel };
-            _pkFields = new Field[] { Id };
+            _allColumns = new Column[] { Id, Name, Age, Gender, Isdel };
+            _pkColumns = new Column[] { Id };
             _allItems = new SelectItemExpression[] { Id.As("Id"), Name.As("Name"), Age.As("Age"), Gender.As("Gender"), Isdel.As("Isdel") };
             _pkItems = new SelectItemExpression[] { Id.As("Id") };
 
         }
 
-        public Field Id { get; set; }
+        public Column Id { get; set; }
 
-        public Field Name { get; set; }
+        public Column Name { get; set; }
 
-        public Field Age { get; set; }
+        public Column Age { get; set; }
 
-        public Field Gender { get; set; }
+        public Column Gender { get; set; }
 
-        public Field Isdel { get; set; }
+        public Column Isdel { get; set; }
     }
 
     public class Bar : _SchemaExpression<Bar>
@@ -104,26 +104,26 @@ namespace SqlExpression.UnitTest.Schema
             (this as IAliasTableExpression).Alias = alias == "bar" ? null : alias;
             (this as IAliasTableExpression).Table = new Table("bar");
 
-            Id = new Field("id", alias);
-            Name = new Field("name", alias);
-            Age = new Field("age", alias);
-            Gender = new Field("gender", alias);
-            Isdel = new Field("isdel", alias);
+            Id = new Column("id", alias);
+            Name = new Column("name", alias);
+            Age = new Column("age", alias);
+            Gender = new Column("gender", alias);
+            Isdel = new Column("isdel", alias);
 
-            _allFields = new Field[] { Id, Name, Age, Gender, Isdel };
-            _pkFields = new Field[] { Id };
+            _allColumns = new Column[] { Id, Name, Age, Gender, Isdel };
+            _pkColumns = new Column[] { Id };
             _allItems = new SelectItemExpression[] { Id.As("Id"), Name.As("Name"), Age.As("Age"), Gender.As("Gender"), Isdel.As("Isdel") };
             _pkItems = new SelectItemExpression[] { Id.As("Id") };
         }
 
-        public Field Id { get; set; }
+        public Column Id { get; set; }
 
-        public Field Name { get; set; }
+        public Column Name { get; set; }
 
-        public Field Age { get; set; }
+        public Column Age { get; set; }
 
-        public Field Gender { get; set; }
+        public Column Gender { get; set; }
 
-        public Field Isdel { get; set; }
+        public Column Isdel { get; set; }
     }
 }

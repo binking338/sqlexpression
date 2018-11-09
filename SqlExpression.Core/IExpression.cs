@@ -66,7 +66,7 @@ namespace SqlExpression
     /// <summary>
     /// 列（字段）
     /// </summary>
-    public interface IField : ISimpleValue
+    public interface IColumn : ISimpleValue
     {
         /// <summary>
         /// 列（字段）名称
@@ -383,7 +383,7 @@ namespace SqlExpression
         /// <summary>
         /// 插入字段
         /// </summary>
-        IList<IField> Fields { get; set; }
+        IList<IColumn> Columns { get; set; }
 
         /// <summary>
         /// 插入值
@@ -449,7 +449,7 @@ namespace SqlExpression
         /// <summary>
         /// 更新字段
         /// </summary>
-        IField Field { get; set; }
+        IColumn Column { get; set; }
         /// <summary>
         /// 更新值
         /// </summary>
@@ -554,7 +554,7 @@ namespace SqlExpression
         /// <summary>
         /// 查询项
         /// </summary>
-        ISimpleValue Field { get; set; }
+        ISimpleValue Column { get; set; }
 
         /// <summary>
         /// 别名
@@ -612,7 +612,7 @@ namespace SqlExpression
         /// <summary>
         /// 分组字段
         /// </summary>
-        IList<ISimpleValue> Fields { get; set; }
+        IList<ISimpleValue> Columns { get; set; }
 
         /// <summary>
         /// 分组条件
@@ -639,7 +639,7 @@ namespace SqlExpression
         /// <summary>
         /// 字段
         /// </summary>
-        ISimpleValue Field { get; set; }
+        ISimpleValue Column { get; set; }
         /// <summary>
         /// 升序|降序
         /// </summary>
