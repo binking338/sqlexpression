@@ -8,4 +8,7 @@
     <ProjectReference Include="..\SqlExpression.Core\SqlExpression.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dialect\Mysql\" />
+  </ItemGroup>
 </Project>

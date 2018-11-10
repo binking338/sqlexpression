@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SqlExpression.Extension.Dialect
+namespace SqlExpression.Extension.Dialect.Mysql
 {
-    public static class Mysql
+    public static class Config
     {
         public static void EnableDialect()
         {
@@ -18,7 +18,10 @@ namespace SqlExpression.Extension.Dialect
             Expression.OpenQuotationMark = string.Empty;
             Expression.CloseQuotationMark = string.Empty;
         }
+    }
 
+    public static class Extensions
+    {
         /// <summary>
         /// 返回分页sql语句
         /// </summary>
@@ -228,6 +231,10 @@ namespace SqlExpression.Extension.Dialect
                 Limit = limit;
             }
 
+            /// <summary>
+            /// Gets or sets the limit.
+            /// </summary>
+            /// <value>The limit.</value>
             public LimitExpression Limit { get; set; }
 
             protected override string Build()
