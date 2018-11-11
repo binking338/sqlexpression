@@ -47,7 +47,7 @@ namespace SqlExpression
         public virtual object Insert(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null)
         {
             var exp = schema.Table
-                            .InsertVarParam(columns == null ? schema.All() : columns(schema));
+                            .InsertVarParam(columns?.Invoke(schema) ?? schema.All());
             var sql = exp.ToString();
             if (enableLog && logger != null) logger.LogDebug(sql);
             var rows = connection.Execute(sql, entity);
@@ -67,7 +67,7 @@ namespace SqlExpression
         public virtual bool Update(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null)
         {
             var exp = schema.Table
-                            .UpdateVarParam(columns == null ? schema.All().Except(schema.PK()) : columns(schema))
+                            .UpdateVarParam(columns?.Invoke(schema) ?? schema.All().Except(schema.PK()))
                             .Where(schema.PK().AllEqVarParam());
             var sql = exp.ToString();
             if (enableLog && logger != null) logger.LogDebug(sql);
@@ -101,7 +101,13 @@ namespace SqlExpression
                             .Where(schema.PK().AllEqVarParam());
             var sql = exp.ToString();
             if (enableLog && logger != null) logger.LogDebug(sql);
-            return connection.Execute(sql, PrimaryKey2ParamObject(primaryKey)) > 0;
+            var param = PrimaryKey2ParamObject(primaryKey);
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.Execute(sql, param) > 0;
         }
 
         public virtual int Delete(IEnumerable<object> primaryKeys)
@@ -121,6 +127,11 @@ namespace SqlExpression
                             .Where(filter(schema));
             var sql = exp.ToString();
             if (enableLog && logger != null) logger.LogDebug(sql);
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
             return connection.Execute(sql, param);
 
         }
@@ -131,7 +142,13 @@ namespace SqlExpression
                             .Where(schema.PK().AllEqVarParam());
             var sql = exp.ToString();
             if (enableLog && logger != null) logger.LogDebug(sql);
-            return connection.QueryFirstOrDefault<TEntity>(sql, PrimaryKey2ParamObject(primaryKey));
+            var param = PrimaryKey2ParamObject(primaryKey);
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QueryFirstOrDefault<TEntity>(sql, param);
         }
 
         public virtual IEnumerable<TEntity> GetList(IEnumerable<object> primaryKeys)
@@ -140,7 +157,7 @@ namespace SqlExpression
             {
                 throw new NotSupportedException();
             }
-            if (primaryKeys == null || primaryKeys.Any())
+            if (primaryKeys == null || !primaryKeys.Any())
             {
                 throw new ArgumentException(nameof(primaryKeys));
             }
@@ -157,6 +174,11 @@ namespace SqlExpression
                             .Where(filter(schema));
             var sql = exp.ToString();
             if (enableLog && logger != null) logger.LogDebug(sql);
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
             return connection.Query<TEntity>(sql, param);
         }
 
@@ -166,6 +188,11 @@ namespace SqlExpression
                             .Where(filter(Schema));
             var sql = exp.ToString();
             if (enableLog && logger != null) logger.LogDebug(sql);
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
             return connection.Query<T>(sql, param);
         }
 
@@ -184,6 +211,49 @@ namespace SqlExpression
                 primaryKey = param;
             }
             return primaryKey;
+        }
+
+        private static ConcurrentDictionary<Type, IList<string>> Cache4ParamPropertyNames { get; } = new ConcurrentDictionary<Type, IList<string>>();
+        protected List<string> CheckMissingParams(ISqlStatement exp, object param)
+        {
+            var paramNotProvided = new List<string>();
+            var paramNames = exp.Params;
+            if (paramNames == null || !paramNames.Any())
+            {
+                return paramNotProvided;
+            }
+
+            if (param is IDictionary<string, object>)
+            {
+                var dic = (param as IDictionary<string, object>);
+                paramNames.ToList().ForEach(paramName =>
+                {
+                    if (!dic.ContainsKey(paramName))
+                    {
+                        paramNotProvided.Add(paramName);
+                    }
+                });
+            }
+            else
+            {
+                var type = param.GetType();
+                if (!Cache4ParamPropertyNames.TryGetValue(type, out var paramPropertyNames))
+                {
+                    paramPropertyNames = new List<string>();
+                    var properties = type.GetProperties();
+                    foreach (var property in properties)
+                    {
+                        paramPropertyNames.Add(property.Name);
+                    }
+                }
+                paramNames.ToList().ForEach(paramName => {
+                    if(!paramPropertyNames.Contains(paramName))
+                    {
+                        paramNotProvided.Add(paramName);
+                    }
+                });
+            }
+            return paramNotProvided;
         }
 
         private static ConcurrentDictionary<Type, IEnumerable<IColumn>> Cache4Properties2Columns { get; } = new ConcurrentDictionary<Type, IEnumerable<IColumn>>();
