@@ -5,7 +5,7 @@ using System.Text;
 using SqlExpression.Extension;
 using System.Linq;
 
-namespace SqlExpression.UnitTest
+namespace SqlExpression.UnitTest.Statement
 {
     /// <summary>
     /// 

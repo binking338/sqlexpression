@@ -1,6 +1,16 @@
-﻿using System;
-namespace SqlExpression.UnitTest
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using SqlExpression.Extension;
+using System.Linq;
+
+namespace SqlExpression.UnitTest.Statement
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    [TestClass]
     public class DeleteStatementTest
     {
         public DeleteStatementTest()

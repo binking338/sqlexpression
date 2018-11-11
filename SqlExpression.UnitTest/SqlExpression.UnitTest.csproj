@@ -19,4 +19,7 @@
     <ProjectReference Include="..\SqlExpression.Extension.Dapper\SqlExpression.Extension.Dapper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Statement\" />
+  </ItemGroup>
 </Project>
