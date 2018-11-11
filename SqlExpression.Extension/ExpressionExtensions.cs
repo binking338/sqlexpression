@@ -72,6 +72,19 @@ namespace SqlExpression.Extension
 
         #endregion
 
+        public static AllColumnsExpression Asterisk(this IAliasDataset dataset)
+        {
+            var alias = string.IsNullOrEmpty(dataset.Alias) && dataset is IAliasTableExpression 
+                              ? (dataset as IAliasTableExpression).Table.Name 
+                              : dataset.Alias;
+            return new AllColumnsExpression(alias);
+        }
+
+        public static AllColumnsExpression Asterisk(this ITable table)
+        {
+            return new AllColumnsExpression(table.Name);
+        }
+
         public static Param ToParam(this IColumn column, string param = null)
         {
             if (string.IsNullOrWhiteSpace(param))
@@ -106,12 +119,12 @@ namespace SqlExpression.Extension
             return new SetExpression(column, value);
         }
 
-        public static OrderExpression Desc(this IColumn column)
+        public static OrderExpression Desc(this ISimpleValue column)
         {
             return new OrderExpression(column, OrderEnum.Desc);
         }
 
-        public static OrderExpression Asc(this IColumn column)
+        public static OrderExpression Asc(this ISimpleValue column)
         {
             return new OrderExpression(column, OrderEnum.Asc);
         }
