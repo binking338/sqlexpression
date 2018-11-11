@@ -19,6 +19,8 @@ namespace SqlExpression.UnitTest
             Connection = connection;
             foo = new Lazy<Respository<FooSchema, Foo>>(() => new Respository<FooSchema, Foo>(Connection));
             bar = new Lazy<Respository<BarSchema, Bar>>(() => new Respository<BarSchema, Bar>(Connection));
+
+            Expression.Column2ParamContractHandler = ToUpperCamalCase;
         }
 
         private Lazy<Respository<FooSchema, Foo>> foo;
