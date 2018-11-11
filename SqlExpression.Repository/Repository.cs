@@ -101,7 +101,7 @@ namespace SqlExpression
                             .Where(schema.PK().AllEqVarParam());
             var sql = exp.ToString();
             if (enableLog && logger != null) logger.LogDebug(sql);
-            return connection.Execute(sql, PrimaryKey2Param(primaryKey)) > 0;
+            return connection.Execute(sql, PrimaryKey2ParamObject(primaryKey)) > 0;
         }
 
         public virtual int Delete(IEnumerable<object> primaryKeys)
@@ -131,7 +131,7 @@ namespace SqlExpression
                             .Where(schema.PK().AllEqVarParam());
             var sql = exp.ToString();
             if (enableLog && logger != null) logger.LogDebug(sql);
-            return connection.QueryFirstOrDefault<TEntity>(sql, PrimaryKey2Param(primaryKey));
+            return connection.QueryFirstOrDefault<TEntity>(sql, PrimaryKey2ParamObject(primaryKey));
         }
 
         public virtual IEnumerable<TEntity> GetList(IEnumerable<object> primaryKeys)
@@ -170,8 +170,12 @@ namespace SqlExpression
         }
 
         #region 工具函数
-        protected object PrimaryKey2Param(object primaryKey)
+        protected object PrimaryKey2ParamObject(object primaryKey)
         {
+            if (schema.PK().Length <= 0)
+            {
+                throw new NotSupportedException();
+            }
             if (schema.PK().Length == 1 && primaryKey.GetType().IsValueType)
             {
                 var param = new Dictionary<string, object>();
