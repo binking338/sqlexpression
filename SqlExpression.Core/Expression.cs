@@ -949,10 +949,10 @@ namespace SqlExpression
     /// </summary>
     public class BinaryExpression : Expression, IBinaryExpression
     {
-        public BinaryExpression(ISimpleValue a, IBinaryOperator op, ISimpleValue b)
+        public BinaryExpression(IBinaryOperator op, ISimpleValue a, ISimpleValue b)
         {
-            Value1 = a;
             Op = op;
+            Value1 = a;
             Value2 = b;
         }
 
@@ -1223,7 +1223,7 @@ namespace SqlExpression
     public class ComparisonExpression : BinaryExpression, IComparisonExpression
     {
         public ComparisonExpression(ISimpleValue a, IComparisonOperator op, ISimpleValue b)
-            : base(a, op, b)
+            : base(op, a, b)
         {
         }
 
@@ -1441,7 +1441,7 @@ namespace SqlExpression
     /// </summary>
     public class InExpression : BinaryExpression, IInExpression
     {
-        public InExpression(ISimpleValue value, ICollection collection) : base(value, Operator.In, collection)
+        public InExpression(ISimpleValue value, ICollection collection) : base(Operator.In, value, collection)
         {
             Value = value;
             Collection = collection;
@@ -1484,7 +1484,7 @@ namespace SqlExpression
     /// </summary>
     public class NotInExpression : BinaryExpression, INotInExpression
     {
-        public NotInExpression(ISimpleValue value, ICollection collection) : base(value, Operator.NotIn, collection)
+        public NotInExpression(ISimpleValue value, ICollection collection) : base(Operator.NotIn, value, collection)
         {
             Value = value;
             Collection = collection;
@@ -1528,15 +1528,15 @@ namespace SqlExpression
     public class LogicExpression : BinaryExpression, ILogicExpression
     {
         public LogicExpression(ISimpleValue a, ILogicOperator op, ISimpleValue b)
-            : base(a, op, b)
+            : base(op, a, b)
         {
-            if (op == LogicOperator.And)
+            if (op == Operator.And)
             {
-                if (a is ILogicExpression && (a as ILogicExpression).Op == LogicOperator.Or)
+                if (a is ILogicExpression && (a as ILogicExpression).Op == Operator.Or)
                 {
                     Value1 = new BracketExpression(a);
                 }
-                if (b is ILogicExpression && (b as ILogicExpression).Op == LogicOperator.Or)
+                if (b is ILogicExpression && (b as ILogicExpression).Op == Operator.Or)
                 {
                     Value2 = new BracketExpression(b);
                 }
@@ -1564,7 +1564,7 @@ namespace SqlExpression
     public class ArithmeticExpression : BinaryExpression, IArithmeticExpression
     {
         public ArithmeticExpression(ISimpleValue a, IArithmeticOperator op, ISimpleValue b)
-            : base(a, op, b)
+            : base(op, a, b)
         {
         }
 
