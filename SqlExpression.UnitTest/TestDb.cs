@@ -5,70 +5,57 @@ using System.Linq;
 using SqlExpression;
 using SqlExpression.Extension;
 using SqlExpression.UnitTest.Schema;
+using SqlExpression.UnitTest.Entity;
+using System.Data;
 
 namespace SqlExpression.UnitTest
 {
-    public static class TestDb
+    public class TestDb : DbContext
     {
-        public static Foo Foo { get; set; } = new Foo();
-        public static Bar Bar { get; set; } = new Bar();
+        readonly Lazy<Respository<FooSchema, Foo>> foo = new Lazy<Respository<FooSchema, Foo>>(() => new Respository<FooSchema, Foo>());
+        readonly Lazy<Respository<BarSchema, Bar>> bar = new Lazy<Respository<BarSchema, Bar>>(() => new Respository<BarSchema, Bar>());
+
+        public Respository<FooSchema, Foo> Foo { get { return foo.Value; } }
+        public Respository<BarSchema, Bar> Bar { get { return bar.Value; } }
+    }
+}
+
+namespace SqlExpression.UnitTest.Entity
+{
+    public class Foo
+    {
+        public long Id { get; set; }
+
+        public string Name { get; set; }
+
+        public int Age { get; set; }
+
+        public int Gender { get; set; }
+
+        public bool Isdel { get; set; }
+    }
+
+    public class Bar
+    {
+        public long Id { get; set; }
+
+        public string Name { get; set; }
+
+        public int Age { get; set; }
+
+        public int Gender { get; set; }
+
+        public bool Isdel { get; set; }
     }
 }
 
 namespace SqlExpression.UnitTest.Schema
 {
-    public abstract class _SchemaExpression<T> : IAliasTableExpression
-        where T : class
+    public class FooSchema : SchemaExpression<FooSchema>
     {
-        protected Column[] _allColumns = null;
-        protected Column[] _pkColumns = null;
-        protected SelectItemExpression[] _allItems = null;
-        protected SelectItemExpression[] _pkItems = null;
-        public Column[] All()
-        {
-            return _allColumns;
-        }
-        public Column[] PK()
-        {
-            return _pkColumns;
-        }
-        public SelectItemExpression[] AllMapped()
-        {
-            return _allItems;
-        }
-        public SelectItemExpression[] PKMapped()
-        {
-            return _pkItems;
-        }
+        public FooSchema() : this("foo") { }
 
-        public T As(string alias)
-        {
-            T t = Activator.CreateInstance(typeof(T), alias) as T;
-            return t;
-        }
-
-        #region IAliasTableExpression
-        public override string ToString()
-        {
-            if (string.IsNullOrEmpty((this as IAliasTableExpression).Alias))
-            {
-                return (this as IAliasTableExpression).Table.ToString();
-            }
-            else
-            {
-                return string.Format("{0} AS {2}{1}{3}", (this as IAliasTableExpression).Table.ToString(), (this as IAliasTableExpression).Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
-            }
-        }
-
-        ITable IAliasTableExpression.Table { get; set; }
-
-        string IAliasDataset.Alias { get; set; }
-        #endregion
-    }
-
-    public class Foo : _SchemaExpression<Foo>
-    {
-        public Foo(string alias = "foo")
+        public FooSchema(string alias)
         {
             (this as IAliasTableExpression).Alias = alias == "foo" ? null : alias;
             (this as IAliasTableExpression).Table = new Table("foo");
@@ -83,23 +70,24 @@ namespace SqlExpression.UnitTest.Schema
             _pkColumns = new Column[] { Id };
             _allItems = new SelectItemExpression[] { Id.As("Id"), Name.As("Name"), Age.As("Age"), Gender.As("Gender"), Isdel.As("Isdel") };
             _pkItems = new SelectItemExpression[] { Id.As("Id") };
-
         }
 
-        public Column Id { get; set; }
+        public Column Id { get; }
 
-        public Column Name { get; set; }
+        public Column Name { get; }
 
-        public Column Age { get; set; }
+        public Column Age { get; }
 
-        public Column Gender { get; set; }
+        public Column Gender { get; }
 
-        public Column Isdel { get; set; }
+        public Column Isdel { get; }
     }
 
-    public class Bar : _SchemaExpression<Bar>
+    public class BarSchema : SchemaExpression<BarSchema>
     {
-        public Bar(string alias = "bar")
+        public BarSchema() : this("bar") { }
+
+        public BarSchema(string alias )
         {
             (this as IAliasTableExpression).Alias = alias == "bar" ? null : alias;
             (this as IAliasTableExpression).Table = new Table("bar");
@@ -116,14 +104,14 @@ namespace SqlExpression.UnitTest.Schema
             _pkItems = new SelectItemExpression[] { Id.As("Id") };
         }
 
-        public Column Id { get; set; }
+        public Column Id { get; }
 
-        public Column Name { get; set; }
+        public Column Name { get; }
 
-        public Column Age { get; set; }
+        public Column Age { get; }
 
-        public Column Gender { get; set; }
+        public Column Gender { get; }
 
-        public Column Isdel { get; set; }
+        public Column Isdel { get; }
     }
 }

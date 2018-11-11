@@ -21,7 +21,8 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void ComparisonExpression()
         {
-            var t = TestDb.Foo;
+            TestDb db = new TestDb();
+            var t = db.Foo.Schema;
             IExpression e = null;
 
             var val = 1000;
@@ -88,7 +89,8 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void ComparisonExpressionVarParam()
         {
-            var t = TestDb.Foo;
+            TestDb db = new TestDb();
+            var t = db.Foo.Schema;
             IExpression e = null;
 
             e = t.Id == t.Id.ToParam();
@@ -142,7 +144,8 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void LogicExpression()
         {
-            var t = TestDb.Foo;
+            TestDb db = new TestDb();
+            var t = db.Foo.Schema;
             IExpression e = null;
 
             e = t.Id > 1 & t.Id < 100;
