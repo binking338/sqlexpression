@@ -21,6 +21,7 @@ namespace SqlExpression.UnitTest
             bar = new Lazy<Respository<BarSchema, Bar>>(() => new Respository<BarSchema, Bar>(Connection));
 
             Expression.DefaultOption.Column2ParamContractHandler = ToUpperCamalCase;
+            // SqlExpression.Extension.Dialect.Mysql.Config.EnableDialect();
         }
 
         private Lazy<Respository<FooSchema, Foo>> foo;
