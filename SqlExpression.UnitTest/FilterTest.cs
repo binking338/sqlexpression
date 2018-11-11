@@ -92,6 +92,7 @@ namespace SqlExpression.UnitTest
             TestDb db = new TestDb();
             var t = db.Foo.Schema;
             IExpression e = null;
+            Expression.Column2ParamContractHandler = null;
 
             e = t.Id == t.Id.ToParam();
             Assert.AreEqual("foo.id=@id", e.ToString());
@@ -136,6 +137,64 @@ namespace SqlExpression.UnitTest
 
             e = t.Id.NotBetweenVarParam();
             Assert.AreEqual("foo.id NOT BETWEEN @idLower AND @idUpper", e.ToString());
+        }
+
+        /// <summary>
+        /// 普通查询条件 参数化查询
+        /// </summary>
+        [TestMethod]
+        public void ComparisonExpressionVarParam_ToUpperCamalCase()
+        {
+            TestDb db = new TestDb();
+            var t = db.Foo.Schema;
+            IExpression e = null;
+            Expression.Column2ParamContractHandler = DbContext.ToUpperCamalCase;
+
+            e = t.Id == t.Id.ToParam();
+            Assert.AreEqual("foo.id=@Id", e.ToString());
+
+            e = t.Id > t.Id.ToParam();
+            Assert.AreEqual("foo.id>@Id", e.ToString());
+
+            e = t.Id < t.Id.ToParam();
+            Assert.AreEqual("foo.id<@Id", e.ToString());
+
+            e = t.Id >= t.Id.ToParam();
+            Assert.AreEqual("foo.id>=@Id", e.ToString());
+
+            e = t.Id <= t.Id.ToParam();
+            Assert.AreEqual("foo.id<=@Id", e.ToString());
+
+
+            e = t.Id.EqVarParam();
+            Assert.AreEqual("foo.id=@Id", e.ToString());
+
+            e = t.Id.GtVarParam();
+            Assert.AreEqual("foo.id>@Id", e.ToString());
+
+            e = t.Id.LtVarParam();
+            Assert.AreEqual("foo.id<@Id", e.ToString());
+
+            e = t.Id.GtOrEqVarParam();
+            Assert.AreEqual("foo.id>=@Id", e.ToString());
+
+            e = t.Id.LtOrEqVarParam();
+            Assert.AreEqual("foo.id<=@Id", e.ToString());
+
+
+            e = t.Name.LikeVarParam();
+            Assert.AreEqual("foo.name LIKE @Name", e.ToString());
+
+            e = t.Name.NotLikeVarParam();
+            Assert.AreEqual("foo.name NOT LIKE @Name", e.ToString());
+
+            e = t.Id.BetweenVarParam();
+            Assert.AreEqual("foo.id BETWEEN @IdLower AND @IdUpper", e.ToString());
+
+            e = t.Id.NotBetweenVarParam();
+            Assert.AreEqual("foo.id NOT BETWEEN @IdLower AND @IdUpper", e.ToString());
+
+            Expression.Column2ParamContractHandler = null;
         }
 
         /// <summary>
