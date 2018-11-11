@@ -12,8 +12,17 @@ namespace SqlExpression.UnitTest
 {
     public class TestDb : DbContext
     {
-        readonly Lazy<Respository<FooSchema, Foo>> foo = new Lazy<Respository<FooSchema, Foo>>(() => new Respository<FooSchema, Foo>());
-        readonly Lazy<Respository<BarSchema, Bar>> bar = new Lazy<Respository<BarSchema, Bar>>(() => new Respository<BarSchema, Bar>());
+        public TestDb() : this(null) { }
+
+        public TestDb(IDbConnection connection)
+        {
+            Connection = connection;
+            foo = new Lazy<Respository<FooSchema, Foo>>(() => new Respository<FooSchema, Foo>(Connection));
+            bar = new Lazy<Respository<BarSchema, Bar>>(() => new Respository<BarSchema, Bar>(Connection));
+        }
+
+        private Lazy<Respository<FooSchema, Foo>> foo;
+        private Lazy<Respository<BarSchema, Bar>> bar;
 
         public Respository<FooSchema, Foo> Foo { get { return foo.Value; } }
         public Respository<BarSchema, Bar> Bar { get { return bar.Value; } }
@@ -87,7 +96,7 @@ namespace SqlExpression.UnitTest.Schema
     {
         public BarSchema() : this("bar") { }
 
-        public BarSchema(string alias )
+        public BarSchema(string alias)
         {
             (this as IAliasTableExpression).Alias = alias == "bar" ? null : alias;
             (this as IAliasTableExpression).Table = new Table("bar");

@@ -12,6 +12,9 @@
   <ItemGroup>
     <ProjectReference Include="..\SqlExpression.Core\SqlExpression.Core.csproj" />
     <ProjectReference Include="..\SqlExpression.Extension\SqlExpression.Extension.csproj" />
-    <ProjectReference Include="..\SqlExpression.Extension.Dapper\SqlExpression.Extension.Dapper.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
   </ItemGroup>
 </Project>

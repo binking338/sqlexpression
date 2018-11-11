@@ -372,9 +372,19 @@ namespace SqlExpression.Extension
             return new NotBetweenExpression(column, new LiteralValue(a), new LiteralValue(b));
         }
 
+        public static InExpression In(this ISimpleValue column, IEnumerable<object> values)
+        {
+            return new InExpression(column, new ValueCollectionExpression(values.Select(val => new LiteralValue(val)).ToArray()));
+        }
+
         public static InExpression In(this ISimpleValue column, params object[] values)
         {
             return new InExpression(column, new ValueCollectionExpression(values.Select(val => new LiteralValue(val)).ToArray()));
+        }
+
+        public static NotInExpression NotIn(this ISimpleValue column, IEnumerable<object> values)
+        {
+            return new NotInExpression(column, new ValueCollectionExpression(values.Select(val => new LiteralValue(val)).ToArray()));
         }
 
         public static NotInExpression NotIn(this ISimpleValue column, params object[] values)
