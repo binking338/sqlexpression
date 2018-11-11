@@ -183,10 +183,29 @@ namespace SqlExpression.Extension.Dialect.Mysql
             return new BatchSqlStatement(new List<ISqlStatement>() { insert, new CustomExpression("SELECT LAST_INSERT_ID()") });
         }
 
+        /// <summary>
+        /// 转换gbk编码
+        /// </summary>
+        private static UnaryOperator ConvertGbkOperator = new UnaryOperator("CONVERT_GBK", "CONVERT({0} USING gbk)");
 
+        /// <summary>
+        /// gbk中文拼音升序
+        /// </summary>
+        /// <returns></returns>
+        /// <param name="column">Column.</param>
         public static OrderExpression AscGBK(this IColumn column)
         {
-            return new OrderExpression(new UnaryExpression(new UnaryOperator("CONVERT", "CONVERT({0} USING gbk)"), column), OrderEnum.Asc);
+            return new OrderExpression(new UnaryExpression(ConvertGbkOperator, column), OrderEnum.Asc);
+        }
+
+        /// <summary>
+        /// gbk中文拼音降序
+        /// </summary>
+        /// <returns>The gbk.</returns>
+        /// <param name="column">Column.</param>
+        public static OrderExpression DescGBK(this IColumn column)
+        {
+            return new OrderExpression(new UnaryExpression(ConvertGbkOperator, column), OrderEnum.Desc);
         }
 
         /// <summary>
