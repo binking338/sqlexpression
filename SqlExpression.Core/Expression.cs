@@ -2743,11 +2743,17 @@ namespace SqlExpression
             }
             if (On == null)
             {
-                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), Left.ToString(), Right.ToString(), string.Empty);
+                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), 
+                                     Left.ToString(),
+                                     Right is IJoinExpression ? string.Format("({0})", Right.ToString()) : Right.ToString(), 
+                                     string.Empty);
             }
             else
             {
-                return string.Format(JoinOp.Format, Left.ToString(), Right.ToString(), On.ToString());
+                return string.Format(JoinOp.Format, 
+                                     Left.ToString(), 
+                                     Right is IJoinExpression ? string.Format("({0})", Right.ToString()) : Right.ToString(), 
+                                     On.ToString());
             }
         }
     }
