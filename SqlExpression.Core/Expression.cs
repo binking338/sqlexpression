@@ -9,25 +9,26 @@ using System.Threading.Tasks;
 
 namespace SqlExpression
 {
+    /// <summary>
+    /// 表达式配置项
+    /// </summary>
+    public class ExpressionOption
+    {
+        public string OpenQuotationMark { get; set; } = string.Empty;
+        public string CloseQuotationMark { get; set; } = string.Empty;
+        public string ParamMark { get; set; } = "@";
+        public Func<string, string> Column2ParamContractHandler { get; set; } = null;
+    }
 
     /// <summary>
     /// 表达式抽象类
     /// </summary>
     public abstract class Expression : IExpression
     {
-        private static ThreadLocal<string> threadLocalOpenQuotationMark = new ThreadLocal<string>(() => string.Empty);
-        private static ThreadLocal<string> threadLocalCloseQuotationMark = new ThreadLocal<string>(() => string.Empty);
-        private static ThreadLocal<string> threadLocalParamMark = new ThreadLocal<string>(() => "@");
-        private static ThreadLocal<Func<string, string>> threadLocalColumn2ParamContractHandler = new ThreadLocal<Func<string, string>>(() => null);
-        public static string OpenQuotationMark { get { return threadLocalOpenQuotationMark.Value; } set { threadLocalOpenQuotationMark.Value = value; } }
-        public static string CloseQuotationMark { get { return threadLocalCloseQuotationMark.Value; } set { threadLocalCloseQuotationMark.Value = value; } }
-        public static string ParamMark { get { return threadLocalParamMark.Value; } set { threadLocalParamMark.Value = value; } }
-        public static Func<string, string> Column2ParamContractHandler { get { return threadLocalColumn2ParamContractHandler.Value; } set { threadLocalColumn2ParamContractHandler.Value = value; } }
+        public static ExpressionOption DefaultOption { get; set; } = new ExpressionOption();
+        private static ThreadLocal<ExpressionOption> threadLocalExpressionOption = new ThreadLocal<ExpressionOption>(() => DefaultOption);
 
-        public Expression()
-        {
-
-        }
+        public ExpressionOption Option { get { return threadLocalExpressionOption.Value; } set { threadLocalExpressionOption.Value = value; } }
 
         /// <summary>
         /// 构建表达式
@@ -82,7 +83,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.TableNameMissing);
             }
-            return string.Format("{1}{0}{2}", Name, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+            return string.Format("{1}{0}{2}", Name, Option.OpenQuotationMark, Option.CloseQuotationMark);
         }
 
         public static implicit operator Table(string name)
@@ -124,7 +125,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{2}{1}{3}.{2}{0}{3}", Name, DatasetAlias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+                return string.Format("{2}{1}{3}.{2}{0}{3}", Name, DatasetAlias, Option.OpenQuotationMark, Option.CloseQuotationMark);
             }
         }
 
@@ -447,9 +448,9 @@ namespace SqlExpression
     {
         public Param(string param)
         {
-            if (param.StartsWith(Expression.ParamMark))
+            if (param.StartsWith(Option.ParamMark))
             {
-                param = param.Substring(Expression.ParamMark.Length);
+                param = param.Substring(Option.ParamMark.Length);
             }
             Name = param;
         }
@@ -465,7 +466,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.ParamNameMissing);
             }
-            return string.Format("{1}{0}", Name, Expression.ParamMark);
+            return string.Format("{1}{0}", Name, Option.ParamMark);
         }
 
         #region 比较运算符
@@ -638,7 +639,7 @@ namespace SqlExpression
 
         public static implicit operator Param(Column column)
         {
-            return new Param(Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(column.Name) : column.Name);
+            return new Param(column.Option.Column2ParamContractHandler?.Invoke(column.Name) ?? column.Name);
         }
 
         #endregion
@@ -913,21 +914,21 @@ namespace SqlExpression
     /// </summary>
     public class UnaryExpression : Expression, IUnaryExpression
     {
-        public UnaryExpression(ISimpleValue value, IUnaryOperator op)
+        public UnaryExpression(IUnaryOperator op, ISimpleValue value)
         {
-            Value = value;
             Op = op;
+            Value = value;
         }
-
-        /// <summary>
-        /// 操作数
-        /// </summary>
-        public ISimpleValue Value { get; set; }
 
         /// <summary>
         /// 操作符
         /// </summary>
         public IUnaryOperator Op { get; set; }
+
+        /// <summary>
+        /// 操作数
+        /// </summary>
+        public ISimpleValue Value { get; set; }
 
         protected override string Build()
         {
@@ -1196,8 +1197,8 @@ namespace SqlExpression
     /// </summary>
     public class UnaryComparisonExpression : UnaryExpression, IUnaryComparisonExpression
     {
-        public UnaryComparisonExpression(ISimpleValue a, IUnaryComparisonOperator op)
-            : base(a, op)
+        public UnaryComparisonExpression(IUnaryComparisonOperator op, ISimpleValue a)
+            : base(op, a)
         {
         }
 
@@ -1246,7 +1247,7 @@ namespace SqlExpression
     /// </summary>
     public class ExistsExpression : UnaryExpression, IExistsExpression
     {
-        public ExistsExpression(ISubQueryExpression subquery) : base(subquery, Operator.Exists)
+        public ExistsExpression(ISubQueryExpression subquery) : base(Operator.Exists, subquery)
         {
             SubQuery = subquery;
         }
@@ -1273,7 +1274,7 @@ namespace SqlExpression
     /// </summary>
     public class NotExistsExpression : UnaryExpression, INotExistsExpression
     {
-        public NotExistsExpression(ISubQueryExpression subquery) : base(subquery, Operator.NotExists)
+        public NotExistsExpression(ISubQueryExpression subquery) : base(Operator.NotExists, subquery)
         {
             SubQuery = subquery;
         }
@@ -2349,8 +2350,9 @@ namespace SqlExpression
         }
 
         public SetExpression(IColumn column)
-            : this(column, new Param(Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(column.Name) : column.Name))
         {
+            Column = column;
+            Value = new Param(Option.Column2ParamContractHandler?.Invoke(column.Name) ?? column.Name);
         }
 
         public IColumn Column { get; set; }
@@ -2580,7 +2582,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{3}", Column.ToString(), Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Column.ToString(), Alias, Option.OpenQuotationMark, Option.CloseQuotationMark);
             }
         }
     }
@@ -2655,7 +2657,7 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{3}", Table.ToString(), Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Table.ToString(), Alias, Option.OpenQuotationMark, Option.CloseQuotationMark);
             }
         }
     }
@@ -2700,7 +2702,7 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.AliasMissing);
             }
-            return string.Format("{0} AS {2}{1}{3}", SubQuery.ToString(), Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+            return string.Format("{0} AS {2}{1}{3}", SubQuery.ToString(), Alias, Option.OpenQuotationMark, Option.CloseQuotationMark);
         }
     }
 

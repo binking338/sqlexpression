@@ -170,6 +170,7 @@ namespace SqlExpression
         }
 
         #region 工具函数
+
         protected object PrimaryKey2ParamObject(object primaryKey)
         {
             if (schema.PK().Length <= 0)
@@ -204,6 +205,7 @@ namespace SqlExpression
             Cache4Properties2Columns.TryAdd(type, list);
             return list;
         }
+
         #endregion
     }
 }

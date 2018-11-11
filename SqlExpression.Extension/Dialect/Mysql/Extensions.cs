@@ -9,14 +9,14 @@ namespace SqlExpression.Extension.Dialect.Mysql
     {
         public static void EnableDialect()
         {
-            Expression.OpenQuotationMark = "`";
-            Expression.CloseQuotationMark = "`";
+            Expression.DefaultOption.OpenQuotationMark = "`";
+            Expression.DefaultOption.CloseQuotationMark = "`";
         }
 
         public static void DisableDialect()
         {
-            Expression.OpenQuotationMark = string.Empty;
-            Expression.CloseQuotationMark = string.Empty;
+            Expression.DefaultOption.OpenQuotationMark = string.Empty;
+            Expression.DefaultOption.CloseQuotationMark = string.Empty;
         }
     }
 
@@ -159,7 +159,7 @@ namespace SqlExpression.Extension.Dialect.Mysql
         /// <returns></returns>
         public static SimpleQueryStatement Exists(this ISelectStatement select)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new UnaryExpression(new SubQueryExpression(select.Query), Operator.Exists)).As("__exists__") }));
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new UnaryExpression(Operator.Exists, new SubQueryExpression(select.Query))).As("__exists__") }));
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace SqlExpression.Extension.Dialect.Mysql
         /// <returns></returns>
         public static SimpleQueryStatement Exists(this IQueryStatement query)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new UnaryExpression(new SubQueryExpression(query), Operator.Exists)).As("__exists__") }));
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new UnaryExpression(Operator.Exists, new SubQueryExpression(query))).As("__exists__") }));
         }
 
         /// <summary>
@@ -181,6 +181,12 @@ namespace SqlExpression.Extension.Dialect.Mysql
         public static BatchSqlStatement ReturnId(this IInsertStatement insert)
         {
             return new BatchSqlStatement(new List<ISqlStatement>() { insert, new CustomExpression("SELECT LAST_INSERT_ID()") });
+        }
+
+
+        public static OrderExpression AscGBK(this IColumn column)
+        {
+            return new OrderExpression(new UnaryExpression(new UnaryOperator("CONVERT", "CONVERT({0} USING gbk)"), column), OrderEnum.Asc);
         }
 
         /// <summary>

@@ -74,8 +74,8 @@ namespace SqlExpression.Extension
 
         public static AllColumnsExpression Asterisk(this IAliasDataset dataset)
         {
-            var alias = string.IsNullOrEmpty(dataset.Alias) && dataset is IAliasTableExpression 
-                              ? (dataset as IAliasTableExpression).Table.Name 
+            var alias = string.IsNullOrEmpty(dataset.Alias) && dataset is IAliasTableExpression
+                              ? (dataset as IAliasTableExpression).Table.Name
                               : dataset.Alias;
             return new AllColumnsExpression(alias);
         }
@@ -90,9 +90,9 @@ namespace SqlExpression.Extension
             if (string.IsNullOrWhiteSpace(param))
             {
                 param = column.Name;
-                if(Expression.Column2ParamContractHandler != null)
+                if (column.Option.Column2ParamContractHandler != null)
                 {
-                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                    param = column.Option.Column2ParamContractHandler?.Invoke(param) ?? param;
                 }
             }
             return new Param(param);
@@ -285,13 +285,13 @@ namespace SqlExpression.Extension
 
         public static UnaryComparisonExpression IsNull(this ISimpleValue column)
         {
-            return new UnaryComparisonExpression(column, Operator.IsNull);
+            return new UnaryComparisonExpression(Operator.IsNull, column);
             //return new ComparisonExpression(column, Operator.Is, new LiteralValueExpression(null));
         }
 
         public static UnaryComparisonExpression IsNotNull(this ISimpleValue column)
         {
-            return new UnaryComparisonExpression(column, Operator.IsNotNull);
+            return new UnaryComparisonExpression(Operator.IsNotNull, column);
             //return new ComparisonExpression(column, Operator.IsNot, new LiteralValueExpression(null));
         }
 
@@ -442,7 +442,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     param = (column as IColumn).Name;
-                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                    param = column.Option.Column2ParamContractHandler?.Invoke(param) ?? param;
                 }
                 else throw new ArgumentNullException(nameof(param));
             }
@@ -456,7 +456,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     param = (column as IColumn).Name;
-                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                    param = column.Option.Column2ParamContractHandler?.Invoke(param) ?? param;
                 }
                 else throw new ArgumentNullException(nameof(param));
             }
@@ -470,7 +470,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     param = (column as IColumn).Name;
-                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                    param = column.Option.Column2ParamContractHandler?.Invoke(param) ?? param;
                 }
                 else throw new ArgumentNullException(nameof(param));
             }
@@ -484,7 +484,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     param = (column as IColumn).Name;
-                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                    param = column.Option.Column2ParamContractHandler?.Invoke(param) ?? param;
                 }
                 else throw new ArgumentNullException(nameof(param));
             }
@@ -498,7 +498,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     param = (column as IColumn).Name;
-                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                    param = column.Option.Column2ParamContractHandler?.Invoke(param) ?? param;
                 }
                 else throw new ArgumentNullException(nameof(param));
             }
@@ -512,7 +512,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     param = (column as IColumn).Name;
-                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                    param = column.Option.Column2ParamContractHandler?.Invoke(param) ?? param;
                 }
                 else throw new ArgumentNullException(nameof(param));
             }
@@ -526,7 +526,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     param = (column as IColumn).Name;
-                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                    param = column.Option.Column2ParamContractHandler?.Invoke(param) ?? param;
                 }
                 else throw new ArgumentNullException(nameof(param));
             }
@@ -540,7 +540,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     param = (column as IColumn).Name;
-                    param = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(param) : param;
+                    param = column.Option.Column2ParamContractHandler?.Invoke(param) ?? param;
                 }
                 else throw new ArgumentNullException(nameof(param));
             }
@@ -561,7 +561,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     paramLower = paramLower ?? (column as IColumn).Name + "Lower";
-                    paramLower = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(paramLower) : paramLower;
+                    paramLower = column.Option.Column2ParamContractHandler?.Invoke(paramLower) ?? paramLower;
                 }
                 else throw new ArgumentNullException(nameof(paramLower));
             }
@@ -570,7 +570,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     paramUpper = paramUpper ?? (column as IColumn).Name + "Upper";
-                    paramUpper = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(paramUpper) : paramUpper;
+                    paramUpper = column.Option.Column2ParamContractHandler?.Invoke(paramUpper) ?? paramUpper;
                 }
                 else throw new ArgumentNullException(nameof(paramUpper));
             }
@@ -591,7 +591,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     paramLower = paramLower ?? (column as IColumn).Name + "Lower";
-                    paramLower = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(paramLower) : paramLower;
+                    paramLower = column.Option.Column2ParamContractHandler?.Invoke(paramLower) ?? paramLower;
                 }
                 else throw new ArgumentNullException(nameof(paramLower));
             }
@@ -600,7 +600,7 @@ namespace SqlExpression.Extension
                 if (column is IColumn)
                 {
                     paramUpper = paramUpper ?? (column as IColumn).Name + "Upper";
-                    paramUpper = Expression.Column2ParamContractHandler != null ? Expression.Column2ParamContractHandler(paramUpper) : paramUpper;
+                    paramUpper = column.Option.Column2ParamContractHandler?.Invoke(paramUpper) ?? paramUpper;
                 }
                 else throw new ArgumentNullException(nameof(paramUpper));
             }

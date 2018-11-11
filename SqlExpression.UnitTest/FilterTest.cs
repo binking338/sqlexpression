@@ -92,7 +92,7 @@ namespace SqlExpression.UnitTest
             TestDb db = new TestDb();
             var t = db.Foo.Schema;
             IExpression e = null;
-            Expression.Column2ParamContractHandler = null;
+            Expression.DefaultOption.Column2ParamContractHandler = null;
 
             e = t.Id == t.Id.ToParam();
             Assert.AreEqual("foo.id=@id", e.ToString());
@@ -148,7 +148,7 @@ namespace SqlExpression.UnitTest
             TestDb db = new TestDb();
             var t = db.Foo.Schema;
             IExpression e = null;
-            Expression.Column2ParamContractHandler = DbContext.ToUpperCamalCase;
+            Expression.DefaultOption.Column2ParamContractHandler = DbContext.ToUpperCamalCase;
 
             e = t.Id == t.Id.ToParam();
             Assert.AreEqual("foo.id=@Id", e.ToString());
@@ -193,8 +193,6 @@ namespace SqlExpression.UnitTest
 
             e = t.Id.NotBetweenVarParam();
             Assert.AreEqual("foo.id NOT BETWEEN @IdLower AND @IdUpper", e.ToString());
-
-            Expression.Column2ParamContractHandler = null;
         }
 
         /// <summary>

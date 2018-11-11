@@ -1,7 +1,7 @@
 ﻿using System;
 namespace SqlExpression
 {
-    public abstract class SchemaExpression<Schema> : IAliasTableExpression
+    public abstract class SchemaExpression<Schema> : Expression, IAliasTableExpression
         where Schema : class
     {
         protected Column[] _allColumns = null;
@@ -32,7 +32,8 @@ namespace SqlExpression
         }
 
         #region IAliasTableExpression
-        public override string ToString()
+
+        protected override string Build()
         {
             if (string.IsNullOrEmpty((this as IAliasTableExpression).Alias))
             {
@@ -40,13 +41,14 @@ namespace SqlExpression
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{3}", (this as IAliasTableExpression).Table.ToString(), (this as IAliasTableExpression).Alias, Expression.OpenQuotationMark, Expression.CloseQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", (this as IAliasTableExpression).Table.ToString(), (this as IAliasTableExpression).Alias, Option.OpenQuotationMark, Option.CloseQuotationMark);
             }
         }
 
         ITable IAliasTableExpression.Table { get; set; }
 
         string IAliasDataset.Alias { get; set; }
+
         #endregion
     }
 }
