@@ -135,8 +135,7 @@ namespace SqlExpression.Extension.Dialect.Mysql
         /// <returns></returns>
         public static SimpleQueryStatement Count(this ISelectStatement select)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Column("*")).As("__totalcount__") }),
-                                            new FromClause(new SubQueryExpression(select.Query)));
+            return Count(select.Query);
         }
 
         /// <summary>
