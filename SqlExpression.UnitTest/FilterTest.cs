@@ -21,8 +21,10 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void ComparisonExpression()
         {
-            TestDb db = new TestDb();
-            var t = db.Foo.Schema;
+            var t = new {
+                Id = new Column("id", "foo"),
+                Name = new Column("name", "foo")
+            };
             IExpression e = null;
 
             var val = 1000;
@@ -89,8 +91,11 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void ComparisonExpressionVarParam()
         {
-            TestDb db = new TestDb();
-            var t = db.Foo.Schema;
+            var t = new
+            {
+                Id = new Column("id", "foo"),
+                Name = new Column("name", "foo")
+            };
             IExpression e = null;
             Expression.DefaultOption.Column2ParamContractHandler = null;
 
@@ -145,8 +150,11 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void ComparisonExpressionVarParam_ToUpperCamalCase()
         {
-            TestDb db = new TestDb();
-            var t = db.Foo.Schema;
+            var t = new
+            {
+                Id = new Column("id", "foo"),
+                Name = new Column("name", "foo")
+            };
             IExpression e = null;
             Expression.DefaultOption.Column2ParamContractHandler = DbContext.ToUpperCamalCase;
 
@@ -201,8 +209,11 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void LogicExpression()
         {
-            TestDb db = new TestDb();
-            var t = db.Foo.Schema;
+            var t = new
+            {
+                Id = new Column("id", "foo"),
+                Name = new Column("name", "foo")
+            };
             IExpression e = null;
 
             e = t.Id > 1 & t.Id < 100;
