@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Data;
-using SqlExpression;
-using SqlExpression.Extension;
-using Dapper;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
+using Dapper;
+using SqlExpression;
+using SqlExpression.Extension;
+using SqlExpression.Extension.Dapper;
 
 namespace SqlExpression
 {
@@ -17,15 +18,11 @@ namespace SqlExpression
     {
         protected TSchema schema;
         protected IDbConnection connection;
-        protected ILogger logger;
-        protected bool enableLog;
 
-        public Respository(IDbConnection connection, ILogger logger = null, bool enableLog = true)
+        public Respository(IDbConnection connection)
         {
             this.schema = new TSchema();
             this.connection = connection;
-            this.logger = logger;
-            this.enableLog = enableLog;
         }
 
         public virtual TSchema Schema
@@ -38,9 +35,7 @@ namespace SqlExpression
         {
             var exp = schema.Table
                             .InsertVarParam(columns == null ? schema.All() : Properties2Columns<T>());
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
-            connection.Execute(sql, entity);
+            connection.Execute(exp, entity);
             return null;
         }
 
@@ -48,9 +43,7 @@ namespace SqlExpression
         {
             var exp = schema.Table
                             .InsertVarParam(columns?.Invoke(schema) ?? schema.All());
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
-            var rows = connection.Execute(sql, entity);
+            var rows = connection.Execute(exp, entity);
             return null;
         }
 
@@ -59,9 +52,7 @@ namespace SqlExpression
             var exp = schema.Table
                             .UpdateVarParam(columns == null ? schema.All().Except(schema.PK()) : Properties2Columns<T>())
                             .Where(schema.PK().AllEqVarParam());
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
-            return connection.Execute(sql, entity) > 0;
+            return connection.Execute(exp, entity) > 0;
         }
 
         public virtual bool Update(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null)
@@ -69,9 +60,7 @@ namespace SqlExpression
             var exp = schema.Table
                             .UpdateVarParam(columns?.Invoke(schema) ?? schema.All().Except(schema.PK()))
                             .Where(schema.PK().AllEqVarParam());
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
-            return connection.Execute(sql, entity) > 0;
+            return connection.Execute(exp, entity) > 0;
         }
 
         public virtual bool Delete(TEntity entity)
@@ -79,9 +68,7 @@ namespace SqlExpression
             var exp = schema.Table
                             .Delete()
                             .Where(schema.PK().AllEqVarParam());
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
-            return connection.Execute(sql, entity) > 0;
+            return connection.Execute(exp, entity) > 0;
         }
 
         public virtual int Delete(IEnumerable<TEntity> entities)
@@ -99,15 +86,13 @@ namespace SqlExpression
             var exp = schema.Table
                             .Delete()
                             .Where(schema.PK().AllEqVarParam());
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
             var param = PrimaryKey2ParamObject(primaryKey);
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.Execute(sql, param) > 0;
+            return connection.Execute(exp, param) > 0;
         }
 
         public virtual int Delete(IEnumerable<object> primaryKeys)
@@ -125,14 +110,12 @@ namespace SqlExpression
             var exp = schema.Table
                             .Delete()
                             .Where(filter(schema));
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.Execute(sql, param);
+            return connection.Execute(exp, param);
 
         }
 
@@ -140,15 +123,13 @@ namespace SqlExpression
         {
             var exp = schema.Select(schema.All())
                             .Where(schema.PK().AllEqVarParam());
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
             var param = PrimaryKey2ParamObject(primaryKey);
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.QueryFirstOrDefault<TEntity>(sql, param);
+            return connection.QueryFirstOrDefault<TEntity>(exp, param);
         }
 
         public virtual IEnumerable<TEntity> GetList(IEnumerable<object> primaryKeys)
@@ -163,37 +144,31 @@ namespace SqlExpression
             }
             var exp = schema.Select(schema.All())
                             .Where(schema.PK().First().In(primaryKeys));
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
-            return connection.Query<TEntity>(sql);
+            return connection.Query<TEntity>(exp);
         }
 
         public virtual IEnumerable<TEntity> Query(Func<TSchema, ISimpleValue> filter, object param = null)
         {
             var exp = schema.Select(schema.All())
                             .Where(filter(schema));
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.Query<TEntity>(sql, param);
+            return connection.Query<TEntity>(exp, param);
         }
 
         public virtual IEnumerable<T> QueryPartial<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
         {
             var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
                             .Where(filter(Schema));
-            var sql = exp.ToString();
-            if (enableLog && logger != null) logger.LogDebug(sql);
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.Query<T>(sql, param);
+            return connection.Query<T>(exp, param);
         }
 
         #region 工具函数

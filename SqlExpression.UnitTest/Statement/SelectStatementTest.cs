@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SqlExpression.Extension;
 using System.Linq;
+using SqlExpression.Extension;
+using SqlExpression.Extension.Dapper;
 
 namespace SqlExpression.UnitTest.Statement
 {
