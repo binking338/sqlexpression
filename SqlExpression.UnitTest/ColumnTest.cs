@@ -72,15 +72,6 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void ExtensionAsteriskTest()
-        {
-            IExpression e;
-
-            e = new Table("foo").Asterisk();
-            Assert.AreEqual("foo.*", e.ToString());
-        }
-
-        [TestMethod]
         public void ExtensionToParamTest()
         {
             IExpression e;

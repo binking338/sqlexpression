@@ -33,7 +33,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void TestAsExtension1()
+        public void ExtensionAliasTest1()
         {
             var e = new Table("foo").As("t");
 
@@ -41,7 +41,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void TestAsExtension2()
+        public void ExtensionAliasTest2()
         {
             Expression.DefaultOption.OpenQuotationMark = "`";
             Expression.DefaultOption.CloseQuotationMark = "`";
@@ -51,6 +51,15 @@ namespace SqlExpression.UnitTest
 
             Expression.DefaultOption.OpenQuotationMark = "";
             Expression.DefaultOption.CloseQuotationMark = "";
+        }
+
+        [TestMethod]
+        public void ExtensionAsteriskTest()
+        {
+            IExpression e;
+
+            e = new Table("foo").Asterisk();
+            Assert.AreEqual("foo.*", e.ToString());
         }
     }
 }
