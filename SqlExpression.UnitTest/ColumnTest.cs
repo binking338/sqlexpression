@@ -12,7 +12,7 @@ namespace SqlExpression.UnitTest
     public class ColumnTest
     {
         [TestMethod]
-        public void Test1()
+        public void Test()
         {
             IExpression e;
 
@@ -24,13 +24,8 @@ namespace SqlExpression.UnitTest
 
             e = new Column("*", "foo");
             Assert.AreEqual("foo.*", e.ToString());
-        }
 
-        [TestMethod]
-        public void Test2()
-        {
-            IExpression e;
-            Misc.UsingQuotationMark(()=>{
+            Misc.UsingQuotationMark(() => {
 
                 e = new Column("id");
                 Assert.AreEqual("`id`", e.ToString());
@@ -42,108 +37,6 @@ namespace SqlExpression.UnitTest
                 Assert.AreEqual("`foo`.*", e.ToString());
 
             });
-        }
-
-        [TestMethod]
-        public void ExtensionAliasTest()
-        {
-            IExpression e;
-
-            e = new Column("id").As("Id");
-            Assert.AreEqual("id AS Id", e.ToString());
-
-            e = new Column("id", "foo").As("Id");
-            Assert.AreEqual("foo.id AS Id", e.ToString());
-        }
-
-        [TestMethod]
-        public void ExtensionOrderTest()
-        {
-            IExpression e;
-
-            e = new Column("id").Asc();
-            Assert.AreEqual("id ASC", e.ToString());
-
-            e = new Column("id").Desc();
-            Assert.AreEqual("id DESC", e.ToString());
-        }
-
-        [TestMethod]
-        public void ExtensionToParamTest()
-        {
-            IExpression e;
-
-            e = new Column("id").ToParam();
-            Assert.AreEqual("@id", e.ToString());
-
-            e = new Column("id").ToP();
-            Assert.AreEqual("@id", e.ToString());
-
-            e = new Column("id").ToParam("val");
-            Assert.AreEqual("@val", e.ToString());
-
-            e = new Column("id").ToP("val");
-            Assert.AreEqual("@val", e.ToString());
-        }
-        
-        [TestMethod]
-        public void ExtensionSetTest()
-        {
-            IExpression e;
-
-            e = new Column("id").Set(null);
-            Assert.AreEqual("id=NULL", e.ToString());
-
-            e = new Column("id").Set(1);
-            Assert.AreEqual("id=1", e.ToString());
-
-            e = new Column("id").Set("1");
-            Assert.AreEqual("id='1'", e.ToString());
-
-            e = new Column("id").Set('1');
-            Assert.AreEqual("id='1'", e.ToString());
-
-            e = new Column("id").Set(true);
-            Assert.AreEqual("id=True", e.ToString());
-
-            e = new Column("id").Set(false);
-            Assert.AreEqual("id=False", e.ToString());
-
-            e = new Column("id").Set(new DateTime(1970,1,1));
-            Assert.AreEqual("id='1970-01-01 00:00:00'", e.ToString());
-
-            e = new Column("id").Set(TestEnum.Item1);
-            Assert.AreEqual("id=1", e.ToString());
-
-            e = new Column("id").SetVarParam();
-            Assert.AreEqual("id=@id", e.ToString());
-
-            e = new Column("id").SetVarParam("val");
-            Assert.AreEqual("id=@val", e.ToString());
-
-            e = new Column("id").SetP();
-            Assert.AreEqual("id=@id", e.ToString());
-
-            e = new Column("id").SetP("val");
-            Assert.AreEqual("id=@val", e.ToString());
-
-            e = new Column("id").SetVarCustom("1");
-            Assert.AreEqual("id=1", e.ToString());
-
-            e = new Column("id").SetVarCustom("'1'");
-            Assert.AreEqual("id='1'", e.ToString());
-
-            e = new Column("id").SetVarCustom("true");
-            Assert.AreEqual("id=true", e.ToString());
-
-            e = new Column("id").SetC("1");
-            Assert.AreEqual("id=1", e.ToString());
-
-            e = new Column("id").SetC("'1'");
-            Assert.AreEqual("id='1'", e.ToString());
-
-            e = new Column("id").SetC("true");
-            Assert.AreEqual("id=true", e.ToString());
         }
     }
 }

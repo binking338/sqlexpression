@@ -26,6 +26,22 @@ namespace SqlExpression.UnitTest
             Expression.DefaultOption.Column2ParamContractHandler = null;
         }
 
+        public static void UsingParamNameAsColumnName(Action main)
+        {
+            Expression.DefaultOption.Column2ParamContractHandler = null;
+
+            main?.Invoke();
+        }
+
+        public static void UsingParamMark(Action main, string mark = "@")
+        {
+            Expression.DefaultOption.ParamMark = mark;
+
+            main?.Invoke();
+
+            Expression.DefaultOption.ParamMark = "@";
+        }
+
     }
     public enum TestEnum
     {

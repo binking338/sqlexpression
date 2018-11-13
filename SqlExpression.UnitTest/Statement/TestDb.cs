@@ -4,11 +4,11 @@ using System.Text;
 using System.Linq;
 using SqlExpression;
 using SqlExpression.Extension;
-using SqlExpression.UnitTest.Schema;
-using SqlExpression.UnitTest.Entity;
+using SqlExpression.UnitTest.Statement.Schema;
+using SqlExpression.UnitTest.Statement.Entity;
 using System.Data;
 
-namespace SqlExpression.UnitTest
+namespace SqlExpression.UnitTest.Statement
 {
     public class TestDb : DbContext
     {
@@ -32,7 +32,7 @@ namespace SqlExpression.UnitTest
     }
 }
 
-namespace SqlExpression.UnitTest.Entity
+namespace SqlExpression.UnitTest.Statement.Entity
 {
     public class Foo
     {
@@ -61,7 +61,7 @@ namespace SqlExpression.UnitTest.Entity
     }
 }
 
-namespace SqlExpression.UnitTest.Schema
+namespace SqlExpression.UnitTest.Statement.Schema
 {
     public class FooSchema : SchemaExpression<FooSchema>
     {

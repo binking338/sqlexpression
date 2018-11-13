@@ -558,7 +558,7 @@ namespace SqlExpression
         /// <summary>
         /// 查询项
         /// </summary>
-        ISimpleValue Column { get; set; }
+        ISimpleValue Value { get; set; }
 
         /// <summary>
         /// 别名

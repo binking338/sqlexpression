@@ -439,6 +439,18 @@ namespace SqlExpression
         {
             return base.GetHashCode();
         }
+
+        public static LiteralValue FromObject(object obj)
+        {
+            if (!(obj is ILiteralValue) && obj is IExpression)
+            {
+                throw new ArgumentException(nameof(obj));
+            }
+            else
+            {
+                return new LiteralValue(obj);
+            }
+        }
     }
 
     /// <summary>
@@ -2443,7 +2455,7 @@ namespace SqlExpression
                 var _params = new List<string>();
                 foreach (var item in Select.Items)
                 {
-                    _params.AddRange(item.Column.ResolveParams());
+                    _params.AddRange(item.Value.ResolveParams());
                 }
                 _params.AddRange(From.Dataset.ResolveParams());
                 if (Where != null) _params.AddRange(Where.Filter.ResolveParams());
@@ -2458,11 +2470,12 @@ namespace SqlExpression
             {
                 throw new SqlSyntaxException(this, Error.SelectClauseMissing);
             }
-            if (From == null)
+            if (From == null && Select.Items.Any(i => i.Value is IColumn))
             {
                 throw new SqlSyntaxException(this, Error.FromClauseMissing);
             }
-            return string.Format("{0} {1}{2}{3}", Select.ToString(), From.ToString(),
+            return string.Format("{0}{1}{2}{3}", Select.ToString(),
+                From == null ? string.Empty : " " + From.ToString(),
                 Where == null ? string.Empty : " " + Where.ToString(),
                 GroupBy == null ? string.Empty : " " + GroupBy?.ToString());
         }
@@ -2556,33 +2569,34 @@ namespace SqlExpression
     /// </summary>
     public class SelectItemExpression : Expression, ISelectItemExpression
     {
+        public SelectItemExpression(ISimpleValue column) : this(column, null) { }
         public SelectItemExpression(ISimpleValue column, string alias)
         {
             if (column is ISelectItemExpression)
             {
                 throw new ArgumentException(nameof(column));
             }
-            Column = column;
+            Value = column;
             Alias = alias;
         }
 
-        public ISimpleValue Column { get; set; }
+        public ISimpleValue Value { get; set; }
 
         public string Alias { get; set; }
 
         protected override string Build()
         {
-            if (Column == null)
+            if (Value == null)
             {
                 throw new SqlSyntaxException(this, Error.ColumnMissing);
             }
             if (string.IsNullOrWhiteSpace(Alias))
             {
-                return Column.ToString();
+                return Value.ToString();
             }
             else
             {
-                return string.Format("{0} AS {2}{1}{3}", Column.ToString(), Alias, Option.OpenQuotationMark, Option.CloseQuotationMark);
+                return string.Format("{0} AS {2}{1}{3}", Value.ToString(), Alias, Option.OpenQuotationMark, Option.CloseQuotationMark);
             }
         }
     }
@@ -2673,7 +2687,7 @@ namespace SqlExpression
         public AliasSubQueryExpression(ISubQueryExpression subquery, string alias)
         {
             SubQuery = subquery;
-            Column = subquery;
+            Value = subquery;
             Alias = alias;
         }
 
@@ -2685,7 +2699,7 @@ namespace SqlExpression
         /// <summary>
         /// 字段
         /// </summary>
-        public ISimpleValue Column { get; set; }
+        public ISimpleValue Value { get; set; }
 
         /// <summary>
         /// 别名
@@ -2745,16 +2759,16 @@ namespace SqlExpression
             }
             if (On == null)
             {
-                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty), 
+                return string.Format(JoinOp.Format.Replace(" ON ", string.Empty),
                                      Left.ToString(),
-                                     Right is IJoinExpression ? string.Format("({0})", Right.ToString()) : Right.ToString(), 
+                                     Right is IJoinExpression ? string.Format("({0})", Right.ToString()) : Right.ToString(),
                                      string.Empty);
             }
             else
             {
-                return string.Format(JoinOp.Format, 
-                                     Left.ToString(), 
-                                     Right is IJoinExpression ? string.Format("({0})", Right.ToString()) : Right.ToString(), 
+                return string.Format(JoinOp.Format,
+                                     Left.ToString(),
+                                     Right is IJoinExpression ? string.Format("({0})", Right.ToString()) : Right.ToString(),
                                      On.ToString());
             }
         }

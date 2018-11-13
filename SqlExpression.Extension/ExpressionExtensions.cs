@@ -29,6 +29,11 @@ namespace SqlExpression.Extension
             return new AliasTableExpression(table, alias);
         }
 
+        public static SelectItemExpression As(this ISimpleValue val, string alias)
+        {
+            return new SelectItemExpression(val, alias);
+        }
+
         public static AliasSubQueryExpression As(this ISubQueryExpression subquery, string alias)
         {
             return new AliasSubQueryExpression(subquery, alias);
@@ -36,17 +41,12 @@ namespace SqlExpression.Extension
 
         public static AliasSubQueryExpression As(this ISelectStatement select, string alias)
         {
-            return new AliasSubQueryExpression(new SubQueryExpression(select.Query), alias);
+            return As(new SubQueryExpression(select.Query), alias);
         }
 
         public static AliasSubQueryExpression As(this IQueryStatement query, string alias)
         {
-            return new AliasSubQueryExpression(new SubQueryExpression(query), alias);
-        }
-
-        public static SelectItemExpression As(this ISimpleValue val, string alias)
-        {
-            return new SelectItemExpression(val, alias);
+            return As(new SubQueryExpression(query), alias);
         }
 
         #endregion
@@ -116,7 +116,7 @@ namespace SqlExpression.Extension
 
         public static SetExpression Set(this IColumn column, ISimpleValue value)
         {
-            if (value == null) return Set(column, value as object);
+            if (value == null) value = new LiteralValue(null);
             return new SetExpression(column, value);
         }
 
@@ -161,29 +161,59 @@ namespace SqlExpression.Extension
 
         #region 算术表达式 ArithmeticExpression
 
-        public static ArithmeticExpression Add(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Add(this ISimpleValue column, ISimpleValue value)
         {
+            if (value == null) value = new LiteralValue(null);
             return new ArithmeticExpression(column, Operator.Add, value);
         }
 
-        public static ArithmeticExpression Sub(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Sub(this ISimpleValue column, ISimpleValue value)
         {
+            if (value == null) value = new LiteralValue(null);
             return new ArithmeticExpression(column, Operator.Sub, value);
         }
 
-        public static ArithmeticExpression Mul(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Mul(this ISimpleValue column, ISimpleValue value)
         {
+            if (value == null) value = new LiteralValue(null);
             return new ArithmeticExpression(column, Operator.Mul, value);
         }
 
-        public static ArithmeticExpression Div(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Div(this ISimpleValue column, ISimpleValue value)
         {
+            if (value == null) value = new LiteralValue(null);
             return new ArithmeticExpression(column, Operator.Div, value);
         }
 
-        public static ArithmeticExpression Mod(this IColumn column, ISimpleValue value)
+        public static ArithmeticExpression Mod(this ISimpleValue column, ISimpleValue value)
         {
+            if (value == null) value = new LiteralValue(null);
             return new ArithmeticExpression(column, Operator.Mod, value);
+        }
+
+        public static ArithmeticExpression Add(this ISimpleValue column, object value)
+        {
+            return new ArithmeticExpression(column, Operator.Add, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
+        }
+
+        public static ArithmeticExpression Sub(this ISimpleValue column, object value)
+        {
+            return new ArithmeticExpression(column, Operator.Sub, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
+        }
+
+        public static ArithmeticExpression Mul(this ISimpleValue column, object value)
+        {
+            return new ArithmeticExpression(column, Operator.Mul, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
+        }
+
+        public static ArithmeticExpression Div(this ISimpleValue column, object value)
+        {
+            return new ArithmeticExpression(column, Operator.Div, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
+        }
+
+        public static ArithmeticExpression Mod(this ISimpleValue column, object value)
+        {
+            return new ArithmeticExpression(column, Operator.Mod, value is ISimpleValue ? value as ISimpleValue : new LiteralValue(value));
         }
 
         #endregion
@@ -272,12 +302,24 @@ namespace SqlExpression.Extension
 
         public static LogicExpression And(this ISimpleValue a, ISimpleValue b)
         {
+            if (b == null) b = new LiteralValue(null);
             return new LogicExpression(a, Operator.And, b);
         }
 
         public static LogicExpression Or(this ISimpleValue a, ISimpleValue b)
         {
+            if (b == null) b = new LiteralValue(null);
             return new LogicExpression(a, Operator.Or, b);
+        }
+
+        public static LogicExpression And(this ISimpleValue a, object b)
+        {
+            return new LogicExpression(a, Operator.And, b is ISimpleValue ? b as ISimpleValue : new LiteralValue(b));
+        }
+
+        public static LogicExpression Or(this ISimpleValue a, object b)
+        {
+            return new LogicExpression(a, Operator.Or, b is ISimpleValue ? b as ISimpleValue : new LiteralValue(b));
         }
 
         #endregion

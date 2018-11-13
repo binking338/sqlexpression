@@ -245,7 +245,7 @@ namespace SqlExpression
             foreach (var property in properties)
             {
                 var item = schema.AllMapped().First(i => i.Alias == property.Name);
-                list.Add((item.Column as IColumn));
+                list.Add((item.Value as IColumn));
             }
             Cache4Properties2Columns.TryAdd(type, list);
             return list;
