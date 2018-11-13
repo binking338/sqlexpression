@@ -30,21 +30,18 @@ namespace SqlExpression.UnitTest
         public void Test2()
         {
             IExpression e;
+            Misc.UsingQuotationMark(()=>{
 
-            Expression.DefaultOption.OpenQuotationMark = "`";
-            Expression.DefaultOption.CloseQuotationMark = "`";
+                e = new Column("id");
+                Assert.AreEqual("`id`", e.ToString());
 
-            e = new Column("id");
-            Assert.AreEqual("`id`", e.ToString());
+                e = new Column("id", "foo");
+                Assert.AreEqual("`foo`.`id`", e.ToString());
 
-            e = new Column("id", "foo");
-            Assert.AreEqual("`foo`.`id`", e.ToString());
+                e = new Column("*", "foo");
+                Assert.AreEqual("`foo`.*", e.ToString());
 
-            e = new Column("*", "foo");
-            Assert.AreEqual("`foo`.*", e.ToString());
-
-            Expression.DefaultOption.OpenQuotationMark = "";
-            Expression.DefaultOption.CloseQuotationMark = "";
+            });
         }
 
         [TestMethod]
@@ -148,10 +145,5 @@ namespace SqlExpression.UnitTest
             e = new Column("id").SetC("true");
             Assert.AreEqual("id=true", e.ToString());
         }
-    }
-    public enum TestEnum
-    {
-        Item1 = 1,
-        Item2 = 2,
     }
 }

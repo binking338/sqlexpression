@@ -22,14 +22,12 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void Test2()
         {
-            Expression.DefaultOption.OpenQuotationMark = "`";
-            Expression.DefaultOption.CloseQuotationMark = "`";
             var e = new Table("foo");
 
-            Assert.AreEqual("`foo`", e.ToString());
-
-            Expression.DefaultOption.OpenQuotationMark = "";
-            Expression.DefaultOption.CloseQuotationMark = "";
+            Misc.UsingQuotationMark(() =>
+            {
+                Assert.AreEqual("`foo`", e.ToString());
+            });
         }
 
         [TestMethod]
@@ -43,14 +41,12 @@ namespace SqlExpression.UnitTest
         [TestMethod]
         public void ExtensionAliasTest2()
         {
-            Expression.DefaultOption.OpenQuotationMark = "`";
-            Expression.DefaultOption.CloseQuotationMark = "`";
             var e = new Table("foo").As("t");
 
-            Assert.AreEqual("`foo` AS `t`", e.ToString());
-
-            Expression.DefaultOption.OpenQuotationMark = "";
-            Expression.DefaultOption.CloseQuotationMark = "";
+            Misc.UsingQuotationMark(() =>
+            {
+                Assert.AreEqual("`foo` AS `t`", e.ToString());
+            });
         }
 
         [TestMethod]
