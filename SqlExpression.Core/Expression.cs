@@ -440,7 +440,7 @@ namespace SqlExpression
             return base.GetHashCode();
         }
 
-        public static LiteralValue FromObject(object obj)
+        public static LiteralValue Parse(object obj)
         {
             if (!(obj is ILiteralValue) && obj is IExpression)
             {
@@ -451,6 +451,8 @@ namespace SqlExpression
                 return new LiteralValue(obj);
             }
         }
+
+        public static LiteralValue Null { get; set; } = new LiteralValue(null);
     }
 
     /// <summary>

@@ -261,11 +261,6 @@ namespace SqlExpression.Extension
             return set;
         }
 
-        public static ISetClause SetItem(this ISetClause set, IColumn column, ISimpleValue value)
-        {
-            return SetItem(set, column.Set(value));
-        }
-
         public static ISetClause SetItem(this ISetClause set, IColumn column, object value)
         {
             return SetItem(set, column.Set(value));
