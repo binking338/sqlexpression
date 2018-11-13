@@ -38,5 +38,49 @@ namespace SqlExpression.UnitTest
 
             });
         }
+
+        [TestMethod]
+        public void OperatorOverrideTest()
+        {
+            var t = new
+            {
+                Id = new Column("id", "foo"),
+                Name = new Column("name", "foo")
+            };
+            IExpression e = null;
+
+            var val = 1000;
+            e = t.Id == val;
+            Assert.AreEqual("foo.id=" + val, e.ToString());
+
+            e = t.Id > val;
+            Assert.AreEqual("foo.id>" + val, e.ToString());
+
+            e = t.Id < val;
+            Assert.AreEqual("foo.id<" + val, e.ToString());
+
+            e = t.Id >= val;
+            Assert.AreEqual("foo.id>=" + val, e.ToString());
+
+            e = t.Id <= val;
+            Assert.AreEqual("foo.id<=" + val, e.ToString());
+
+
+
+            t.Id.ToParam("val");
+            Assert.AreEqual("foo.id=@val", e.ToString());
+
+            e = t.Id > t.Id.ToParam("val");
+            Assert.AreEqual("foo.id>@val", e.ToString());
+
+            e = t.Id < t.Id.ToParam("val");
+            Assert.AreEqual("foo.id<@val", e.ToString());
+
+            e = t.Id >= t.Id.ToParam("val");
+            Assert.AreEqual("foo.id>=@val", e.ToString());
+
+            e = t.Id <= t.Id.ToParam("val");
+            Assert.AreEqual("foo.id<=@val", e.ToString());
+        }
     }
 }

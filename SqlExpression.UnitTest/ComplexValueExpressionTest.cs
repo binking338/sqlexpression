@@ -20,40 +20,6 @@ namespace SqlExpression.UnitTest
             };
             IExpression e = null;
 
-            var val = 1000;
-            e = t.Id == val;
-            Assert.AreEqual("foo.id=" + val, e.ToString());
-
-            e = t.Id > val;
-            Assert.AreEqual("foo.id>" + val, e.ToString());
-
-            e = t.Id < val;
-            Assert.AreEqual("foo.id<" + val, e.ToString());
-
-            e = t.Id >= val;
-            Assert.AreEqual("foo.id>=" + val, e.ToString());
-
-            e = t.Id <= val;
-            Assert.AreEqual("foo.id<=" + val, e.ToString());
-
-
-
-            t.Id.ToParam("val");
-            Assert.AreEqual("foo.id=@val", e.ToString());
-
-            e = t.Id > t.Id.ToParam("val");
-            Assert.AreEqual("foo.id>@val", e.ToString());
-
-            e = t.Id < t.Id.ToParam("val");
-            Assert.AreEqual("foo.id<@val", e.ToString());
-
-            e = t.Id >= t.Id.ToParam("val");
-            Assert.AreEqual("foo.id>=@val", e.ToString());
-
-            e = t.Id <= t.Id.ToParam("val");
-            Assert.AreEqual("foo.id<=@val", e.ToString());
-
-
 
             e = t.Id > 1 & t.Id < 100;
             Assert.AreEqual("foo.id>1 AND foo.id<100", e.ToString());
