@@ -67,7 +67,7 @@ namespace SqlExpression.UnitTest
 
 
 
-            t.Id.ToParam("val");
+            e = t.Id == t.Id.ToParam("val");
             Assert.AreEqual("foo.id=@val", e.ToString());
 
             e = t.Id > t.Id.ToParam("val");
