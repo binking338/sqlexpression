@@ -354,5 +354,29 @@ namespace SqlExpression.Extension
         }
 
         #endregion
+
+        #region Exists
+
+        public static UnaryExpression Exists(this IQueryStatement query)
+        {
+            return new UnaryExpression(Operator.Exists, new SubQueryExpression(query));
+        }
+
+        public static UnaryExpression Exists(this ISelectStatement select)
+        {
+            return new UnaryExpression(Operator.Exists, new SubQueryExpression(select.Query));
+        }
+
+        public static UnaryExpression NotExists(this IQueryStatement query)
+        {
+            return new UnaryExpression(Operator.NotExists, new SubQueryExpression(query));
+        }
+
+        public static UnaryExpression NotExists(this ISelectStatement select)
+        {
+            return new UnaryExpression(Operator.NotExists, new SubQueryExpression(select.Query));
+        }
+
+        #endregion
     }
 }

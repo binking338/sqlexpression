@@ -13,8 +13,6 @@ namespace SqlExpression.UnitTest
     [TestClass]
     public class FilterTest
     {
-        #region Filter
-
         /// <summary>
         /// 普通查询条件
         /// </summary>
@@ -97,7 +95,6 @@ namespace SqlExpression.UnitTest
                 Name = new Column("name", "foo")
             };
             IExpression e = null;
-            Expression.DefaultOption.Column2ParamContractHandler = null;
 
             e = t.Id == t.Id.ToParam();
             Assert.AreEqual("foo.id=@id", e.ToString());
@@ -196,11 +193,74 @@ namespace SqlExpression.UnitTest
             e = t.Name.NotLikeVarParam();
             Assert.AreEqual("foo.name NOT LIKE @Name", e.ToString());
 
+            
             e = t.Id.BetweenVarParam();
             Assert.AreEqual("foo.id BETWEEN @IdLower AND @IdUpper", e.ToString());
 
             e = t.Id.NotBetweenVarParam();
             Assert.AreEqual("foo.id NOT BETWEEN @IdLower AND @IdUpper", e.ToString());
+
+            Expression.DefaultOption.Column2ParamContractHandler = null;
+        }
+
+        /// <summary>
+        /// 普通查询条件 参数化查询
+        /// </summary>
+        [TestMethod]
+        public void ComparisonExpressionVarParam_Custom()
+        {
+            var t = new
+            {
+                Id = new Column("id", "foo"),
+                Name = new Column("name", "foo")
+            };
+            IExpression e = null;
+
+            e = t.Id == t.Id.ToParam("val");
+            Assert.AreEqual("foo.id=@val", e.ToString());
+
+            e = t.Id > t.Id.ToParam("val");
+            Assert.AreEqual("foo.id>@val", e.ToString());
+
+            e = t.Id < t.Id.ToParam("val");
+            Assert.AreEqual("foo.id<@val", e.ToString());
+
+            e = t.Id >= t.Id.ToParam("val");
+            Assert.AreEqual("foo.id>=@val", e.ToString());
+
+            e = t.Id <= t.Id.ToParam("val");
+            Assert.AreEqual("foo.id<=@val", e.ToString());
+
+
+            e = t.Id.EqVarParam("val");
+            Assert.AreEqual("foo.id=@val", e.ToString());
+
+            e = t.Id.GtVarParam("val");
+            Assert.AreEqual("foo.id>@val", e.ToString());
+
+            e = t.Id.LtVarParam("val");
+            Assert.AreEqual("foo.id<@val", e.ToString());
+
+            e = t.Id.GtOrEqVarParam("val");
+            Assert.AreEqual("foo.id>=@val", e.ToString());
+
+            e = t.Id.LtOrEqVarParam("val");
+            Assert.AreEqual("foo.id<=@val", e.ToString());
+
+
+            e = t.Name.LikeVarParam("val");
+            Assert.AreEqual("foo.name LIKE @val", e.ToString());
+
+            e = t.Name.NotLikeVarParam("val");
+            Assert.AreEqual("foo.name NOT LIKE @val", e.ToString());
+
+            
+            e = t.Id.BetweenVarParam("val1", "val2");
+            Assert.AreEqual("foo.id BETWEEN @val1 AND @val2", e.ToString());
+
+            e = t.Id.NotBetweenVarParam("val1", "val2");
+            Assert.AreEqual("foo.id NOT BETWEEN @val1 AND @val2", e.ToString());
+
         }
 
         /// <summary>
@@ -268,7 +328,5 @@ namespace SqlExpression.UnitTest
             Assert.AreEqual("(foo.name LIKE '%' OR foo.id>1) AND foo.id<100", e.ToString());
             #endregion
         }
-
-        #endregion
     }
 }

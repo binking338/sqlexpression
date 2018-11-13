@@ -116,6 +116,7 @@ namespace SqlExpression.Extension
 
         public static SetExpression Set(this IColumn column, ISimpleValue value)
         {
+            if (value == null) return Set(column, value as object);
             return new SetExpression(column, value);
         }
 

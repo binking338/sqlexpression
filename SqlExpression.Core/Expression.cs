@@ -121,11 +121,11 @@ namespace SqlExpression
             }
             if (DatasetAlias == null)
             {
-                return Name;
+                return Name == "*" ? "*" : string.Format("{1}{0}{2}", Name, Option.OpenQuotationMark, Option.CloseQuotationMark);
             }
             else
             {
-                return string.Format("{2}{1}{3}.{2}{0}{3}", Name, DatasetAlias, Option.OpenQuotationMark, Option.CloseQuotationMark);
+                return string.Format(Name == "*" ? "{2}{1}{3}.*" : "{2}{1}{3}.{2}{0}{3}", Name, DatasetAlias, Option.OpenQuotationMark, Option.CloseQuotationMark);
             }
         }
 
