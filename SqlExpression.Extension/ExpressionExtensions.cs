@@ -188,6 +188,20 @@ namespace SqlExpression.Extension
 
         #region LogicExpresssion
 
+        #region ShortCut
+
+        public static IBoolValue AllEqP(this IEnumerable<IColumn> columns)
+        {
+            return AllEqVarParam(columns);
+        }
+
+        public static IBoolValue AnyEqP(this IEnumerable<IColumn> columns)
+        {
+            return AnyEqVarParam(columns);
+        }
+
+        #endregion 
+
         public static LogicExpression And(this ISimpleValue value, object assert)
         {
             return new LogicExpression(value, Operator.And, assert is ISimpleValue ? assert as ISimpleValue : new LiteralValue(assert));
