@@ -247,6 +247,27 @@ namespace SqlExpression.UnitTest.Extension
             e = new LiteralValue[] { LiteralValue.Parse(true), LiteralValue.Parse(true), LiteralValue.Parse(true) }.AnySatisfied();
             Assert.AreEqual("True OR True OR True", e.ToString());
 
+            var t = new
+            {
+                Id = new Column("id", "foo"),
+                Name = new Column("name", "foo")
+            };
+
+
+            Misc.UsingParamNameAsColumnName(() =>
+            {
+                e = new List<Column>() { t.Id, t.Name }.AllEqVarParam();
+                Assert.AreEqual("foo.id=@id AND foo.name=@name", e.ToString());
+
+                e = new List<Column>() { t.Id, t.Name }.AllEqP();
+                Assert.AreEqual("foo.id=@id AND foo.name=@name", e.ToString());
+
+                e = new List<Column>() { t.Id, t.Name }.AnyEqVarParam();
+                Assert.AreEqual("foo.id=@id OR foo.name=@name", e.ToString());
+
+                e = new List<Column>() { t.Id, t.Name }.AnyEqP();
+                Assert.AreEqual("foo.id=@id OR foo.name=@name", e.ToString());
+            });
         }
 
 
