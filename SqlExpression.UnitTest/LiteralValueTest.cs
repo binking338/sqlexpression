@@ -73,6 +73,53 @@ namespace SqlExpression.UnitTest
 
             e = LiteralValue.Parse(TestEnum.Item1);
             Assert.AreEqual("1", e.ToString());
+
+            LiteralValue l;
+
+            l = (int)1;
+            Assert.AreEqual("1", l.ToString());
+
+            l = (short)1;
+            Assert.AreEqual("1", l.ToString());
+
+            l = (ushort)1;
+            Assert.AreEqual("1", l.ToString());
+
+            l = (long)1;
+            Assert.AreEqual("1", l.ToString());
+
+            l = (ulong)1;
+            Assert.AreEqual("1", l.ToString());
+
+            l = (uint)1;
+            Assert.AreEqual("1", l.ToString());
+
+            l = 1d;
+            Assert.AreEqual("1", l.ToString());
+
+            l = 1f;
+            Assert.AreEqual("1", l.ToString());
+
+            l = 1m;
+            Assert.AreEqual("1", l.ToString());
+
+            l = "1";
+            Assert.AreEqual("'1'", l.ToString());
+
+            l = '1';
+            Assert.AreEqual("'1'", l.ToString());
+
+            l = true;
+            Assert.AreEqual("True", l.ToString());
+
+            l = false;
+            Assert.AreEqual("False", l.ToString());
+
+            l = new DateTime(1970, 1, 1);
+            Assert.AreEqual("'1970-01-01 00:00:00'", l.ToString());
+
+            l = TestEnum.Item1;
+            Assert.AreEqual("1", l.ToString());
         }
     }
 }
