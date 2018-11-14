@@ -13,7 +13,7 @@ using SqlExpression.Extension.Dapper;
 namespace SqlExpression
 {
     public class Respository<TSchema, TEntity>
-        where TSchema : SchemaExpression<TSchema>, IAliasTableExpression, new()
+        where TSchema : TableSchema<TSchema>, IAliasTableExpression, new()
         where TEntity : class, new()
     {
         protected TSchema schema;

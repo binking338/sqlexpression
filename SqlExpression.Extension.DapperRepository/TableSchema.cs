@@ -1,7 +1,7 @@
 ﻿using System;
 namespace SqlExpression
 {
-    public abstract class SchemaExpression<Schema> : Expression, IAliasTableExpression
+    public abstract class TableSchema<Schema> : Expression, IAliasTableExpression
         where Schema : class
     {
         protected Column[] _allColumns = null;
@@ -50,5 +50,15 @@ namespace SqlExpression
         string IAliasDataset.Alias { get; set; }
 
         #endregion
+    }
+
+    public class TableColumn<T> : Column
+    {
+        public TableColumn(string name, string dataset = null, T def = default(T)) : base(name, dataset)
+        {
+            Default = def;
+        }
+
+        public T Default { get; set; } = default(T);
     }
 }

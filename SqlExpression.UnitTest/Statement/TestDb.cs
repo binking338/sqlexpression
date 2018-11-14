@@ -63,7 +63,7 @@ namespace SqlExpression.UnitTest.Statement.Entity
 
 namespace SqlExpression.UnitTest.Statement.Schema
 {
-    public class FooSchema : SchemaExpression<FooSchema>
+    public class FooSchema : TableSchema<FooSchema>
     {
         public FooSchema() : this("foo") { }
 
@@ -72,11 +72,11 @@ namespace SqlExpression.UnitTest.Statement.Schema
             (this as IAliasTableExpression).Alias = alias == "foo" ? null : alias;
             (this as IAliasTableExpression).Table = new Table("foo");
 
-            Id = new Column("id", alias);
-            Name = new Column("name", alias);
-            Age = new Column("age", alias);
-            Gender = new Column("gender", alias);
-            Isdel = new Column("isdel", alias);
+            Id = new TableColumn<long>("id", alias);
+            Name = new TableColumn<string>("name", alias);
+            Age = new TableColumn<int>("age", alias);
+            Gender = new TableColumn<int>("gender", alias);
+            Isdel = new TableColumn<bool>("isdel", alias);
 
             _allColumns = new Column[] { Id, Name, Age, Gender, Isdel };
             _pkColumns = new Column[] { Id };
@@ -84,18 +84,18 @@ namespace SqlExpression.UnitTest.Statement.Schema
             _pkItems = new SelectItemExpression[] { Id.As("Id") };
         }
 
-        public Column Id { get; }
+        public TableColumn<long> Id { get; }
 
-        public Column Name { get; }
+        public TableColumn<string> Name { get; }
 
-        public Column Age { get; }
+        public TableColumn<int> Age { get; }
 
-        public Column Gender { get; }
+        public TableColumn<int> Gender { get; }
 
-        public Column Isdel { get; }
+        public TableColumn<bool> Isdel { get; }
     }
 
-    public class BarSchema : SchemaExpression<BarSchema>
+    public class BarSchema : TableSchema<BarSchema>
     {
         public BarSchema() : this("bar") { }
 
@@ -104,11 +104,11 @@ namespace SqlExpression.UnitTest.Statement.Schema
             (this as IAliasTableExpression).Alias = alias == "bar" ? null : alias;
             (this as IAliasTableExpression).Table = new Table("bar");
 
-            Id = new Column("id", alias);
-            Name = new Column("name", alias);
-            Age = new Column("age", alias);
-            Gender = new Column("gender", alias);
-            Isdel = new Column("isdel", alias);
+            Id = new TableColumn<long>("id", alias);
+            Name = new TableColumn<string>("name", alias);
+            Age = new TableColumn<int>("age", alias);
+            Gender = new TableColumn<int>("gender", alias);
+            Isdel = new TableColumn<bool>("isdel", alias);
 
             _allColumns = new Column[] { Id, Name, Age, Gender, Isdel };
             _pkColumns = new Column[] { Id };
@@ -116,14 +116,14 @@ namespace SqlExpression.UnitTest.Statement.Schema
             _pkItems = new SelectItemExpression[] { Id.As("Id") };
         }
 
-        public Column Id { get; }
+        public TableColumn<long> Id { get; }
 
-        public Column Name { get; }
+        public TableColumn<string> Name { get; }
 
-        public Column Age { get; }
+        public TableColumn<int> Age { get; }
 
-        public Column Gender { get; }
+        public TableColumn<int> Gender { get; }
 
-        public Column Isdel { get; }
+        public TableColumn<bool> Isdel { get; }
     }
 }

@@ -127,41 +127,40 @@ namespace SqlExpression.UnitTest
         {
             IExpression e = null;
             LiteralValue literal = LiteralValue.Parse(1);
-            ISimpleValue val = LiteralValue.Parse(1);
 
-            e = literal + val;
-            Assert.AreEqual(literal.ToString() + "+" + val.ToString(), e.ToString());
+            e = literal + literal;
+            Assert.AreEqual(literal.ToString() + "+" + literal.ToString(), e.ToString());
 
-            e = literal - val;
-            Assert.AreEqual(literal.ToString() + "-" + val.ToString(), e.ToString());
+            e = literal - literal;
+            Assert.AreEqual(literal.ToString() + "-" + literal.ToString(), e.ToString());
 
-            e = literal * val;
-            Assert.AreEqual(literal.ToString() + "*" + val.ToString(), e.ToString());
+            e = literal * literal;
+            Assert.AreEqual(literal.ToString() + "*" + literal.ToString(), e.ToString());
 
-            e = literal / val;
-            Assert.AreEqual(literal.ToString() + "/" + val.ToString(), e.ToString());
+            e = literal / literal;
+            Assert.AreEqual(literal.ToString() + "/" + literal.ToString(), e.ToString());
 
-            e = literal % val;
-            Assert.AreEqual(literal.ToString() + "%" + val.ToString(), e.ToString());
+            e = literal % literal;
+            Assert.AreEqual(literal.ToString() + "%" + literal.ToString(), e.ToString());
 
 
-            e = literal == val;
-            Assert.AreEqual(literal.ToString() + "=" + val.ToString(), e.ToString());
+            e = literal == literal;
+            Assert.AreEqual(literal.ToString() + "=" + literal.ToString(), e.ToString());
 
-            e = literal != val;
-            Assert.AreEqual(literal.ToString() + "<>" + val.ToString(), e.ToString());
+            e = literal != literal;
+            Assert.AreEqual(literal.ToString() + "<>" + literal.ToString(), e.ToString());
 
-            e = literal > val;
-            Assert.AreEqual(literal.ToString() + ">" + val.ToString(), e.ToString());
+            e = literal > literal;
+            Assert.AreEqual(literal.ToString() + ">" + literal.ToString(), e.ToString());
 
-            e = literal < val;
-            Assert.AreEqual(literal.ToString() + "<" + val.ToString(), e.ToString());
+            e = literal < literal;
+            Assert.AreEqual(literal.ToString() + "<" + literal.ToString(), e.ToString());
 
-            e = literal >= val;
-            Assert.AreEqual(literal.ToString() + ">=" + val.ToString(), e.ToString());
+            e = literal >= literal;
+            Assert.AreEqual(literal.ToString() + ">=" + literal.ToString(), e.ToString());
 
-            e = literal <= val;
-            Assert.AreEqual(literal.ToString() + "<=" + val.ToString(), e.ToString());
+            e = literal <= literal;
+            Assert.AreEqual(literal.ToString() + "<=" + literal.ToString(), e.ToString());
         }
 
         [TestMethod]
@@ -169,12 +168,6 @@ namespace SqlExpression.UnitTest
         {
             IExpression e = null;
             LiteralValue literal = LiteralValue.Parse(true);
-            ISimpleValue val = literal;
-
-            e = literal & val;
-            Assert.AreEqual("True AND True", e.ToString());
-            e = literal | val;
-            Assert.AreEqual("True OR True", e.ToString());
 
             e = literal & literal;
             Assert.AreEqual("True AND True", e.ToString());
