@@ -75,7 +75,7 @@ namespace SqlExpression.UnitTest
                 Assert.AreEqual((int)val + "+foo.id", e.ToString());
 
                 e = val - t.Id;
-                Assert.AreEqual((int)val + "-foo.id" , e.ToString());
+                Assert.AreEqual((int)val + "-foo.id", e.ToString());
 
                 e = val * t.Id;
                 Assert.AreEqual((int)val + "*foo.id", e.ToString());
@@ -562,40 +562,41 @@ namespace SqlExpression.UnitTest
 
             Misc.UsingQuotationMark(() =>
             {
-                e = t.Id +  val.ToString("yyyy-MM-dd HH:mm:ss");
-                Assert.AreEqual("foo.id+'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
+                e = t.Id + val;
+                Assert.AreEqual("foo.id+'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
 
-                e = t.Id -  val.ToString("yyyy-MM-dd HH:mm:ss");
-                Assert.AreEqual("foo.id-'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
+                e = t.Id - val;
+                Assert.AreEqual("foo.id-'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
 
-                e = t.Id *  val.ToString("yyyy-MM-dd HH:mm:ss");
-                Assert.AreEqual("foo.id*'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
+                e = t.Id * val;
+                Assert.AreEqual("foo.id*'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
 
-                e = t.Id /  val.ToString("yyyy-MM-dd HH:mm:ss");
-                Assert.AreEqual("foo.id/'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
+                e = t.Id / val;
+                Assert.AreEqual("foo.id/'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
 
-                e = t.Id %  val.ToString("yyyy-MM-dd HH:mm:ss");
-                Assert.AreEqual("foo.id%'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
+                e = t.Id % val;
+                Assert.AreEqual("foo.id%'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
 
 
-                e =  val.ToString("yyyy-MM-dd HH:mm:ss") + t.Id;
-                Assert.AreEqual("'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'+foo.id", e.ToString());
+                e = val + t.Id;
+                Assert.AreEqual("'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'+foo.id", e.ToString());
 
-                e =  val.ToString("yyyy-MM-dd HH:mm:ss") - t.Id;
-                Assert.AreEqual("'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'-foo.id", e.ToString());
+                e = val - t.Id;
+                Assert.AreEqual("'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'-foo.id", e.ToString());
 
-                e =  val.ToString("yyyy-MM-dd HH:mm:ss") * t.Id;
-                Assert.AreEqual("'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'*foo.id", e.ToString());
+                e = val * t.Id;
+                Assert.AreEqual("'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'*foo.id", e.ToString());
 
-                e =  val.ToString("yyyy-MM-dd HH:mm:ss") / t.Id;
-                Assert.AreEqual("'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'/foo.id", e.ToString());
+                e = val / t.Id;
+                Assert.AreEqual("'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'/foo.id", e.ToString());
 
-                e =  val.ToString("yyyy-MM-dd HH:mm:ss") % t.Id;
-                Assert.AreEqual("'" +  val.ToString("yyyy-MM-dd HH:mm:ss") + "'%foo.id", e.ToString());
+                e = val % t.Id;
+                Assert.AreEqual("'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'%foo.id", e.ToString());
 
 
                 e = t.Id == val;
                 Assert.AreEqual("foo.id='" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
+
                 e = t.Id != val;
                 Assert.AreEqual("foo.id<>'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'", e.ToString());
 
@@ -629,6 +630,86 @@ namespace SqlExpression.UnitTest
 
                 e = val <= t.Id;
                 Assert.AreEqual("'" + val.ToString("yyyy-MM-dd HH:mm:ss") + "'<=foo.id", e.ToString());
+            }, string.Empty, string.Empty);
+        }
+
+        [TestMethod]
+        public void OperatorOverrideTestISimpleValue()
+        {
+            var t = new
+            {
+                Id = new Column("id", "foo"),
+                Name = new Column("name", "foo")
+            };
+            IExpression e = null;
+            ISimpleValue val = LiteralValue.Parse(1);
+
+            Misc.UsingQuotationMark(() =>
+            {
+                e = t.Id + val;
+                Assert.AreEqual("foo.id+" + val, e.ToString());
+
+                e = t.Id - val;
+                Assert.AreEqual("foo.id-" + val, e.ToString());
+
+                e = t.Id * val;
+                Assert.AreEqual("foo.id*" + val, e.ToString());
+
+                e = t.Id / val;
+                Assert.AreEqual("foo.id/" + val, e.ToString());
+
+                e = t.Id % val;
+                Assert.AreEqual("foo.id%" + val, e.ToString());
+
+
+                e = t.Id == val;
+                Assert.AreEqual("foo.id=" + val, e.ToString());
+                e = t.Id != val;
+                Assert.AreEqual("foo.id<>" + val, e.ToString());
+
+                e = t.Id > val;
+                Assert.AreEqual("foo.id>" + val, e.ToString());
+
+                e = t.Id < val;
+                Assert.AreEqual("foo.id<" + val, e.ToString());
+
+                e = t.Id >= val;
+                Assert.AreEqual("foo.id>=" + val, e.ToString());
+
+                e = t.Id <= val;
+                Assert.AreEqual("foo.id<=" + val, e.ToString());
+            }, string.Empty, string.Empty);
+        }
+
+        [TestMethod]
+        public void OperatorOverrideTestLogicExpression()
+        {
+            var t = new
+            {
+                Id = new Column("id", "foo"),
+                Name = new Column("name", "foo")
+            };
+            IExpression e = null;
+            LiteralValue l = LiteralValue.Parse(1);
+            ISimpleValue val = l;
+
+            Misc.UsingQuotationMark(() =>
+            {
+                e = t.Id & val;
+                Assert.AreEqual("foo.id AND 1", e.ToString());
+                e = t.Id | val;
+                Assert.AreEqual("foo.id OR 1", e.ToString());
+
+                e = t.Id & l;
+                Assert.AreEqual("foo.id AND 1", e.ToString());
+                e = t.Id | l;
+                Assert.AreEqual("foo.id OR 1", e.ToString());
+
+                e = l & t.Id;
+                Assert.AreEqual("1 AND foo.id", e.ToString());
+                e = l | t.Id;
+                Assert.AreEqual("1 OR foo.id", e.ToString());
+
             }, string.Empty, string.Empty);
         }
     }
