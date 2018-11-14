@@ -74,52 +74,113 @@ namespace SqlExpression.UnitTest
             e = LiteralValue.Parse(TestEnum.Item1);
             Assert.AreEqual("1", e.ToString());
 
-            LiteralValue l;
+            LiteralValue literal;
 
-            l = (int)1;
-            Assert.AreEqual("1", l.ToString());
+            literal = (int)1;
+            Assert.AreEqual("1", literal.ToString());
 
-            l = (short)1;
-            Assert.AreEqual("1", l.ToString());
+            literal = (short)1;
+            Assert.AreEqual("1", literal.ToString());
 
-            l = (ushort)1;
-            Assert.AreEqual("1", l.ToString());
+            literal = (ushort)1;
+            Assert.AreEqual("1", literal.ToString());
 
-            l = (long)1;
-            Assert.AreEqual("1", l.ToString());
+            literal = (long)1;
+            Assert.AreEqual("1", literal.ToString());
 
-            l = (ulong)1;
-            Assert.AreEqual("1", l.ToString());
+            literal = (ulong)1;
+            Assert.AreEqual("1", literal.ToString());
 
-            l = (uint)1;
-            Assert.AreEqual("1", l.ToString());
+            literal = (uint)1;
+            Assert.AreEqual("1", literal.ToString());
 
-            l = 1d;
-            Assert.AreEqual("1", l.ToString());
+            literal = 1d;
+            Assert.AreEqual("1", literal.ToString());
 
-            l = 1f;
-            Assert.AreEqual("1", l.ToString());
+            literal = 1f;
+            Assert.AreEqual("1", literal.ToString());
 
-            l = 1m;
-            Assert.AreEqual("1", l.ToString());
+            literal = 1m;
+            Assert.AreEqual("1", literal.ToString());
 
-            l = "1";
-            Assert.AreEqual("'1'", l.ToString());
+            literal = "1";
+            Assert.AreEqual("'1'", literal.ToString());
 
-            l = '1';
-            Assert.AreEqual("'1'", l.ToString());
+            literal = '1';
+            Assert.AreEqual("'1'", literal.ToString());
 
-            l = true;
-            Assert.AreEqual("True", l.ToString());
+            literal = true;
+            Assert.AreEqual("True", literal.ToString());
 
-            l = false;
-            Assert.AreEqual("False", l.ToString());
+            literal = false;
+            Assert.AreEqual("False", literal.ToString());
 
-            l = new DateTime(1970, 1, 1);
-            Assert.AreEqual("'1970-01-01 00:00:00'", l.ToString());
+            literal = new DateTime(1970, 1, 1);
+            Assert.AreEqual("'1970-01-01 00:00:00'", literal.ToString());
 
-            l = TestEnum.Item1;
-            Assert.AreEqual("1", l.ToString());
+            literal = TestEnum.Item1;
+            Assert.AreEqual("1", literal.ToString());
+        }
+
+        [TestMethod]
+        public void TestOperatorOverrideByISimpleValue()
+        {
+            IExpression e = null;
+            LiteralValue literal = LiteralValue.Parse(1);
+            ISimpleValue val = LiteralValue.Parse(1);
+
+            e = literal + val;
+            Assert.AreEqual(literal + "+" + val, e.ToString());
+
+            e = literal - val;
+            Assert.AreEqual(literal + "-" + val, e.ToString());
+
+            e = literal * val;
+            Assert.AreEqual(literal + "*" + val, e.ToString());
+
+            e = literal / val;
+            Assert.AreEqual(literal + "/" + val, e.ToString());
+
+            e = literal % val;
+            Assert.AreEqual(literal + "%" + val, e.ToString());
+
+
+            e = literal == val;
+            Assert.AreEqual(literal + "=" + val, e.ToString());
+
+            e = literal != val;
+            Assert.AreEqual(literal + "<>" + val, e.ToString());
+
+            e = literal > val;
+            Assert.AreEqual(literal + ">" + val, e.ToString());
+
+            e = literal < val;
+            Assert.AreEqual(literal + "<" + val, e.ToString());
+
+            e = literal >= val;
+            Assert.AreEqual(literal + ">=" + val, e.ToString());
+
+            e = literal <= val;
+            Assert.AreEqual(literal + "<=" + val, e.ToString());
+        }
+
+        [TestMethod]
+        public void TestOperatorOverrideLogicExpression()
+        {
+            IExpression e = null;
+            LiteralValue literal = LiteralValue.Parse(true);
+            ISimpleValue val = literal;
+
+            e = literal & val;
+            Assert.AreEqual("True AND True", e.ToString());
+            e = literal | val;
+            Assert.AreEqual("True OR True", e.ToString());
+
+            e = literal & literal;
+            Assert.AreEqual("True AND True", e.ToString());
+            e = literal | literal;
+            Assert.AreEqual("True OR True", e.ToString());
+
         }
     }
 }

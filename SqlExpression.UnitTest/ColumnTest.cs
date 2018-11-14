@@ -42,7 +42,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueEnum()
+        public void TestOperatorOverrideByEnumLiteralValue()
         {
             var t = new
             {
@@ -127,7 +127,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueInt()
+        public void TestOperatorOverrideByIntLiteralValue()
         {
             var t = new
             {
@@ -211,7 +211,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueDouble()
+        public void TestOperatorOverrideByDoubleLiteralValue()
         {
             var t = new
             {
@@ -295,7 +295,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueBool()
+        public void TestOperatorOverrideByBoolLiteralValue()
         {
             var t = new
             {
@@ -379,7 +379,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueString()
+        public void TestOperatorOverrideByStringLiteralValue()
         {
             var t = new
             {
@@ -464,7 +464,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueChar()
+        public void TestOperatorOverrideByCharLiteralValue()
         {
             var t = new
             {
@@ -549,7 +549,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueDateTime()
+        public void TestOperatorOverrideByDateTimeLiteralValue()
         {
             var t = new
             {
@@ -634,7 +634,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestISimpleValue()
+        public void TestOperatorOverrideByISimpleValue()
         {
             var t = new
             {
@@ -664,6 +664,7 @@ namespace SqlExpression.UnitTest
 
                 e = t.Id == val;
                 Assert.AreEqual("foo.id=" + val, e.ToString());
+
                 e = t.Id != val;
                 Assert.AreEqual("foo.id<>" + val, e.ToString());
 
@@ -682,7 +683,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLogicExpression()
+        public void TestOperatorOverrideLogicExpression()
         {
             var t = new
             {
@@ -690,25 +691,25 @@ namespace SqlExpression.UnitTest
                 Name = new Column("name", "foo")
             };
             IExpression e = null;
-            LiteralValue l = LiteralValue.Parse(1);
-            ISimpleValue val = l;
+            LiteralValue literal = LiteralValue.Parse(true);
+            ISimpleValue val = literal;
 
             Misc.UsingQuotationMark(() =>
             {
                 e = t.Id & val;
-                Assert.AreEqual("foo.id AND 1", e.ToString());
+                Assert.AreEqual("foo.id AND True", e.ToString());
                 e = t.Id | val;
-                Assert.AreEqual("foo.id OR 1", e.ToString());
+                Assert.AreEqual("foo.id OR True", e.ToString());
 
-                e = t.Id & l;
-                Assert.AreEqual("foo.id AND 1", e.ToString());
-                e = t.Id | l;
-                Assert.AreEqual("foo.id OR 1", e.ToString());
+                e = t.Id & literal;
+                Assert.AreEqual("foo.id AND True", e.ToString());
+                e = t.Id | literal;
+                Assert.AreEqual("foo.id OR True", e.ToString());
 
-                e = l & t.Id;
-                Assert.AreEqual("1 AND foo.id", e.ToString());
-                e = l | t.Id;
-                Assert.AreEqual("1 OR foo.id", e.ToString());
+                e = literal & t.Id;
+                Assert.AreEqual("True AND foo.id", e.ToString());
+                e = literal | t.Id;
+                Assert.AreEqual("True OR foo.id", e.ToString());
 
             }, string.Empty, string.Empty);
         }

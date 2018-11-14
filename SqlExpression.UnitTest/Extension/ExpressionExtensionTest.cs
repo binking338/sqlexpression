@@ -11,7 +11,7 @@ namespace SqlExpression.UnitTest.Extension
     public class ExpressionExtensionTest
     {
         [TestMethod]
-        public void ConcatTest()
+        public void TestConcat()
         {
             IExpression e;
 
@@ -20,7 +20,7 @@ namespace SqlExpression.UnitTest.Extension
         }
 
         [TestMethod]
-        public void BracketTest()
+        public void TestBracket()
         {
             IExpression e;
 
@@ -29,7 +29,7 @@ namespace SqlExpression.UnitTest.Extension
         }
 
         [TestMethod]
-        public void AliasTest()
+        public void TestAlias()
         {
             IExpression e;
             Misc.UsingQuotationMark(() =>
@@ -52,7 +52,7 @@ namespace SqlExpression.UnitTest.Extension
         }
 
         [TestMethod]
-        public void UsingQuotationMarkAliasTest()
+        public void TestAliasUsingQuotationMark()
         {
             IExpression e;
             Misc.UsingQuotationMark(() =>
@@ -75,7 +75,7 @@ namespace SqlExpression.UnitTest.Extension
         }
 
         [TestMethod]
-        public void AsteriskTest()
+        public void TestAsterisk()
         {
             IExpression e;
 
@@ -87,7 +87,7 @@ namespace SqlExpression.UnitTest.Extension
         }
 
         [TestMethod]
-        public void ToParamTest()
+        public void TestExtensionToParam()
         {
             IExpression e;
             Misc.UsingParamNameAsColumnName(() =>
@@ -108,7 +108,7 @@ namespace SqlExpression.UnitTest.Extension
         }
 
         [TestMethod]
-        public void SetTest()
+        public void TestExtensionSet()
         {
             IExpression e;
 
@@ -171,7 +171,7 @@ namespace SqlExpression.UnitTest.Extension
         }
 
         [TestMethod]
-        public void OrderEnumTest()
+        public void TestExtensionOrderEnum()
         {
             IExpression e;
 
@@ -186,7 +186,7 @@ namespace SqlExpression.UnitTest.Extension
         }
 
         [TestMethod]
-        public void FunctionTest()
+        public void TestExtensionFunction()
         {
             IExpression e;
 
@@ -210,7 +210,7 @@ namespace SqlExpression.UnitTest.Extension
         }
 
         [TestMethod]
-        public void ArithmeticTest()
+        public void TestExtensionArithmetic()
         {
             IExpression e;
 
@@ -235,7 +235,7 @@ namespace SqlExpression.UnitTest.Extension
 
 
         [TestMethod]
-        public void LogicTest()
+        public void TestExtensionLogicExpression()
         {
             IExpression e;
 
@@ -291,7 +291,7 @@ namespace SqlExpression.UnitTest.Extension
 
 
         [TestMethod]
-        public void ComparisonTest()
+        public void TestExtensionComparisonExpression()
         {
             var t = new
             {

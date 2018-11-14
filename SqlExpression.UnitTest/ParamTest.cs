@@ -22,7 +22,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueEnum()
+        public void TestOperatorOverrideByEnumLiteralValue()
         {
             var t = new
             {
@@ -107,7 +107,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueInt()
+        public void TestOperatorOverrideByIntLiteralValue()
         {
             var t = new
             {
@@ -191,7 +191,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueDouble()
+        public void TestOperatorOverrideByDoubleLiteralValue()
         {
             var t = new
             {
@@ -275,7 +275,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueBool()
+        public void TestOperatorOverrideByBoolLiteralValue()
         {
             var t = new
             {
@@ -359,7 +359,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueString()
+        public void TestOperatorOverrideByStringLiteralValue()
         {
             var t = new
             {
@@ -444,7 +444,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueChar()
+        public void TestOperatorOverrideByCharLiteralValue()
         {
             var t = new
             {
@@ -529,7 +529,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLiteralValueDateTime()
+        public void TestOperatorOverrideByDateTimeLiteralValue()
         {
             var t = new
             {
@@ -613,7 +613,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestISimpleValue()
+        public void TestOperatorOverrideByISimpleValue()
         {
             var t = new
             {
@@ -661,7 +661,7 @@ namespace SqlExpression.UnitTest
         }
 
         [TestMethod]
-        public void OperatorOverrideTestLogicExpression()
+        public void TestOperatorOverrideLogicExpression()
         {
             var t = new
             {
@@ -669,28 +669,27 @@ namespace SqlExpression.UnitTest
                 Name = new Param("name")
             };
             IExpression e = null;
-            LiteralValue l = LiteralValue.Parse(1);
+            LiteralValue l = LiteralValue.Parse(true);
             ISimpleValue val = l;
 
             Misc.UsingQuotationMark(() =>
             {
                 e = t.Id & val;
-                Assert.AreEqual("@id AND 1", e.ToString());
+                Assert.AreEqual("@id AND True", e.ToString());
                 e = t.Id | val;
-                Assert.AreEqual("@id OR 1", e.ToString());
+                Assert.AreEqual("@id OR True", e.ToString());
 
                 e = t.Id & l;
-                Assert.AreEqual("@id AND 1", e.ToString());
+                Assert.AreEqual("@id AND True", e.ToString());
                 e = t.Id | l;
-                Assert.AreEqual("@id OR 1", e.ToString());
+                Assert.AreEqual("@id OR True", e.ToString());
 
                 e = l & t.Id;
-                Assert.AreEqual("1 AND @id", e.ToString());
+                Assert.AreEqual("True AND @id", e.ToString());
                 e = l | t.Id;
-                Assert.AreEqual("1 OR @id", e.ToString());
+                Assert.AreEqual("True OR @id", e.ToString());
 
             }, string.Empty, string.Empty);
         }
-
     }
 }
