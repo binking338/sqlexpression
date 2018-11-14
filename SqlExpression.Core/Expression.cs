@@ -389,31 +389,6 @@ namespace SqlExpression
 
         #region 比较运算符
 
-        public static ComparisonExpression operator ==(LiteralValue value, ISimpleValue val)
-        {
-            return new ComparisonExpression(value, Operator.Eq, val);
-        }
-        public static ComparisonExpression operator !=(LiteralValue value, ISimpleValue val)
-        {
-            return new ComparisonExpression(value, Operator.Neq, val);
-        }
-        public static ComparisonExpression operator >(LiteralValue value, ISimpleValue val)
-        {
-            return new ComparisonExpression(value, Operator.Gt, val);
-        }
-        public static ComparisonExpression operator <(LiteralValue value, ISimpleValue val)
-        {
-            return new ComparisonExpression(value, Operator.Lt, val);
-        }
-        public static ComparisonExpression operator >=(LiteralValue value, ISimpleValue val)
-        {
-            return new ComparisonExpression(value, Operator.GtOrEq, val);
-        }
-        public static ComparisonExpression operator <=(LiteralValue value, ISimpleValue val)
-        {
-            return new ComparisonExpression(value, Operator.LtOrEq, val);
-        }
-
         public static ComparisonExpression operator ==(LiteralValue value, LiteralValue val)
         {
             return new ComparisonExpression(value, Operator.Eq, val);
@@ -443,27 +418,6 @@ namespace SqlExpression
 
         #region 算术运算符
 
-        public static ArithmeticExpression operator +(LiteralValue value, ISimpleValue val)
-        {
-            return new ArithmeticExpression(value, Operator.Add, val);
-        }
-        public static ArithmeticExpression operator -(LiteralValue value, ISimpleValue val)
-        {
-            return new ArithmeticExpression(value, Operator.Sub, val);
-        }
-        public static ArithmeticExpression operator *(LiteralValue value, ISimpleValue val)
-        {
-            return new ArithmeticExpression(value, Operator.Mul, val);
-        }
-        public static ArithmeticExpression operator /(LiteralValue value, ISimpleValue val)
-        {
-            return new ArithmeticExpression(value, Operator.Div, val);
-        }
-        public static ArithmeticExpression operator %(LiteralValue value, ISimpleValue val)
-        {
-            return new ArithmeticExpression(value, Operator.Mod, val);
-        }
-
         public static ArithmeticExpression operator +(LiteralValue value, LiteralValue val)
         {
             return new ArithmeticExpression(value, Operator.Add, val);
@@ -488,16 +442,6 @@ namespace SqlExpression
         #endregion
 
         #region 逻辑运算符
-
-        public static LogicExpression operator &(LiteralValue exp1, ISimpleValue exp2)
-        {
-            return new LogicExpression(exp1, Operator.And, exp2);
-        }
-
-        public static LogicExpression operator |(LiteralValue exp1, ISimpleValue exp2)
-        {
-            return new LogicExpression(exp1, Operator.Or, exp2);
-        }
 
         public static LogicExpression operator &(LiteralValue exp1, LiteralValue exp2)
         {
