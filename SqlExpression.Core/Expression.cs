@@ -369,6 +369,11 @@ namespace SqlExpression
 
         #region 隐式转换
 
+        public static implicit operator LiteralValue(Enum value)
+        {
+            return new LiteralValue(value);
+        }
+
         public static implicit operator LiteralValue(string value)
         {
             return new LiteralValue(value);
