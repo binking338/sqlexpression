@@ -288,6 +288,26 @@ namespace SqlExpression
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
+        public static LogicExpression operator &(Column exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(Column exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, Column exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, Column exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
         #endregion
 
         #region 隐式转换
@@ -375,6 +395,16 @@ namespace SqlExpression
         }
 
         public static LogicExpression operator |(LiteralValue exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, LiteralValue exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
@@ -666,6 +696,26 @@ namespace SqlExpression
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
+        public static LogicExpression operator &(Param exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(Param exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, Param exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, Param exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
         #endregion
 
         #region 隐式转换
@@ -912,6 +962,26 @@ namespace SqlExpression
         }
 
         public static LogicExpression operator |(SubQueryExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(SubQueryExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(SubQueryExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, SubQueryExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, SubQueryExpression exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
@@ -1218,6 +1288,26 @@ namespace SqlExpression
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
+        public static LogicExpression operator &(BracketExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(BracketExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, BracketExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, BracketExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
         #endregion
 
         public override bool Equals(object obj)
@@ -1252,6 +1342,26 @@ namespace SqlExpression
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
+        public static LogicExpression operator &(UnaryComparisonExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(UnaryComparisonExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, UnaryComparisonExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, UnaryComparisonExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
         #endregion
     }
 
@@ -1273,6 +1383,26 @@ namespace SqlExpression
         }
 
         public static LogicExpression operator |(ComparisonExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(ComparisonExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(ComparisonExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, ComparisonExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, ComparisonExpression exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
@@ -1304,6 +1434,26 @@ namespace SqlExpression
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
+        public static LogicExpression operator &(ExistsExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(ExistsExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, ExistsExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, ExistsExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
         #endregion
     }
 
@@ -1327,6 +1477,26 @@ namespace SqlExpression
         }
 
         public static LogicExpression operator |(NotExistsExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(NotExistsExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(NotExistsExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, NotExistsExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, NotExistsExpression exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
@@ -1421,6 +1591,26 @@ namespace SqlExpression
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
+        public static LogicExpression operator &(BetweenExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(BetweenExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, BetweenExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, BetweenExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
         #endregion
     }
 
@@ -1471,6 +1661,26 @@ namespace SqlExpression
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
+        public static LogicExpression operator &(NotBetweenExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(NotBetweenExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, NotBetweenExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, NotBetweenExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
         #endregion
     }
 
@@ -1510,6 +1720,26 @@ namespace SqlExpression
         }
 
         public static LogicExpression operator |(InExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(InExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(InExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, InExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, InExpression exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
@@ -1557,6 +1787,26 @@ namespace SqlExpression
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
 
+        public static LogicExpression operator &(NotInExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(NotInExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, NotInExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, NotInExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
         #endregion
     }
 
@@ -1589,6 +1839,26 @@ namespace SqlExpression
         }
 
         public static LogicExpression operator |(LogicExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LogicExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LogicExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, LogicExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, LogicExpression exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
@@ -1763,6 +2033,26 @@ namespace SqlExpression
         }
 
         public static LogicExpression operator |(ArithmeticExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(ArithmeticExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(ArithmeticExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, ArithmeticExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, ArithmeticExpression exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
@@ -1960,6 +2250,26 @@ namespace SqlExpression
         }
 
         public static LogicExpression operator |(FunctionExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(FunctionExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(FunctionExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, FunctionExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, FunctionExpression exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
@@ -2170,6 +2480,26 @@ namespace SqlExpression
         }
 
         public static LogicExpression operator |(AggregateFunctionExpression exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(AggregateFunctionExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(AggregateFunctionExpression exp1, LiteralValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        public static LogicExpression operator &(LiteralValue exp1, AggregateFunctionExpression exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, AggregateFunctionExpression exp2)
         {
             return new LogicExpression(exp1, Operator.Or, exp2);
         }
