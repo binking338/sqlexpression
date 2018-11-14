@@ -130,38 +130,38 @@ namespace SqlExpression.UnitTest
             ISimpleValue val = LiteralValue.Parse(1);
 
             e = literal + val;
-            Assert.AreEqual(literal + "+" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + "+" + val.ToString(), e.ToString());
 
             e = literal - val;
-            Assert.AreEqual(literal + "-" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + "-" + val.ToString(), e.ToString());
 
             e = literal * val;
-            Assert.AreEqual(literal + "*" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + "*" + val.ToString(), e.ToString());
 
             e = literal / val;
-            Assert.AreEqual(literal + "/" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + "/" + val.ToString(), e.ToString());
 
             e = literal % val;
-            Assert.AreEqual(literal + "%" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + "%" + val.ToString(), e.ToString());
 
 
             e = literal == val;
-            Assert.AreEqual(literal + "=" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + "=" + val.ToString(), e.ToString());
 
             e = literal != val;
-            Assert.AreEqual(literal + "<>" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + "<>" + val.ToString(), e.ToString());
 
             e = literal > val;
-            Assert.AreEqual(literal + ">" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + ">" + val.ToString(), e.ToString());
 
             e = literal < val;
-            Assert.AreEqual(literal + "<" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + "<" + val.ToString(), e.ToString());
 
             e = literal >= val;
-            Assert.AreEqual(literal + ">=" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + ">=" + val.ToString(), e.ToString());
 
             e = literal <= val;
-            Assert.AreEqual(literal + "<=" + val, e.ToString());
+            Assert.AreEqual(literal.ToString() + "<=" + val.ToString(), e.ToString());
         }
 
         [TestMethod]
