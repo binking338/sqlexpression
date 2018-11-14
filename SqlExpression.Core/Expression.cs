@@ -367,6 +367,20 @@ namespace SqlExpression
             }
         }
 
+        #region 逻辑运算符
+
+        public static LogicExpression operator &(LiteralValue exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.And, exp2);
+        }
+
+        public static LogicExpression operator |(LiteralValue exp1, ISimpleValue exp2)
+        {
+            return new LogicExpression(exp1, Operator.Or, exp2);
+        }
+
+        #endregion
+
         #region 隐式转换
 
         public static implicit operator LiteralValue(Enum value)
@@ -375,6 +389,11 @@ namespace SqlExpression
         }
 
         public static implicit operator LiteralValue(string value)
+        {
+            return new LiteralValue(value);
+        }
+
+        public static implicit operator LiteralValue(char value)
         {
             return new LiteralValue(value);
         }
