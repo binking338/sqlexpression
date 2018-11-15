@@ -3451,7 +3451,7 @@ namespace SqlExpression
         public static List<string> ResolveParams(this ICustomExpression custom)
         {
             var list = new List<string>();
-            var matchs = Regex.Matches(custom.ToString(), "(?<=@)[_a-zA-Z]+[_a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)");
+            var matchs = Regex.Matches(custom.ToString(), "(?<=@)[_a-zA-Z]+[_a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)".Replace("@", custom.Option.ParamMark));
             foreach (Match match in matchs)
             {
                 list.Add(match.Value);
