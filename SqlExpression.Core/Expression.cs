@@ -334,6 +334,11 @@ namespace SqlExpression
         {
             return this.Name?.GetHashCode() ?? 0;
         }
+
+        public static Column Create(string name, string dataset = null)
+        {
+            return new Column(name, dataset);
+        }
     }
 
     /// <summary>
@@ -790,6 +795,11 @@ namespace SqlExpression
         public override int GetHashCode()
         {
             return this.Name?.GetHashCode() ?? 0;
+        }
+
+        public static Param Create(string param)
+        {
+            return new Param(param);
         }
     }
 
@@ -2327,6 +2337,16 @@ namespace SqlExpression
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public static FunctionExpression Call(string name, IList<ISimpleValue> values)
+        {
+            return new FunctionExpression(name, values);
+        }
+
+        public static FunctionExpression Call(string name, params ISimpleValue[] values)
+        {
+            return new FunctionExpression(name, values.ToList());
         }
     }
 
