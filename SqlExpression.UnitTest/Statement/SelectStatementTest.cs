@@ -151,6 +151,81 @@ namespace SqlExpression.UnitTest.Statement
         }
 
         [TestMethod]
+        public void SimpleQueryStatement_Exists()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
+                .Where(foo.Name == "hero")
+                .Select(foo.All())
+                .Exists();
+            Assert.AreEqual("EXISTS (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void SimpleQueryStatement_Exists2()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
+                .Where(foo.Name == "hero")
+                .Select(foo.All())
+                .OrderBy(foo.Age.Desc())
+                .Exists();
+            Assert.AreEqual("EXISTS (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void SimpleQueryStatement_NotExists()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
+                .Where(foo.Name == "hero")
+                .Select(foo.All())
+                .NotExists();
+            Assert.AreEqual("NOT EXISTS (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void SimpleQueryStatement_NotExists2()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
+                .Where(foo.Name == "hero")
+                .Select(foo.All())
+                .OrderBy(foo.Age.Desc())
+                .NotExists();
+            Assert.AreEqual("NOT EXISTS (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void SimpleQueryStatement_ToCountSql()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
+                .Where(foo.Name == "hero")
+                .Select(foo.All())
+                .ToCountSql();
+            Assert.AreEqual("SELECT COUNT(*) AS __totalcount__ FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void SimpleQueryStatement_ToCountSql2()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
+                .Where(foo.Name == "hero")
+                .Select(foo.All())
+                .OrderBy(foo.Age.Desc())
+                .ToCountSql();
+            Assert.AreEqual("SELECT COUNT(*) AS __totalcount__ FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero')", exp.ToString());
+        }
+
+        [TestMethod]
         public void UnionQueryStatement()
         {
             TestDb db = new TestDb();
@@ -171,6 +246,81 @@ namespace SqlExpression.UnitTest.Statement
                       .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
                       .OrderBy(foo.Age.Desc());
             Assert.AreEqual("SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero' ORDER BY foo.age DESC", exp.ToString());
+        }
+
+        [TestMethod]
+        public void UnionQueryStatement_Exists()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var bar = db.Bar.Schema;
+            var exp = foo.Select(foo.All()).Where(foo.Name == "hero")
+                      .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
+                      .Exists();
+            Assert.AreEqual("EXISTS (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void UnionQueryStatement_Exists2()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var bar = db.Bar.Schema;
+            var exp = foo.Select(foo.All()).Where(foo.Name == "hero")
+                      .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
+                      .OrderBy(foo.Age.Desc())
+                      .Exists();
+            Assert.AreEqual("EXISTS (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void UnionQueryStatement_NotExists()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var bar = db.Bar.Schema;
+            var exp = foo.Select(foo.All()).Where(foo.Name == "hero")
+                      .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
+                      .NotExists();
+            Assert.AreEqual("NOT EXISTS (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void UnionQueryStatement_NotExists2()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var bar = db.Bar.Schema;
+            var exp = foo.Select(foo.All()).Where(foo.Name == "hero")
+                      .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
+                      .OrderBy(foo.Age.Desc())
+                      .NotExists();
+            Assert.AreEqual("NOT EXISTS (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void UnionQueryStatement_ToCountSql()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var bar = db.Bar.Schema;
+            var exp = foo.Select(foo.All()).Where(foo.Name == "hero")
+                      .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
+                      .ToCountSql();
+            Assert.AreEqual("SELECT COUNT(*) AS __totalcount__ FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero')", exp.ToString());
+        }
+
+        [TestMethod]
+        public void UnionQueryStatement_ToCountSql2()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var bar = db.Bar.Schema;
+            var exp = foo.Select(foo.All()).Where(foo.Name == "hero")
+                      .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
+                      .OrderBy(foo.Age.Desc())
+                      .ToCountSql();
+            Assert.AreEqual("SELECT COUNT(*) AS __totalcount__ FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero')", exp.ToString());
         }
 
     }

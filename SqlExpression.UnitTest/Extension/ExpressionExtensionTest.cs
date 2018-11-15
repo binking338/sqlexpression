@@ -46,6 +46,12 @@ namespace SqlExpression.UnitTest.Extension
                 e = new Column("id", "foo").As("Id");
                 Assert.AreEqual("foo.id AS Id", e.ToString());
 
+                e = new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { new SelectItemExpression(LiteralValue.Parse(1)) })).As("Val");
+                Assert.AreEqual("(SELECT 1) AS Val", e.ToString());
+
+                e = new SelectStatement(new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { new SelectItemExpression(LiteralValue.Parse(1)) })), null).As("Val");
+                Assert.AreEqual("(SELECT 1) AS Val", e.ToString());
+
                 e = new SubQueryExpression(new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { new SelectItemExpression(LiteralValue.Parse(1)) }))).As("Val");
                 Assert.AreEqual("(SELECT 1) AS Val", e.ToString());
             }, string.Empty, string.Empty);

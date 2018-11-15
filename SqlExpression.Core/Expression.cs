@@ -3024,9 +3024,9 @@ namespace SqlExpression
     /// <summary>
     /// 所有项 *
     /// </summary>
-    public class AllColumnsExpression : Column
+    public class AllColumns : Column
     {
-        public AllColumnsExpression(string dataset = null)
+        public AllColumns(string dataset = null)
             : base("*", dataset)
         {
         }
