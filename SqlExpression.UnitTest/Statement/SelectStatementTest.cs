@@ -106,8 +106,8 @@ namespace SqlExpression.UnitTest.Statement
             var foo1 = foo.As("foo1");
             var exp = foo.Join(bar).On(foo.Name == bar.Name)
                          .Join(foo1).On(foo1.Id == foo.Id)
-                         .Select(foo.All())
-                         .Where(foo.Name == "hero");
+                         .Where(foo.Name == "hero")
+                         .Select(foo.All());
             Assert.AreEqual("SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo JOIN bar ON foo.name=bar.name JOIN foo AS foo1 ON foo1.id=foo.id WHERE foo.name='hero'", exp.ToString());
         }
 
@@ -120,8 +120,8 @@ namespace SqlExpression.UnitTest.Statement
             var foo1 = foo.As("foo1");
             var exp = foo.Join(bar.Join(foo1).On(foo1.Id == bar.Id))
                          .On(foo.Name == bar.Name)
-                         .Select(foo.All())
-                         .Where(foo.Name == "hero");
+                         .Where(foo.Name == "hero")
+                         .Select(foo.All());
             Assert.AreEqual("SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo JOIN (bar JOIN foo AS foo1 ON foo1.id=bar.id) ON foo.name=bar.name WHERE foo.name='hero'", exp.ToString());
         }
 
@@ -168,8 +168,8 @@ namespace SqlExpression.UnitTest.Statement
             var foo = db.Foo.Schema;
             var bar = db.Bar.Schema;
             var exp = foo.Select(foo.All()).Where(foo.Name == "hero")
-                         .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
-                         .OrderBy(foo.Age.Desc());
+                      .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
+                      .OrderBy(foo.Age.Desc());
             Assert.AreEqual("SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero' ORDER BY foo.age DESC", exp.ToString());
         }
 
