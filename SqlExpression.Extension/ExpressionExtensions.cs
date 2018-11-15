@@ -72,17 +72,17 @@ namespace SqlExpression.Extension
 
         #endregion
 
-        public static AllColumnsExpression Asterisk(this IAliasDataset dataset)
+        public static AllColumns Asterisk(this IAliasDataset dataset)
         {
             var alias = string.IsNullOrEmpty(dataset.Alias) && dataset is IAliasTableExpression
                               ? (dataset as IAliasTableExpression).Table.Name
                               : dataset.Alias;
-            return new AllColumnsExpression(alias);
+            return new AllColumns(alias);
         }
 
-        public static AllColumnsExpression Asterisk(this ITable table)
+        public static AllColumns Asterisk(this ITable table)
         {
-            return new AllColumnsExpression(table.Name);
+            return new AllColumns(table.Name);
         }
 
         public static Param ToParam(this IColumn column, string param = null)
