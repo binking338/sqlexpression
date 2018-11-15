@@ -56,7 +56,7 @@ namespace SqlExpression.Extension
             return Select(dataset, items.AsEnumerable());
         }
 
-        public static SimpleQueryStatement SelectVarCustom(this IDataset dataset,params IEnumerable<string>[] customs)
+        public static SimpleQueryStatement SelectVarCustom(this IDataset dataset, params IEnumerable<string>[] customs)
         {
             var flatenItems = customs.Aggregate((IEnumerable<string> a, IEnumerable<string> b) => a.Concat(b));
             return Select(dataset, flatenItems.Select(c => new SelectItemExpression(new CustomExpression(c), null) as ISelectItemExpression));
@@ -357,24 +357,95 @@ namespace SqlExpression.Extension
 
         #region Exists
 
-        public static UnaryExpression Exists(this IQueryStatement query)
+        public static ExistsExpression Exists(this ISelectStatement select)
         {
-            return new UnaryExpression(Operator.Exists, new SubQueryExpression(query));
+            return new ExistsExpression(new SubQueryExpression(select.Query));
         }
 
-        public static UnaryExpression Exists(this ISelectStatement select)
+        public static ExistsExpression Exists(this IQueryStatement query)
         {
-            return new UnaryExpression(Operator.Exists, new SubQueryExpression(select.Query));
+            return new ExistsExpression(new SubQueryExpression(query));
         }
 
-        public static UnaryExpression NotExists(this IQueryStatement query)
+        public static NotExistsExpression NotExists(this ISelectStatement select)
         {
-            return new UnaryExpression(Operator.NotExists, new SubQueryExpression(query));
+            return new NotExistsExpression(new SubQueryExpression(select.Query));
         }
 
-        public static UnaryExpression NotExists(this ISelectStatement select)
+        public static NotExistsExpression NotExists(this IQueryStatement query)
         {
-            return new UnaryExpression(Operator.NotExists, new SubQueryExpression(select.Query));
+            return new NotExistsExpression(new SubQueryExpression(query));
+        }
+
+        #endregion
+
+        #region SQL
+
+        /// <summary>
+        /// 返回计数sql语句
+        /// SELECT COUNT(*) AS __totalcount__ FROM ({0})
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public static SimpleQueryStatement ToCountSql(this ISelectStatement select)
+        {
+            return ToCountSql(select.Query);
+        }
+
+        /// <summary>
+        /// 返回计数sql语句
+        /// SELECT COUNT(*) AS __totalcount__ FROM ({0})
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static SimpleQueryStatement ToCountSql(this IQueryStatement query)
+        {
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Column("*")).As("__totalcount__") }),
+                                            new FromClause(new SubQueryExpression(query)));
+        }
+
+        /// <summary>
+        /// 判断是否存在sql语句
+        /// SELECT EXISTS({0}) AS __exists__
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public static SimpleQueryStatement ToExistsSql(this ISelectStatement select)
+        {
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new ExistsExpression(new SubQueryExpression(select.Query))).As("__exists__") }));
+        }
+
+        /// <summary>
+        /// 判断是否存在sql语句
+        /// SELECT EXISTS({0}) AS __exists__
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static SimpleQueryStatement ToExistsSql(this IQueryStatement query)
+        {
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new ExistsExpression(new SubQueryExpression(query))).As("__exists__") }));
+        }
+
+        /// <summary>
+        /// 判断是否存在sql语句
+        /// SELECT NOT EXISTS({0}) AS __notexists__
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public static SimpleQueryStatement ToNotExistsSql(this ISelectStatement select)
+        {
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new NotExistsExpression(new SubQueryExpression(select.Query))).As("__notexists__") }));
+        }
+
+        /// <summary>
+        /// 判断是否存在sql语句
+        /// SELECT NOT EXISTS({0}) AS __notexists__
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static SimpleQueryStatement ToNotExistsSql(this IQueryStatement query)
+        {
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new NotExistsExpression(new SubQueryExpression(query))).As("__notexists__") }));
         }
 
         #endregion

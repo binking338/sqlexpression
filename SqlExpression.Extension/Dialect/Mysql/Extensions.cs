@@ -133,9 +133,9 @@ namespace SqlExpression.Extension.Dialect.Mysql
         /// </summary>
         /// <param name="select"></param>
         /// <returns></returns>
-        public static SimpleQueryStatement Count(this ISelectStatement select)
+        public static SimpleQueryStatement ToCountSql(this ISelectStatement select)
         {
-            return Count(select.Query);
+            return ToCountSql(select.Query);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace SqlExpression.Extension.Dialect.Mysql
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static SimpleQueryStatement Count(this IQueryStatement query)
+        public static SimpleQueryStatement ToCountSql(this IQueryStatement query)
         {
             return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Column("*")).As("__totalcount__") }),
                                             new FromClause(new SubQueryExpression(query)));
@@ -156,9 +156,9 @@ namespace SqlExpression.Extension.Dialect.Mysql
         /// </summary>
         /// <param name="select"></param>
         /// <returns></returns>
-        public static SimpleQueryStatement Exists(this ISelectStatement select)
+        public static SimpleQueryStatement ToExistsSql(this ISelectStatement select)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new UnaryExpression(Operator.Exists, new SubQueryExpression(select.Query))).As("__exists__") }));
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new ExistsExpression(new SubQueryExpression(select.Query))).As("__exists__") }));
         }
 
         /// <summary>
@@ -167,9 +167,9 @@ namespace SqlExpression.Extension.Dialect.Mysql
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static SimpleQueryStatement Exists(this IQueryStatement query)
+        public static SimpleQueryStatement ToExistsSql(this IQueryStatement query)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new UnaryExpression(Operator.Exists, new SubQueryExpression(query))).As("__exists__") }));
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new ExistsExpression(new SubQueryExpression(query))).As("__exists__") }));
         }
 
         /// <summary>
