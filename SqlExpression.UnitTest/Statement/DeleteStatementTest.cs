@@ -13,8 +13,18 @@ namespace SqlExpression.UnitTest.Statement
     [TestClass]
     public class DeleteStatementTest
     {
-        public DeleteStatementTest()
+        [TestMethod]
+        public void Test()
         {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            IExpression e;
+
+            e = (foo as IAliasTableExpression).Table.Delete();
+            Assert.AreEqual("DELETE FROM foo", e.ToString());
+
+            e = (foo as IAliasTableExpression).Table.Delete().Where(foo.Id == 1);
+            Assert.AreEqual("DELETE FROM foo WHERE foo.id=1", e.ToString());
         }
     }
 }

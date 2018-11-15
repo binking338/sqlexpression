@@ -57,9 +57,9 @@ namespace SqlExpression.Extension
 
         #region Shortcut
 
-        public static IUpdateStatement Vals(this IUpdateStatement update, params object[] values)
+        public static IUpdateStatement ValsL(this IUpdateStatement update, params object[] values)
         {
-            return Values(update, values);
+            return ValuesVarLiteral(update, values);
         }
         public static IUpdateStatement ValsP(this IUpdateStatement update)
         {
@@ -82,15 +82,15 @@ namespace SqlExpression.Extension
 
         #endregion
 
-        public static IUpdateStatement Values(this IUpdateStatement update, params object[] values)
+        public static IUpdateStatement ValuesVarLiteral(this IUpdateStatement update, params object[] values)
         {
             update.Set = update.Set.ValuesVarLiteral(values);
             return update;
         }
 
-        public static IUpdateStatement ValuesVarParam(this IUpdateStatement update)
+        public static IUpdateStatement ValuesVarParam(this IUpdateStatement update, params string[] paramNames)
         {
-            update.Set = update.Set.ValuesVarParam();
+            update.Set = update.Set.ValuesVarParam(paramNames);
             return update;
         }
 
@@ -125,30 +125,50 @@ namespace SqlExpression.Extension
 
         public static IUpdateStatement Set(this IUpdateStatement update, ISetExpression setItem)
         {
+            if (update.Set == null)
+            {
+                update.Set = new SetClause(new List<ISetExpression>());
+            }
             update.Set = update.Set.SetItem(setItem);
             return update;
         }
 
         public static IUpdateStatement Set(this IUpdateStatement update, IColumn column, ISimpleValue value)
         {
+            if (update.Set == null)
+            {
+                update.Set = new SetClause(new List<ISetExpression>());
+            }
             update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
         public static IUpdateStatement SetVarLiteral(this IUpdateStatement update, IColumn column, object value)
         {
+            if (update.Set == null)
+            {
+                update.Set = new SetClause(new List<ISetExpression>());
+            }
             update.Set = update.Set.SetItem(column, value);
             return update;
         }
 
         public static IUpdateStatement SetVarParam(this IUpdateStatement update, IColumn column, string param = null)
         {
+            if (update.Set == null)
+            {
+                update.Set = new SetClause(new List<ISetExpression>());
+            }
             update.Set = update.Set.SetItemVarParam(column, param);
             return update;
         }
 
         public static IUpdateStatement SetVarCustom(this IUpdateStatement update, IColumn column, string customValue)
         {
+            if (update.Set == null)
+            {
+                update.Set = new SetClause(new List<ISetExpression>());
+            }
             update.Set = update.Set.SetItemVarCustom(column, customValue);
             return update;
         }
@@ -187,18 +207,18 @@ namespace SqlExpression.Extension
         {
             return ValuesVarLiteral(set, values);
         }
-        public static ISetClause ValsP(this ISetClause set)
+        public static ISetClause ValsP(this ISetClause set, params string[] paramNames)
         {
-            return ValuesVarParam(set);
+            return ValuesVarParam(set, paramNames);
         }
         public static ISetClause ValsC(this ISetClause set, params string[] customValues)
         {
             return ValuesVarCustom(set, customValues);
         }
 
-        public static ISetClause ValuesP(this ISetClause set)
+        public static ISetClause ValuesP(this ISetClause set, params string[] paramNames)
         {
-            return ValuesVarParam(set);
+            return ValuesVarParam(set, paramNames);
         }
 
         public static ISetClause ValuesC(this ISetClause set, params string[] customValues)
@@ -235,9 +255,9 @@ namespace SqlExpression.Extension
             return Values(set, values.Select(val => val is ISimpleValue ? val as ISimpleValue : new LiteralValue(val)));
         }
 
-        public static ISetClause ValuesVarParam(this ISetClause set)
+        public static ISetClause ValuesVarParam(this ISetClause set, params string[] paramNames)
         {
-            return Values(set, set.Sets.Where(s => s.Value == null).Select(s => s.Column.ToParam()));
+            return Values(set, set.Sets.Where(s => s.Value == null).Select((s, i) => s.Column.ToParam(i < paramNames.Length ? paramNames[i] : null)));
         }
 
         public static ISetClause ValuesVarCustom(this ISetClause set, params string[] customValues)
@@ -249,7 +269,7 @@ namespace SqlExpression.Extension
         {
             var list = (set.Sets ?? new List<ISetExpression>());
             var originSetItem = list.FirstOrDefault(i => i.Column.Name == setItem.Column.Name);
-            if (originSetItem != null)
+            if (originSetItem == null)
             {
                 list.Add(setItem);
             }

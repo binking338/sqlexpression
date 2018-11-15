@@ -105,7 +105,6 @@ namespace SqlExpression.Extension
 
         public static SetExpression SetVarParam(this IColumn column, string param = null)
         {
-            if (string.IsNullOrWhiteSpace(param)) param = column.Name;
             return Set(column, column.ToParam(param));
         }
 

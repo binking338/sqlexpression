@@ -117,9 +117,9 @@ namespace SqlExpression.Extension
         {
             return ValuesVarCustom(insert, customValues);
         }
-        public static IInsertStatement ValsP(this IInsertStatement insert)
+        public static IInsertStatement ValsP(this IInsertStatement insert, params string[] paramNames)
         {
-            return ValuesVarParam(insert);
+            return ValuesVarParam(insert, paramNames);
         }
 
         public static IInsertStatement ValuesL(this IInsertStatement insert, params object[] values)
@@ -137,9 +137,9 @@ namespace SqlExpression.Extension
             return ValuesVarCustom(insert, customValues);
         }
 
-        public static IInsertStatement ValuesP(this IInsertStatement insert)
+        public static IInsertStatement ValuesP(this IInsertStatement insert, params string[] paramNames)
         {
-            return ValuesVarParam(insert);
+            return ValuesVarParam(insert, paramNames);
         }
 
         #endregion
@@ -179,11 +179,10 @@ namespace SqlExpression.Extension
             return Values(insert, customValues.Select(v => new CustomExpression(v)));
         }
 
-        public static IInsertStatement ValuesVarParam(this IInsertStatement insert)
+        public static IInsertStatement ValuesVarParam(this IInsertStatement insert, params string[] paramNames)
         {
             if (insert.Columns == null) return insert;
-            var vals = insert.Columns.Select(column => column.ToParam() as ISimpleValue);
-
+            var vals = insert.Columns.Select((column, i) => column.ToParam(i < paramNames.Length ? paramNames[i] : null)).ToList();
             return Values(insert, vals);
         }
         public static IInsertStatement ValuesFillNull(this IInsertStatement insert)
