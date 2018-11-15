@@ -127,6 +127,7 @@ namespace SqlExpression.UnitTest
         {
             IExpression e = null;
             LiteralValue literal = LiteralValue.Parse(1);
+            LiteralValue literal2 = LiteralValue.Parse(2);
 
             e = literal + literal;
             Assert.AreEqual(literal.ToString() + "+" + literal.ToString(), e.ToString());
@@ -144,23 +145,23 @@ namespace SqlExpression.UnitTest
             Assert.AreEqual(literal.ToString() + "%" + literal.ToString(), e.ToString());
 
 
-            e = literal == literal;
-            Assert.AreEqual(literal.ToString() + "=" + literal.ToString(), e.ToString());
+            e = literal == literal2;
+            Assert.AreEqual(literal.ToString() + "=" + literal2.ToString(), e.ToString());
 
-            e = literal != literal;
-            Assert.AreEqual(literal.ToString() + "<>" + literal.ToString(), e.ToString());
+            e = literal != literal2;
+            Assert.AreEqual(literal.ToString() + "<>" + literal2.ToString(), e.ToString());
 
-            e = literal > literal;
-            Assert.AreEqual(literal.ToString() + ">" + literal.ToString(), e.ToString());
+            e = literal > literal2;
+            Assert.AreEqual(literal.ToString() + ">" + literal2.ToString(), e.ToString());
 
-            e = literal < literal;
-            Assert.AreEqual(literal.ToString() + "<" + literal.ToString(), e.ToString());
+            e = literal < literal2;
+            Assert.AreEqual(literal.ToString() + "<" + literal2.ToString(), e.ToString());
 
-            e = literal >= literal;
-            Assert.AreEqual(literal.ToString() + ">=" + literal.ToString(), e.ToString());
+            e = literal >= literal2;
+            Assert.AreEqual(literal.ToString() + ">=" + literal2.ToString(), e.ToString());
 
-            e = literal <= literal;
-            Assert.AreEqual(literal.ToString() + "<=" + literal.ToString(), e.ToString());
+            e = literal <= literal2;
+            Assert.AreEqual(literal.ToString() + "<=" + literal2.ToString(), e.ToString());
         }
 
         [TestMethod]
