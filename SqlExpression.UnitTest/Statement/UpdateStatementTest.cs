@@ -32,6 +32,9 @@ namespace SqlExpression.UnitTest.Statement
             e = (foo as IAliasTableExpression).Table.Update(foo.Name, foo.Age).ValuesVarParam("val1", "val2");
             Assert.AreEqual("UPDATE foo SET foo.name=@val1,foo.age=@val2", e.ToString());
 
+            e = (foo as IAliasTableExpression).Table.UpdateVarParam(foo.Name, foo.Age);
+            Assert.AreEqual("UPDATE foo SET foo.name=@Name,foo.age=@Age", e.ToString());
+
             e = (foo as IAliasTableExpression).Table.Update().SetVarLiteral(foo.Name, "hero").SetVarLiteral(foo.Age, 18);
             Assert.AreEqual("UPDATE foo SET foo.name='hero',foo.age=18", e.ToString());
 
