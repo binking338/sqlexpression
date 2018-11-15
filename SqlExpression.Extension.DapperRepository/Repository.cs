@@ -162,13 +162,51 @@ namespace SqlExpression
         public virtual IEnumerable<T> QueryPartial<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
         {
             var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
-                            .Where(filter(Schema));
+                            .Where(filter(schema));
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
             return connection.Query<T>(exp, param);
+        }
+
+        public virtual long Count(Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(new AllColumns(schema.Alias).Count())
+                            .Where(filter(schema));
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QuerySingle<long>(exp, param);
+        }
+
+        public virtual bool Exists(Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(new AllColumns(schema.Alias))
+                            .Where(filter(schema))
+                            .ToExistsSql();
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QuerySingle<bool>(exp, param);
+        }
+
+        public virtual bool NotExists(Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(new AllColumns(schema.Alias))
+                            .Where(filter(schema))
+                            .ToNotExistsSql();
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QuerySingle<bool>(exp, param);
         }
 
         #region 工具函数
