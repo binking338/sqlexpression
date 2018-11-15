@@ -3026,7 +3026,7 @@ namespace SqlExpression
     /// </summary>
     public class AllColumnsExpression : Column
     {
-        public AllColumnsExpression(string dataset)
+        public AllColumnsExpression(string dataset = null)
             : base("*", dataset)
         {
         }
