@@ -265,10 +265,10 @@ namespace SqlExpression.UnitTest.Extension
                 e = new LiteralValue(true).Or(new LiteralValue(true));
                 Assert.AreEqual("True OR True", e.ToString());
 
-                e = new LiteralValue[] { LiteralValue.Parse(true), LiteralValue.Parse(true), LiteralValue.Parse(true) }.AllSatisfied();
+                e = new LiteralValue[] { LiteralValue.Parse(true), LiteralValue.Parse(true), LiteralValue.Parse(true) }.AllFullfilled();
                 Assert.AreEqual("True AND True AND True", e.ToString());
 
-                e = new LiteralValue[] { LiteralValue.Parse(true), LiteralValue.Parse(true), LiteralValue.Parse(true) }.AnySatisfied();
+                e = new LiteralValue[] { LiteralValue.Parse(true), LiteralValue.Parse(true), LiteralValue.Parse(true) }.AnyFullfilled();
                 Assert.AreEqual("True OR True OR True", e.ToString());
             }, string.Empty, string.Empty);
 

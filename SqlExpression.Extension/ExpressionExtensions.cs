@@ -211,7 +211,7 @@ namespace SqlExpression.Extension
             return new LogicExpression(value, Operator.Or, assert is ISimpleValue ? assert as ISimpleValue : new LiteralValue(assert));
         }
 
-        public static IBoolValue AllSatisfied(this IEnumerable<ISimpleValue> exps)
+        public static IBoolValue AllFullfilled(this IEnumerable<ISimpleValue> exps)
         {
             IBoolValue filter = null;
             filter = exps.First().And(exps.Skip(1).First());
@@ -222,7 +222,7 @@ namespace SqlExpression.Extension
             return filter;
         }
 
-        public static IBoolValue AnySatisfied(this IEnumerable<ISimpleValue> exps)
+        public static IBoolValue AnyFullfilled(this IEnumerable<ISimpleValue> exps)
         {
             IBoolValue filter = null;
             filter = exps.First().Or(exps.Skip(1).First());
