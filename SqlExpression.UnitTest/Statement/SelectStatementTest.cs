@@ -21,9 +21,9 @@ namespace SqlExpression.UnitTest.Statement
             var foo = db.Foo.Schema;
             var exp = foo
                 .Where(foo.Age >= 18)
+                .Select(foo.Name)
                 .GroupBy(foo.Name)
                 .Having(foo.Name == "hero")
-                .Select(foo.Name)
                 .OrderBy(foo.Asterisk().Count().Desc());
             Assert.AreEqual("SELECT foo.name FROM foo WHERE foo.age>=18 GROUP BY foo.name HAVING foo.name='hero' ORDER BY COUNT(foo.*) DESC", exp.ToString());
         }
@@ -132,9 +132,9 @@ namespace SqlExpression.UnitTest.Statement
             var foo = db.Foo.Schema;
             var exp = foo
                 .Where(foo.Age >= 18)
+                .Select(foo.Name)
                 .GroupBy(foo.Name)
-                .Having(foo.Name == "hero")
-                .Select(foo.Name);
+                .Having(foo.Name == "hero");
             Assert.AreEqual("SELECT foo.name FROM foo WHERE foo.age>=18 GROUP BY foo.name HAVING foo.name='hero'", exp.ToString());
         }
 

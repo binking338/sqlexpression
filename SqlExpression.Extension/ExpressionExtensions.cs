@@ -16,11 +16,89 @@ namespace SqlExpression.Extension
             return new BatchSqlStatement(sqls.ToArray());
         }
 
-        public static BracketExpression Bracket<T>(this T exp)
-            where T : ISimpleValue
+        public static BracketExpression Bracket(this ISimpleValue exp)
         {
             return new BracketExpression(exp);
         }
+
+        #region Where
+
+        #region ShortCut
+        public static TableFilterExpression WhereC(this ITable table, string customFilter)
+        {
+            return WhereVarCustom(table, customFilter);
+        }
+        public static TableFilterExpression WhereC(this IAliasTableExpression table, string customFilter)
+        {
+            return WhereVarCustom(table, customFilter);
+        }
+        public static ITableFilterExpression WhereC(this ITableFilterExpression table, string customFilter)
+        {
+            return WhereVarCustom(table, customFilter);
+        }
+        public static ITableFilterExpression OrWhereC(this ITableFilterExpression table, string customFilter)
+        {
+            return OrWhereVarCustom(table, customFilter);
+        }
+        #endregion
+
+        public static TableFilterExpression Where(this ITable table, ISimpleValue filter)
+        {
+            return new TableFilterExpression(table, new WhereClause(filter));
+        }
+
+        public static TableFilterExpression WhereVarCustom(this ITable table, string customFilter)
+        {
+            return Where(table, new CustomExpression(customFilter));
+        }
+
+        public static TableFilterExpression Where(this IAliasTableExpression table, ISimpleValue filter)
+        {
+            return new TableFilterExpression(table.Table, new WhereClause(filter));
+        }
+
+        public static TableFilterExpression WhereVarCustom(this IAliasTableExpression table, string customFilter)
+        {
+            return Where(table, new CustomExpression(customFilter));
+        }
+
+        public static ITableFilterExpression Where(this ITableFilterExpression table, ISimpleValue filter)
+        {
+            if (table.Where == null)
+            {
+                table.Where = new WhereClause(filter);
+            }
+            else
+            {
+                table.Where.Filter = new LogicExpression(table.Where.Filter, Operator.And, filter);
+            }
+            return table;
+        }
+
+        public static ITableFilterExpression WhereVarCustom(this ITableFilterExpression table, string customFilter)
+        {
+            return Where(table, new CustomExpression(customFilter));
+        }
+
+        public static ITableFilterExpression OrWhere(this ITableFilterExpression table, ISimpleValue filter)
+        {
+            if (table.Where == null)
+            {
+                table.Where = new WhereClause(filter);
+            }
+            else
+            {
+                table.Where.Filter = new LogicExpression(table.Where.Filter, Operator.Or, filter);
+            }
+            return table;
+        }
+
+        public static ITableFilterExpression OrWhereVarCustom(this ITableFilterExpression table, string customFilter)
+        {
+            return OrWhere(table, new CustomExpression(customFilter));
+        }
+
+        #endregion
 
         #region Alias
 

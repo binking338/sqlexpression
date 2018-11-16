@@ -49,6 +49,21 @@ namespace SqlExpression.UnitTest.Statement
 
             e = (foo as IAliasTableExpression).Table.Update().SetVarLiteral(foo.Name, "hero").SetVarLiteral(foo.Age, 18).Where(foo.Id==1);
             Assert.AreEqual("UPDATE foo SET foo.name='hero',foo.age=18 WHERE foo.id=1", e.ToString());
+
+            e = (foo as IAliasTableExpression).Table.Where(foo.Id == 1).Update().SetVarLiteral(foo.Name, "hero").SetVarLiteral(foo.Age, 18);
+            Assert.AreEqual("UPDATE foo SET foo.name='hero',foo.age=18 WHERE foo.id=1", e.ToString());
+
+            e = (foo as IAliasTableExpression).Table.Where(foo.Id == 1).Update().SetVarLiteral(foo.Name, "hero").SetVarLiteral(foo.Age, 18).Where(foo.Age > 18);
+            Assert.AreEqual("UPDATE foo SET foo.name='hero',foo.age=18 WHERE foo.id=1 AND foo.age>18", e.ToString());
+
+            e = (foo as IAliasTableExpression).Table.Where(foo.Id == 1).Update().SetVarLiteral(foo.Name, "hero").SetVarLiteral(foo.Age, 18).OrWhere(foo.Age > 18);
+            Assert.AreEqual("UPDATE foo SET foo.name='hero',foo.age=18 WHERE foo.id=1 OR foo.age>18", e.ToString());
+
+            e = (foo as IAliasTableExpression).Table.Where(foo.Id == 1).Where(foo.Age > 18).Update().SetVarLiteral(foo.Name, "hero").SetVarLiteral(foo.Age, 18);
+            Assert.AreEqual("UPDATE foo SET foo.name='hero',foo.age=18 WHERE foo.id=1 AND foo.age>18", e.ToString());
+
+            e = (foo as IAliasTableExpression).Table.Where(foo.Id == 1).OrWhere(foo.Age > 18).Update().SetVarLiteral(foo.Name, "hero").SetVarLiteral(foo.Age, 18);
+            Assert.AreEqual("UPDATE foo SET foo.name='hero',foo.age=18 WHERE foo.id=1 OR foo.age>18", e.ToString());
         }
     }
 }

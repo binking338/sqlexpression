@@ -315,6 +315,16 @@ namespace SqlExpression
     #region Statement
 
     /// <summary>
+    /// 表过滤
+    /// </summary>
+    public interface ITableFilterExpression : IExpression
+    {
+        ITable Table { get; set; }
+
+        IWhereClause Where { get; set; }
+    }
+
+    /// <summary>
     /// sql语句
     /// </summary>
     public interface ISqlStatement : IExpression

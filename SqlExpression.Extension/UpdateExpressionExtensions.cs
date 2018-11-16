@@ -24,6 +24,33 @@ namespace SqlExpression.Extension
 
         #endregion
 
+        public static UpdateStatement Update(this ITableFilterExpression tableFilter)
+        {
+            return new UpdateStatement(new AliasTableExpression(tableFilter.Table, null), null, tableFilter.Where);
+        }
+
+        public static UpdateStatement Update(this ITableFilterExpression tableFilter, IEnumerable<IColumn> columns)
+        {
+            var set = new SetClause(columns.Select(c => new SetExpression(c, null) as ISetExpression).ToList());
+            return new UpdateStatement(new AliasTableExpression(tableFilter.Table, null), set, null);
+        }
+
+        public static UpdateStatement Update(this ITableFilterExpression tableFilter, params IColumn[] columns)
+        {
+            return Update(tableFilter.Table, columns.AsEnumerable());
+        }
+
+        public static UpdateStatement UpdateVarParam(this ITableFilterExpression tableFilter, IEnumerable<IColumn> columns)
+        {
+            var set = new SetClause(columns.Select(column => column.SetVarParam() as ISetExpression).ToList());
+            return new UpdateStatement(new AliasTableExpression(tableFilter.Table, null), set, null);
+        }
+
+        public static UpdateStatement UpdateVarParam(this ITableFilterExpression tableFilter, params IColumn[] columns)
+        {
+            return UpdateVarParam(tableFilter.Table, columns.AsEnumerable());
+        }
+
         public static UpdateStatement Update(this ITable table)
         {
             return new UpdateStatement(new AliasTableExpression(table, null), null, null);
@@ -182,16 +209,44 @@ namespace SqlExpression.Extension
         {
             return WhereVarCustom(update, customFilter);
         }
+        public static IUpdateStatement OrWhereC(this IUpdateStatement update, string customFilter)
+        {
+            return OrWhereVarCustom(update, customFilter);
+        }
         #endregion
 
         public static IUpdateStatement Where(this IUpdateStatement update, ISimpleValue filter)
         {
-            update.Where = new WhereClause(filter);
+            if (update.Where == null)
+            {
+                update.Where = new WhereClause(filter);
+            }
+            else
+            {
+                update.Where.Filter = new LogicExpression(update.Where.Filter, Operator.And, filter);
+            }
             return update;
         }
         public static IUpdateStatement WhereVarCustom(this IUpdateStatement update, string customFilter)
         {
             return Where(update, new CustomExpression(customFilter));
+        }
+
+        public static IUpdateStatement OrWhere(this IUpdateStatement update, ISimpleValue filter)
+        {
+            if (update.Where == null)
+            {
+                update.Where = new WhereClause(filter);
+            }
+            else
+            {
+                update.Where.Filter = new LogicExpression(update.Where.Filter, Operator.Or, filter);
+            }
+            return update;
+        }
+        public static IUpdateStatement OrWhereVarCustom(this IUpdateStatement update, string customFilter)
+        {
+            return OrWhere(update, new CustomExpression(customFilter));
         }
 
         #endregion

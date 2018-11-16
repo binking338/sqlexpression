@@ -12,6 +12,16 @@ namespace SqlExpression.Extension
 
         #region ShortCut
 
+        public static SimpleQueryStatement SelectC(this ITableFilterExpression tableFilter, params IEnumerable<string>[] customs)
+        {
+            return SelectVarCustom(tableFilter, customs);
+        }
+
+        public static SimpleQueryStatement SelectC(this ITableFilterExpression tableFilter, params string[] customs)
+        {
+            return SelectVarCustom(tableFilter, customs);
+        }
+
         public static SimpleQueryStatement SelectC(this IDataset dataset, params IEnumerable<string>[] customs)
         {
             return SelectVarCustom(dataset, customs);
@@ -33,6 +43,39 @@ namespace SqlExpression.Extension
         }
 
         #endregion
+
+        public static SimpleQueryStatement Select(this ITableFilterExpression tableFilter, params IEnumerable<ISelectItemExpression>[] items)
+        {
+            var flatenItems = items.Aggregate((IEnumerable<ISelectItemExpression> a, IEnumerable<ISelectItemExpression> b) => a.Concat(b));
+            return new SimpleQueryStatement(new SelectClause(flatenItems.ToList()), new FromClause(tableFilter.Table), tableFilter.Where);
+        }
+
+        public static SimpleQueryStatement Select(this ITableFilterExpression tableFilter, params ISelectItemExpression[] items)
+        {
+            return Select(tableFilter, items.Cast<ISelectItemExpression>());
+        }
+
+        public static SimpleQueryStatement Select(this ITableFilterExpression tableFilter, params IEnumerable<ISimpleValue>[] items)
+        {
+            var flatenItems = items.Aggregate((IEnumerable<ISimpleValue> a, IEnumerable<ISimpleValue> b) => a.Concat(b));
+            return Select(tableFilter, flatenItems.Select(item => new SelectItemExpression(item, null) as ISelectItemExpression));
+        }
+
+        public static SimpleQueryStatement Select(this ITableFilterExpression tableFilter, params ISimpleValue[] items)
+        {
+            return Select(tableFilter, items.AsEnumerable());
+        }
+
+        public static SimpleQueryStatement SelectVarCustom(this ITableFilterExpression tableFilter, params IEnumerable<string>[] customs)
+        {
+            var flatenItems = customs.Aggregate((IEnumerable<string> a, IEnumerable<string> b) => a.Concat(b));
+            return Select(tableFilter, flatenItems.Select(c => new SelectItemExpression(new CustomExpression(c), null) as ISelectItemExpression));
+        }
+
+        public static SimpleQueryStatement SelectVarCustom(this ITableFilterExpression tableFilter, params string[] customs)
+        {
+            return SelectVarCustom(tableFilter, customs.AsEnumerable());
+        }
 
         public static SimpleQueryStatement Select(this IDataset dataset, params IEnumerable<ISelectItemExpression>[] items)
         {
@@ -164,9 +207,17 @@ namespace SqlExpression.Extension
         #region Where
 
         #region Shortcut
+        public static SimpleQueryStatement WhereC(this IDataset dataset, string customFilter)
+        {
+            return WhereVarCustom(dataset, customFilter);
+        }
         public static ISimpleQueryStatement WhereC(this ISimpleQueryStatement select, string customFilter)
         {
             return WhereVarCustom(select, customFilter);
+        }
+        public static ISimpleQueryStatement OrWhereC(this ISimpleQueryStatement select, string customFilter)
+        {
+            return OrWhereVarCustom(select, customFilter);
         }
         #endregion
 
@@ -175,15 +226,45 @@ namespace SqlExpression.Extension
             return new SimpleQueryStatement(null, new FromClause(dataset), new WhereClause(filter));
         }
 
+        public static SimpleQueryStatement WhereVarCustom(this IDataset dataset, string customFilter)
+        {
+            return Where(dataset, new CustomExpression(customFilter));
+        }
+
         public static ISimpleQueryStatement Where(this ISimpleQueryStatement select, ISimpleValue filter)
         {
-            select.Where = new WhereClause(filter);
+            if (select.Where == null)
+            {
+                select.Where = new WhereClause(filter);
+            }
+            else
+            {
+                select.Where.Filter = new LogicExpression(select.Where.Filter, Operator.And, filter);
+            }
             return select;
         }
 
         public static ISimpleQueryStatement WhereVarCustom(this ISimpleQueryStatement select, string customFilter)
         {
             return Where(select, new CustomExpression(customFilter));
+        }
+
+        public static ISimpleQueryStatement OrWhere(this ISimpleQueryStatement select, ISimpleValue filter)
+        {
+            if (select.Where == null)
+            {
+                select.Where = new WhereClause(filter);
+            }
+            else
+            {
+                select.Where.Filter = new LogicExpression(select.Where.Filter, Operator.Or, filter);
+            }
+            return select;
+        }
+
+        public static ISimpleQueryStatement OrWhereVarCustom(this ISimpleQueryStatement select, string customFilter)
+        {
+            return OrWhere(select, new CustomExpression(customFilter));
         }
 
         #endregion

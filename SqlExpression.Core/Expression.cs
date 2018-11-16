@@ -2606,6 +2606,29 @@ namespace SqlExpression
     }
 
     /// <summary>
+    /// 表过滤
+    /// </summary>
+    public class TableFilterExpression : Expression, ITableFilterExpression
+    {
+        public TableFilterExpression(ITable table, ISimpleValue filter) : this(table, new WhereClause(filter)) { }
+
+        public TableFilterExpression(ITable table, IWhereClause where)
+        {
+            Table = table;
+            Where = where;
+        }
+
+        public ITable Table { get; set; }
+
+        public IWhereClause Where { get; set; }
+
+        protected override string Build()
+        {
+            return string.Format("{0} {1}", Table, Where);
+        }
+    }
+
+    /// <summary>
     /// 插入语句
     /// </summary>
     public class InsertStatement : Expression, IInsertStatement
