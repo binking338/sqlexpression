@@ -50,7 +50,7 @@ namespace SqlExpression
         public virtual bool Update<T>(TEntity entity, Func<TEntity, T> columns = null, Func<TSchema, ISimpleValue> filter = null, object param = null)
         {
             var exp = schema.Table
-                            .UpdateVarParam(columns == null ? schema.All().Except(schema.PK()) : Properties2Columns<T>())
+                            .UpdateVarParam(columns == null ? schema.All(false) : Properties2Columns<T>())
                             .Where(schema.PK().AllEqVarParam());
             return connection.Execute(exp, entity) > 0;
         }
@@ -58,7 +58,7 @@ namespace SqlExpression
         public virtual bool Update(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null)
         {
             var exp = schema.Table
-                            .UpdateVarParam(columns?.Invoke(schema) ?? schema.All().Except(schema.PK()))
+                            .UpdateVarParam(columns?.Invoke(schema) ?? schema.All(false))
                             .Where(schema.PK().AllEqVarParam());
             return connection.Execute(exp, entity) > 0;
         }

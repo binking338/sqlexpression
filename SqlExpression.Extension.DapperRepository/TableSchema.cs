@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+
 namespace SqlExpression
 {
     public abstract class TableSchema<Schema> : Expression, IAliasTableExpression
@@ -6,11 +8,23 @@ namespace SqlExpression
     {
         protected Column[] _allColumns = null;
         protected Column[] _pkColumns = null;
+        protected Column[] _otherColumns = null;
         protected SelectItemExpression[] _allItems = null;
         protected SelectItemExpression[] _pkItems = null;
-        public Column[] All()
+        public Column[] All(bool withPK = true)
         {
-            return _allColumns;
+            if(withPK)
+            {
+                return _allColumns;
+            }
+            else
+            {
+                if(_otherColumns == null)
+                {
+                    _otherColumns = _allColumns.Except(_pkColumns).ToArray();
+                }
+                return _otherColumns;
+            }
         }
         public Column[] PK()
         {
