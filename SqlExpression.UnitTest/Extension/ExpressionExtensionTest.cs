@@ -15,8 +15,8 @@ namespace SqlExpression.UnitTest.Extension
         {
             IExpression e;
 
-            e = (new CustomExpression("select * from a")).Concat(new CustomExpression("select * from b"));
-            Assert.AreEqual("select * from a;select * from b", e.ToString());
+            e = (new CustomExpression("select * from foo")).Concat(new CustomExpression("select * from bar"));
+            Assert.AreEqual("select * from foo;select * from bar", e.ToString());
         }
 
         [TestMethod]
