@@ -33,10 +33,7 @@ namespace SqlExpression
 
         public virtual object Insert<T>(TEntity entity, Func<TEntity, T> columns = null)
         {
-            var exp = schema.Table
-                            .InsertVarParam(columns == null ? schema.All() : Properties2Columns<T>());
-            connection.Execute(exp, entity);
-            return null;
+            return Insert(entity, (TSchema s) => Properties2Columns<T>());
         }
 
         public virtual object Insert(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null)
@@ -47,20 +44,28 @@ namespace SqlExpression
             return null;
         }
 
-        public virtual bool Update<T>(TEntity entity, Func<TEntity, T> columns = null, Func<TSchema, ISimpleValue> filter = null, object param = null)
+        public virtual int Update<T>(TEntity entity, Func<TEntity, T> columns = null, Func<TSchema, ISimpleValue> filter = null, object param = null)
         {
-            var exp = schema.Table
-                            .UpdateVarParam(columns == null ? schema.All(false) : Properties2Columns<T>())
-                            .Where(schema.PK().AllEqVarParam());
-            return connection.Execute(exp, entity) > 0;
+            return Update(entity, (TSchema s) => Properties2Columns<T>(), filter, param);
         }
 
-        public virtual bool Update(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null)
+        public virtual int Update(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null, Func<TSchema, ISimpleValue> filter = null, object param = null)
         {
+            if (columns == null) columns = s => s.All(false);
             var exp = schema.Table
-                            .UpdateVarParam(columns?.Invoke(schema) ?? schema.All(false))
-                            .Where(schema.PK().AllEqVarParam());
-            return connection.Execute(exp, entity) > 0;
+                            .UpdateVarParam(columns(schema))
+                            .Where(filter?.Invoke(schema) ?? schema.PK().AllEqVarParam());
+            var paramNames = columns(schema).Select(c => exp.Option.Column2ParamContractHandler(c.Name));
+            if (filter == null) paramNames = paramNames.Concat(schema.PK().Select(c => exp.Option.Column2ParamContractHandler(c.Name)));
+            var dic = Properties2Dictionary(entity, null, paramNames);
+            if (filter != null && param != null) Properties2Dictionary(param, dic);
+            param = dic;
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.Execute(exp, dic);
         }
 
         public virtual bool Delete(TEntity entity)
@@ -226,6 +231,33 @@ namespace SqlExpression
             return primaryKey;
         }
 
+        protected Dictionary<string, object> Properties2Dictionary(object src, Dictionary<string, object> des, IEnumerable<string> propertyNames = null)
+        {
+            if (src == null) return null;
+            Dictionary<string, object> dic = des ?? new Dictionary<string, object>();
+            if (src is IDictionary<string, object>)
+            {
+                foreach (var pair in src as IDictionary<string, object>)
+                {
+                    dic[pair.Key] = pair.Value;
+                }
+                return dic;
+            }
+            else
+            {
+                var type = src.GetType();
+                var properties = type.GetProperties();
+                foreach (var property in properties)
+                {
+                    if (propertyNames == null || propertyNames.Contains(property.Name))
+                    {
+                        dic[property.Name] = property.GetValue(src);
+                    }
+                }
+            }
+            return dic;
+        }
+
         private static ConcurrentDictionary<Type, IList<string>> Cache4ParamPropertyNames { get; } = new ConcurrentDictionary<Type, IList<string>>();
         protected List<string> CheckMissingParams(ISqlStatement exp, object param)
         {
@@ -233,6 +265,11 @@ namespace SqlExpression
             var paramNames = exp.Params;
             if (paramNames == null || !paramNames.Any())
             {
+                return paramNotProvided;
+            }
+            if(param == null)
+            {
+                paramNotProvided.AddRange(paramNames);
                 return paramNotProvided;
             }
 
@@ -259,8 +296,9 @@ namespace SqlExpression
                         paramPropertyNames.Add(property.Name);
                     }
                 }
-                paramNames.ToList().ForEach(paramName => {
-                    if(!paramPropertyNames.Contains(paramName))
+                paramNames.ToList().ForEach(paramName =>
+                {
+                    if (!paramPropertyNames.Contains(paramName))
                     {
                         paramNotProvided.Add(paramName);
                     }
