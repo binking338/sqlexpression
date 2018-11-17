@@ -42,6 +42,16 @@ namespace SqlExpression.Extension
             return SelectVarCustom(query, customs);
         }
 
+        public static ISelectStatement SelectC(this ISelectStatement select, params IEnumerable<string>[] customs)
+        {
+            return SelectVarCustom(select, customs);
+        }
+
+        public static ISelectStatement SelectC(this ISelectStatement select, params string[] customs)
+        {
+            return SelectVarCustom(select, customs);
+        }
+
         #endregion
 
         public static SimpleQueryStatement Select(this ITableFilterExpression tableFilter, params IEnumerable<ISelectItemExpression>[] items)
@@ -144,6 +154,66 @@ namespace SqlExpression.Extension
             return SelectVarCustom(query, customs.AsEnumerable());
         }
 
+        public static ISelectStatement Select(this ISelectStatement select, params IEnumerable<ISelectItemExpression>[] items)
+        {
+            var query = select.Query;
+            if(query is ISimpleQueryStatement)
+            {
+                Select(query as ISimpleQueryStatement, items);
+            }
+            return select;
+        }
+
+        public static ISelectStatement Select(this ISelectStatement select, params ISelectItemExpression[] items)
+        {
+            var query = select.Query;
+            if (query is ISimpleQueryStatement)
+            {
+                Select(query as ISimpleQueryStatement, items);
+            }
+            return select;
+        }
+
+        public static ISelectStatement Select(this ISelectStatement select, params IEnumerable<ISimpleValue>[] items)
+        {
+            var query = select.Query;
+            if (query is ISimpleQueryStatement)
+            {
+                Select(query as ISimpleQueryStatement, items);
+            }
+            return select;
+        }
+
+        public static ISelectStatement Select(this ISelectStatement select, params ISimpleValue[] items)
+        {
+            var query = select.Query;
+            if (query is ISimpleQueryStatement)
+            {
+                Select(query as ISimpleQueryStatement, items);
+            }
+            return select;
+        }
+
+        public static ISelectStatement SelectVarCustom(this ISelectStatement select, params IEnumerable<string>[] customs)
+        {
+            var query = select.Query;
+            if (query is ISimpleQueryStatement)
+            {
+                SelectVarCustom(query as ISimpleQueryStatement, customs);
+            }
+            return select;
+        }
+
+        public static ISelectStatement SelectVarCustom(this ISelectStatement select, params string[] customs)
+        {
+            var query = select.Query;
+            if (query is ISimpleQueryStatement)
+            {
+                SelectVarCustom(query as ISimpleQueryStatement, customs);
+            }
+            return select;
+        }
+
         #endregion
 
         #region Join
@@ -231,40 +301,40 @@ namespace SqlExpression.Extension
             return Where(dataset, new CustomExpression(customFilter));
         }
 
-        public static ISimpleQueryStatement Where(this ISimpleQueryStatement select, ISimpleValue filter)
+        public static ISimpleQueryStatement Where(this ISimpleQueryStatement query, ISimpleValue filter)
         {
-            if (select.Where == null)
+            if (query.Where == null)
             {
-                select.Where = new WhereClause(filter);
+                query.Where = new WhereClause(filter);
             }
             else
             {
-                select.Where.Filter = new LogicExpression(select.Where.Filter, Operator.And, filter);
+                query.Where.Filter = new LogicExpression(query.Where.Filter, Operator.And, filter);
             }
-            return select;
+            return query;
         }
 
-        public static ISimpleQueryStatement WhereVarCustom(this ISimpleQueryStatement select, string customFilter)
+        public static ISimpleQueryStatement WhereVarCustom(this ISimpleQueryStatement query, string customFilter)
         {
-            return Where(select, new CustomExpression(customFilter));
+            return Where(query, new CustomExpression(customFilter));
         }
 
-        public static ISimpleQueryStatement OrWhere(this ISimpleQueryStatement select, ISimpleValue filter)
+        public static ISimpleQueryStatement OrWhere(this ISimpleQueryStatement query, ISimpleValue filter)
         {
-            if (select.Where == null)
+            if (query.Where == null)
             {
-                select.Where = new WhereClause(filter);
+                query.Where = new WhereClause(filter);
             }
             else
             {
-                select.Where.Filter = new LogicExpression(select.Where.Filter, Operator.Or, filter);
+                query.Where.Filter = new LogicExpression(query.Where.Filter, Operator.Or, filter);
             }
-            return select;
+            return query;
         }
 
-        public static ISimpleQueryStatement OrWhereVarCustom(this ISimpleQueryStatement select, string customFilter)
+        public static ISimpleQueryStatement OrWhereVarCustom(this ISimpleQueryStatement query, string customFilter)
         {
-            return OrWhere(select, new CustomExpression(customFilter));
+            return OrWhere(query, new CustomExpression(customFilter));
         }
 
         #endregion
@@ -306,63 +376,143 @@ namespace SqlExpression.Extension
         #region GroupBy
 
         #region Shortcut
-        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, IEnumerable<IColumn> columns)
+        public static ISimpleQueryStatement GB(this IDataset dataset, IEnumerable<IColumn> items)
         {
-            return GroupBy(select, columns);
+            return GroupBy(dataset, items);
         }
-        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, params IColumn[] columns)
+        public static ISimpleQueryStatement GB(this IDataset dataset, params IColumn[] items)
         {
-            return GroupBy(select, columns);
+            return GroupBy(dataset, items);
         }
-        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, IEnumerable<string> columns)
+        public static ISimpleQueryStatement GBC(this IDataset dataset, IEnumerable<string> customs)
         {
-            return GroupBy(select, columns);
+            return GroupByCustom(dataset, customs);
         }
-        public static ISimpleQueryStatement GB(this ISimpleQueryStatement select, params string[] columns)
+        public static ISimpleQueryStatement GBC(this IDataset dataset, params string[] customs)
         {
-            return GroupBy(select, columns);
+            return GroupByCustom(dataset, customs);
         }
-        public static ISimpleQueryStatement H(this ISimpleQueryStatement select, ISimpleValue filter)
+        public static ISimpleQueryStatement GB(this ITableFilterExpression tableFilter, IEnumerable<IColumn> items)
         {
-            return Having(select, filter);
+            return GroupBy(tableFilter, items);
         }
-        public static ISimpleQueryStatement HC(this ISimpleQueryStatement select, string customFilter)
+        public static ISimpleQueryStatement GB(this ITableFilterExpression tableFilter, params IColumn[] items)
         {
-            return HavingVarCustom(select, customFilter);
+            return GroupBy(tableFilter, items);
+        }
+        public static ISimpleQueryStatement GBC(this ITableFilterExpression tableFilter, IEnumerable<string> customs)
+        {
+            return GroupByCustom(tableFilter, customs);
+        }
+        public static ISimpleQueryStatement GBC(this ITableFilterExpression tableFilter, params string[] customs)
+        {
+            return GroupByCustom(tableFilter, customs);
+        }
+        public static ISimpleQueryStatement GB(this ISimpleQueryStatement query, IEnumerable<IColumn> items)
+        {
+            return GroupBy(query, items);
+        }
+        public static ISimpleQueryStatement GB(this ISimpleQueryStatement query, params IColumn[] items)
+        {
+            return GroupBy(query, items);
+        }
+        public static ISimpleQueryStatement GBC(this ISimpleQueryStatement query, IEnumerable<string> customs)
+        {
+            return GroupByCustom(query, customs);
+        }
+        public static ISimpleQueryStatement GBC(this ISimpleQueryStatement query, params string[] customs)
+        {
+            return GroupByCustom(query, customs);
+        }
+        public static ISimpleQueryStatement H(this ISimpleQueryStatement query, ISimpleValue filter)
+        {
+            return Having(query, filter);
+        }
+        public static ISimpleQueryStatement HC(this ISimpleQueryStatement query, string customFilter)
+        {
+            return HavingVarCustom(query, customFilter);
         }
         #endregion
 
-        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, IEnumerable<IColumn> columns)
+        public static ISimpleQueryStatement GroupBy(this IDataset dataset, IEnumerable<ISimpleValue> items)
         {
-            select.GroupBy = new GroupByClause(columns.Cast<ISimpleValue>().ToList());
-            return select;
+            var query = Select(dataset, new List<ISimpleValue>());
+            return GroupBy(query, items);
         }
 
-        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, params IColumn[] columns)
+        public static ISimpleQueryStatement GroupBy(this IDataset dataset, params ISimpleValue[] items)
         {
-            return GroupBy(select, columns.AsEnumerable());
+            var query = Select(dataset, new List<ISimpleValue>());
+            return GroupBy(query, items.AsEnumerable());
         }
 
-        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, IEnumerable<string> columns)
+        public static ISimpleQueryStatement GroupByCustom(this IDataset dataset, IEnumerable<string> custom)
         {
-            return GroupBy(select, columns.Select(column => new Column(column) as IColumn));
+            var query = Select(dataset, new List<ISimpleValue>());
+            return GroupByCustom(query, custom);
         }
 
-        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement select, params string[]
-            columns)
+        public static ISimpleQueryStatement GroupByCustom(this IDataset dataset, params string[] custom)
         {
-            return GroupBy(select, columns.AsEnumerable());
+            var query = Select(dataset, new List<ISimpleValue>());
+            return GroupByCustom(query, custom.AsEnumerable());
         }
 
-        public static ISimpleQueryStatement Having(this ISimpleQueryStatement select, ISimpleValue filter)
+        public static ISimpleQueryStatement GroupBy(this ITableFilterExpression tableFilter, IEnumerable<ISimpleValue> items)
         {
-            select.GroupBy.Having = filter;
-            return select;
+            var query = Select(tableFilter, new List<ISimpleValue>());
+            return GroupBy(query, items);
         }
 
-        public static ISimpleQueryStatement HavingVarCustom(this ISimpleQueryStatement select, string customFilter)
+        public static ISimpleQueryStatement GroupBy(this ITableFilterExpression tableFilter, params ISimpleValue[] items)
         {
-            return Having(select, new CustomExpression(customFilter));
+            var query = Select(tableFilter, new List<ISimpleValue>());
+            return GroupBy(query, items.AsEnumerable());
+        }
+
+        public static ISimpleQueryStatement GroupByCustom(this ITableFilterExpression tableFilter, IEnumerable<string> custom)
+        {
+            var query = Select(tableFilter, new List<ISimpleValue>());
+            return GroupByCustom(query, custom);
+        }
+
+        public static ISimpleQueryStatement GroupByCustom(this ITableFilterExpression tableFilter, params string[] custom)
+        {
+            var query = Select(tableFilter, new List<ISimpleValue>());
+            return GroupByCustom(query, custom.AsEnumerable());
+        }
+
+        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement query, IEnumerable<ISimpleValue> items)
+        {
+            query.GroupBy = new GroupByClause(items.ToList());
+            return query;
+        }
+
+        public static ISimpleQueryStatement GroupBy(this ISimpleQueryStatement query, params ISimpleValue[] items)
+        {
+            return GroupBy(query, items.AsEnumerable());
+        }
+
+        public static ISimpleQueryStatement GroupByCustom(this ISimpleQueryStatement query, IEnumerable<string> customs)
+        {
+            return GroupBy(query, customs.Select(custom => new CustomExpression(custom) as ISimpleValue));
+        }
+
+        public static ISimpleQueryStatement GroupByCustom(this ISimpleQueryStatement query, params string[]
+            customs)
+        {
+            return GroupByCustom(query, customs.AsEnumerable());
+        }
+
+        public static ISimpleQueryStatement Having(this ISimpleQueryStatement query, ISimpleValue filter)
+        {
+            query.GroupBy.Having = filter;
+            return query;
+        }
+
+        public static ISimpleQueryStatement HavingVarCustom(this ISimpleQueryStatement query, string customFilter)
+        {
+            return Having(query, new CustomExpression(customFilter));
         }
 
         #endregion
@@ -370,31 +520,91 @@ namespace SqlExpression.Extension
         #region OrderBy
 
         #region Shortcut
-        public static SelectStatement OB(this ISimpleQueryStatement select, IOrderByClause orderby)
+        public static SelectStatement OB(this IDataset dataset, IOrderByClause orderby)
         {
-            return OrderBy(select, orderby);
+            return OrderBy(dataset, orderby);
         }
-        public static SelectStatement OB(this ISimpleQueryStatement select, IEnumerable<IOrderExpression> orders)
+        public static SelectStatement OB(this IDataset dataset, IEnumerable<IOrderExpression> orders)
         {
-            return OrderBy(select, orders);
+            return OrderBy(dataset, orders);
         }
-        public static SelectStatement OB(this ISimpleQueryStatement select, params IOrderExpression[] orders)
+        public static SelectStatement OB(this IDataset dataset, params IOrderExpression[] orders)
         {
-            return OrderBy(select, orders);
+            return OrderBy(dataset, orders);
         }
-        public static SelectStatement OB(this IUnionQueryStatement select, IOrderByClause orderby)
+        public static SelectStatement OB(this ITableFilterExpression tableFilter, IOrderByClause orderby)
         {
-            return OrderBy(select, orderby);
+            return OrderBy(tableFilter, orderby);
         }
-        public static SelectStatement OB(this IUnionQueryStatement select, IEnumerable<IOrderExpression> orders)
+        public static SelectStatement OB(this ITableFilterExpression tableFilter, IEnumerable<IOrderExpression> orders)
         {
-            return OrderBy(select, orders);
+            return OrderBy(tableFilter, orders);
         }
-        public static SelectStatement OB(this IUnionQueryStatement select, params IOrderExpression[] orders)
+        public static SelectStatement OB(this ITableFilterExpression tableFilter, params IOrderExpression[] orders)
         {
-            return OrderBy(select, orders);
+            return OrderBy(tableFilter, orders);
+        }
+        public static SelectStatement OB(this ISimpleQueryStatement query, IOrderByClause orderby)
+        {
+            return OrderBy(query, orderby);
+        }
+        public static SelectStatement OB(this ISimpleQueryStatement query, IEnumerable<IOrderExpression> orders)
+        {
+            return OrderBy(query, orders);
+        }
+        public static SelectStatement OB(this ISimpleQueryStatement query, params IOrderExpression[] orders)
+        {
+            return OrderBy(query, orders);
+        }
+        public static SelectStatement OB(this IUnionQueryStatement query, IOrderByClause orderby)
+        {
+            return OrderBy(query, orderby);
+        }
+        public static SelectStatement OB(this IUnionQueryStatement query, IEnumerable<IOrderExpression> orders)
+        {
+            return OrderBy(query, orders);
+        }
+        public static SelectStatement OB(this IUnionQueryStatement query, params IOrderExpression[] orders)
+        {
+            return OrderBy(query, orders);
         }
         #endregion
+
+        public static SelectStatement OrderBy(this IDataset dataset, IOrderByClause orderby)
+        {
+            var query = Select(dataset, new List<ISelectItemExpression>());
+            return OrderBy(query, orderby);
+        }
+
+        public static SelectStatement OrderBy(this IDataset dataset, IEnumerable<IOrderExpression> orders)
+        {
+            var query = Select(dataset, new List<ISelectItemExpression>());
+            return OrderBy(query, orders);
+        }
+
+        public static SelectStatement OrderBy(this IDataset dataset, params IOrderExpression[] orders)
+        {
+            var query = Select(dataset, new List<ISelectItemExpression>());
+            return OrderBy(query, orders);
+        }
+
+        public static SelectStatement OrderBy(this ITableFilterExpression tableFilter, IOrderByClause orderby)
+        {
+            var query = Select(tableFilter, new List<ISelectItemExpression>());
+            return OrderBy(query, orderby);
+        }
+
+        public static SelectStatement OrderBy(this ITableFilterExpression tableFilter, IEnumerable<IOrderExpression> orders)
+        {
+            var query = Select(tableFilter, new List<ISelectItemExpression>());
+            return OrderBy(query, orders);
+        }
+
+        public static SelectStatement OrderBy(this ITableFilterExpression tableFilter, params IOrderExpression[] orders)
+        {
+            var query = Select(tableFilter, new List<ISelectItemExpression>());
+            return OrderBy(query, orders);
+        }
 
         public static SelectStatement OrderBy(this ISimpleQueryStatement query, IOrderByClause orderby)
         {
