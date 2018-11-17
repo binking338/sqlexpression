@@ -335,6 +335,49 @@ namespace SqlExpression.Extension
 
         #region ComparisonExpression
 
+        #region ShortCut
+        public static ComparisonExpression EqP(this ISimpleValue value, string param = null)
+        {
+            return EqVarParam(value, param);
+        }
+        public static ComparisonExpression NeqP(this ISimpleValue value, string param = null)
+        {
+            return NeqVarParam(value, param);
+        }
+        public static ComparisonExpression GtP(this ISimpleValue value, string param = null)
+        {
+            return GtVarParam(value, param);
+        }
+        public static ComparisonExpression GtOrEqP(this ISimpleValue value, string param = null)
+        {
+            return GtOrEqVarParam(value, param);
+        }
+        public static ComparisonExpression LtP(this ISimpleValue value, string param = null)
+        {
+            return LtVarParam(value, param);
+        }
+        public static ComparisonExpression LtOrEqP(this ISimpleValue value, string param = null)
+        {
+            return LtOrEqVarParam(value, param);
+        }
+        public static ComparisonExpression LikeP(this ISimpleValue value, string param = null)
+        {
+            return LikeVarParam(value, param);
+        }
+        public static ComparisonExpression NotLikeP(this ISimpleValue value, string param = null)
+        {
+            return NotLikeVarParam(value, param);
+        }
+        public static BetweenExpression BetweenP(this ISimpleValue value, string paramLower = null, string paramUpper = null)
+        {
+            return BetweenVarParam(value, paramLower, paramUpper);
+        }
+        public static NotBetweenExpression NotBetweenP(this ISimpleValue value, string paramLower = null, string paramUpper = null)
+        {
+            return NotBetweenVarParam(value, paramLower, paramUpper);
+        }
+        #endregion
+
         public static UnaryComparisonExpression IsNull(this ISimpleValue value)
         {
             return new UnaryComparisonExpression(Operator.IsNull, value);
