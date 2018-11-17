@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SqlExpression.Extension
 {
-    public static class DeleteExpressionExtensions
+    public static class DeleteStatementExtensions
     {
         public static DeleteStatement Delete(this ITableFilterExpression tableFilter)
         {

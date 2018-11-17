@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SqlExpression.Extension
 {
-    public static class UpdateExpressionExtensions
+    public static class UpdateStatementExtensions
     {
         #region Update
 
