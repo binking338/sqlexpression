@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.2.1" />
     <PackageReference Include="MSTest.TestFramework" Version="1.2.1" />
+    <PackageReference Include="FakeItEasy" Version="4.9.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,5 +18,8 @@
     <ProjectReference Include="..\SqlExpression.Extension.DapperRepository\SqlExpression.Extension.DapperRepository.csproj" />
     <ProjectReference Include="..\SqlExpression.Extension\SqlExpression.Extension.csproj" />
     <ProjectReference Include="..\SqlExpression.Extension.Dapper\SqlExpression.Extension.Dapper.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Statement\TestLogger.cs" />
   </ItemGroup>
 </Project>

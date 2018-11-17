@@ -21,7 +21,15 @@ namespace SqlExpression.UnitTest.Statement
             var foo = db.Foo.Schema;
             var exp = foo
                 .Where(foo.Age >= 18)
+                .GroupBy(foo.Name)
+                .Having(foo.Name == "hero")
+                .OrderBy(foo.Asterisk().Count().Desc())
+                .Select(foo.Name);
+            Assert.AreEqual("SELECT foo.name FROM foo WHERE foo.age>=18 GROUP BY foo.name HAVING foo.name='hero' ORDER BY COUNT(foo.*) DESC", exp.ToString());
+
+            exp = foo
                 .Select(foo.Name)
+                .Where(foo.Age >= 18)
                 .GroupBy(foo.Name)
                 .Having(foo.Name == "hero")
                 .OrderBy(foo.Asterisk().Count().Desc());
@@ -34,13 +42,23 @@ namespace SqlExpression.UnitTest.Statement
             TestDb db = new TestDb();
             var foo = db.Foo.Schema;
             var exp = foo
+                .Select(foo.All());
+            Assert.AreEqual("SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo", exp.ToString());
+        }
+
+        [TestMethod]
+        public void SimpleQueryStatement_SingleTable2()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
                 .Where(foo.Name == "hero")
                 .Select(foo.All());
             Assert.AreEqual("SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero'", exp.ToString());
         }
 
         [TestMethod]
-        public void SimpleQueryStatement_SingleTable2()
+        public void SimpleQueryStatement_SingleTable3()
         {
             TestDb db = new TestDb();
             var foo = db.Foo.Schema;
@@ -51,14 +69,49 @@ namespace SqlExpression.UnitTest.Statement
         }
 
         [TestMethod]
-        public void SimpleQueryStatement_SingleTable3()
+        public void SimpleQueryStatement_SingleTable4()
         {
             TestDb db = new TestDb();
             var foo = db.Foo.Schema;
             var exp = foo
-                .Select(foo.All())
-                .Where(foo.Name == "hero");
-            Assert.AreEqual("SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero'", exp.ToString());
+                .Where(foo.Name == "hero")
+                .OrderBy(foo.Age.Desc())
+                .Select(foo.All());
+            Assert.AreEqual("SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' ORDER BY foo.age DESC", exp.ToString());
+        }
+
+        [TestMethod]
+        public void SimpleQueryStatement_SingleTable5()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
+                .Where(foo.Name == "hero")
+                .GroupBy(foo.Age).Having(foo.Age > 18)
+                .Select(foo.Age, foo.Id.Count());
+            Assert.AreEqual("SELECT foo.age,COUNT(foo.id) FROM foo WHERE foo.name='hero' GROUP BY foo.age HAVING foo.age>18", exp.ToString());
+        }
+
+        [TestMethod]
+        public void SimpleQueryStatement_SingleTable6()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
+                .OrderBy(foo.Age.Desc())
+                .Select(foo.All());
+            Assert.AreEqual("SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo ORDER BY foo.age DESC", exp.ToString());
+        }
+
+        [TestMethod]
+        public void SimpleQueryStatement_SingleTable7()
+        {
+            TestDb db = new TestDb();
+            var foo = db.Foo.Schema;
+            var exp = foo
+                .GroupBy(foo.Age).Having(foo.Age > 18)
+                .Select(foo.Age, foo.Id.Count());
+            Assert.AreEqual("SELECT foo.age,COUNT(foo.id) FROM foo GROUP BY foo.age HAVING foo.age>18", exp.ToString());
         }
 
         [TestMethod]
