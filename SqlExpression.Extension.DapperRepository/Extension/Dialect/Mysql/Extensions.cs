@@ -14,7 +14,7 @@ namespace SqlExpression.Extension.Dialect.Mysql
 {
     public static class Extensions
     {
-        public static IEnumerable<TEntity> QueryByPage<TSchema, TEntity>(this Repository<TSchema, TEntity> repository, Func<TSchema, ISimpleValue> filter, object param = null, int pageSize = 50, int pageIndex = 1)
+        public static IEnumerable<TEntity> QueryByPage<TSchema, TEntity>(this Repository<TSchema, TEntity> repository, Func<TSchema, ISimpleValue> filter, object param = null, int pagesize = 50, int pageindex = 1)
 
             where TSchema : TableSchema<TSchema>, IAliasTableExpression, new()
             where TEntity : class, new()
@@ -22,7 +22,7 @@ namespace SqlExpression.Extension.Dialect.Mysql
             var schema = repository.schema;
             var exp = schema.Select(schema.All())
                             .Where(filter(schema))
-                            .Page(1, 50);
+                            .Page(pagesize, pageindex);
             var missingParams = repository.CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
