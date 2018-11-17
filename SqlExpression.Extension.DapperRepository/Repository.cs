@@ -12,14 +12,14 @@ using SqlExpression.Extension.Dapper;
 
 namespace SqlExpression
 {
-    public class Respository<TSchema, TEntity>
+    public class Repository<TSchema, TEntity>
         where TSchema : TableSchema<TSchema>, IAliasTableExpression, new()
         where TEntity : class, new()
     {
-        protected TSchema schema;
-        protected IDbConnection connection;
+        internal TSchema schema;
+        internal IDbConnection connection;
 
-        public Respository(IDbConnection connection)
+        public Repository(IDbConnection connection)
         {
             this.schema = new TSchema();
             this.connection = connection;
@@ -164,6 +164,54 @@ namespace SqlExpression
             return connection.Query<TEntity>(exp, param);
         }
 
+        public virtual TEntity QueryFirst(Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(schema.All())
+                            .Where(filter(schema));
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QueryFirst<TEntity>(exp, param);
+        }
+
+        public virtual TEntity QueryFirstOrDefault(Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(schema.All())
+                            .Where(filter(schema));
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QueryFirstOrDefault<TEntity>(exp, param);
+        }
+
+        public virtual TEntity QuerySingle(Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(schema.All())
+                            .Where(filter(schema));
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QuerySingle<TEntity>(exp, param);
+        }
+
+        public virtual TEntity QuerySingleOrDefault(Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(schema.All())
+                            .Where(filter(schema));
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QuerySingleOrDefault<TEntity>(exp, param);
+        }
+
         public virtual IEnumerable<T> QueryPartial<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
         {
             var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
@@ -174,6 +222,54 @@ namespace SqlExpression
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
             return connection.Query<T>(exp, param);
+        }
+
+        public virtual T QueryPartialFirst<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
+                            .Where(filter(schema));
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QueryFirst<T>(exp, param);
+        }
+
+        public virtual T QueryPartialFirstOrDefault<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
+                            .Where(filter(schema));
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QueryFirstOrDefault<T>(exp, param);
+        }
+
+        public virtual T QueryPartialSingle<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
+                            .Where(filter(schema));
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QuerySingle<T>(exp, param);
+        }
+
+        public virtual T QueryPartialSingleOrDefault<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
+        {
+            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
+                            .Where(filter(schema));
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.QuerySingleOrDefault<T>(exp, param);
         }
 
         public virtual long Count(Func<TSchema, ISimpleValue> filter, object param = null)
@@ -216,7 +312,7 @@ namespace SqlExpression
 
         #region 工具函数
 
-        protected object PrimaryKey2ParamObject(object primaryKey)
+        internal object PrimaryKey2ParamObject(object primaryKey)
         {
             if (schema.PK().Length <= 0)
             {
@@ -231,7 +327,7 @@ namespace SqlExpression
             return primaryKey;
         }
 
-        protected Dictionary<string, object> Properties2Dictionary(object src, Dictionary<string, object> des, IEnumerable<string> propertyNames = null)
+        internal Dictionary<string, object> Properties2Dictionary(object src, Dictionary<string, object> des, IEnumerable<string> propertyNames = null)
         {
             if (src == null) return null;
             Dictionary<string, object> dic = des ?? new Dictionary<string, object>();
@@ -259,7 +355,7 @@ namespace SqlExpression
         }
 
         private static ConcurrentDictionary<Type, IList<string>> Cache4ParamPropertyNames { get; } = new ConcurrentDictionary<Type, IList<string>>();
-        protected List<string> CheckMissingParams(ISqlStatement exp, object param)
+        internal List<string> CheckMissingParams(ISqlStatement exp, object param)
         {
             var paramNotProvided = new List<string>();
             var paramNames = exp.Params;
