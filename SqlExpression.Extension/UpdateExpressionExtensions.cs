@@ -12,6 +12,16 @@ namespace SqlExpression.Extension
 
         #region ShortCut
 
+        public static UpdateStatement UpdateP(this ITableFilterExpression tableFilter, IEnumerable<IColumn> columns)
+        {
+            return UpdateVarParam(tableFilter, columns);
+        }
+
+        public static UpdateStatement UpdateP(this ITableFilterExpression tableFilter, params IColumn[] columns)
+        {
+            return UpdateVarParam(tableFilter, columns);
+        }
+
         public static UpdateStatement UpdateP(this ITable table, IEnumerable<IColumn> columns)
         {
             return UpdateVarParam(table, columns);
@@ -53,7 +63,7 @@ namespace SqlExpression.Extension
 
         public static UpdateStatement Update(this ITable table)
         {
-            return new UpdateStatement(new AliasTableExpression(table, null), null, null);
+            return Update(table, new List<IColumn>());
         }
 
         public static UpdateStatement Update(this ITable table, IEnumerable<IColumn> columns)
