@@ -18,4 +18,8 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extension\" />
+    <Folder Include="Extension\Dialect\" />
+  </ItemGroup>
 </Project>

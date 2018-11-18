@@ -87,7 +87,7 @@ namespace SqlExpression.Extension.Dialect.Mysql
         /// <param name="pageindex"></param>
         /// <param name="pagesize"></param>
         /// <returns></returns>
-        public static LimitSimpleQueryStatement Page(this ISimpleQueryStatement query, int pageindex, int pagesize)
+        public static LimitSimpleQueryStatement Page(this ISimpleQueryStatement query, int pagesize, int pageindex)
         {
             return new LimitSimpleQueryStatement(query.Select, query.From, query.Where, query.GroupBy, new LimitExpression((pageindex - 1) * pagesize, pagesize));
         }

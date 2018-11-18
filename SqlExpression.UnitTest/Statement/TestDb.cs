@@ -18,18 +18,18 @@ namespace SqlExpression.UnitTest.Statement
         public TestDb(IDbConnection connection)
         {
             Connection = connection;
-            foo = new Lazy<Respository<FooSchema, Foo>>(() => new Respository<FooSchema, Foo>(Connection));
-            bar = new Lazy<Respository<BarSchema, Bar>>(() => new Respository<BarSchema, Bar>(Connection));
+            foo = new Lazy<Repository<FooSchema, Foo>>(() => new Repository<FooSchema, Foo>(Connection));
+            bar = new Lazy<Repository<BarSchema, Bar>>(() => new Repository<BarSchema, Bar>(Connection));
 
             Expression.DefaultOption.Column2ParamContractHandler = ToUpperCamalCase;
             // SqlExpression.Extension.Dialect.Mysql.Config.EnableDialect();
         }
 
-        private Lazy<Respository<FooSchema, Foo>> foo;
-        private Lazy<Respository<BarSchema, Bar>> bar;
+        private Lazy<Repository<FooSchema, Foo>> foo;
+        private Lazy<Repository<BarSchema, Bar>> bar;
 
-        public Respository<FooSchema, Foo> Foo { get { return foo.Value; } }
-        public Respository<BarSchema, Bar> Bar { get { return bar.Value; } }
+        public Repository<FooSchema, Foo> Foo { get { return foo.Value; } }
+        public Repository<BarSchema, Bar> Bar { get { return bar.Value; } }
     }
 }
 
