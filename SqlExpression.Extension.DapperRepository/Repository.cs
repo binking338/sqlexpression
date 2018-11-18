@@ -10,7 +10,7 @@ using SqlExpression;
 using SqlExpression.Extension;
 using SqlExpression.Extension.Dapper;
 
-namespace SqlExpression
+namespace SqlExpression.Extension.DapperRepository
 {
     public class Respository<TSchema, TEntity>
         where TSchema : TableSchema<TSchema>, IAliasTableExpression, new()

@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Data;
 using SqlExpression;
 using SqlExpression.Extension;
 using SqlExpression.UnitTest.Statement.Schema;
 using SqlExpression.UnitTest.Statement.Entity;
-using System.Data;
+using SqlExpression.Extension.DapperRepository;
 
 namespace SqlExpression.UnitTest.Statement
 {

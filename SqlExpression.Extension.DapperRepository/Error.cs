@@ -1,5 +1,5 @@
 ﻿using System;
-namespace SqlExpression
+namespace SqlExpression.Extension.DapperRepository
 {
     internal class Error
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace SqlExpression
+namespace SqlExpression.Extension.DapperRepository
 {
     public abstract class TableSchema<Schema> : Expression, IAliasTableExpression
         where Schema : class

@@ -19,7 +19,7 @@ namespace SqlExpression.UnitTest
 
         public static void UsingParamName2UpperCamalCase(Action main)
         {
-            Expression.DefaultOption.Column2ParamContractHandler = DbContext.ToUpperCamalCase;
+            Expression.DefaultOption.Column2ParamContractHandler = SqlExpression.Extension.DapperRepository.DbContext.ToUpperCamalCase;
 
             main?.Invoke();
 

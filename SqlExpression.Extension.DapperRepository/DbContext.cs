@@ -3,7 +3,7 @@ using System.Linq;
 using System.Data;
 using System.Text;
 
-namespace SqlExpression
+namespace SqlExpression.Extension.DapperRepository
 {
     public abstract class DbContext
     {
