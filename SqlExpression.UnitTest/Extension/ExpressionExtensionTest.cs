@@ -147,17 +147,20 @@ namespace SqlExpression.UnitTest.Extension
                 e = new Column("id").Set(TestEnum.Item1);
                 Assert.AreEqual("id=1", e.ToString());
 
-                e = new Column("id").SetVarParam();
-                Assert.AreEqual("id=@id", e.ToString());
+                Misc.UsingParamNameAsColumnName(() =>
+                {
+                    e = new Column("id").SetVarParam();
+                    Assert.AreEqual("id=@id", e.ToString());
 
-                e = new Column("id").SetVarParam("val");
-                Assert.AreEqual("id=@val", e.ToString());
+                    e = new Column("id").SetVarParam("val");
+                    Assert.AreEqual("id=@val", e.ToString());
 
-                e = new Column("id").SetP();
-                Assert.AreEqual("id=@id", e.ToString());
+                    e = new Column("id").SetP();
+                    Assert.AreEqual("id=@id", e.ToString());
 
-                e = new Column("id").SetP("val");
-                Assert.AreEqual("id=@val", e.ToString());
+                    e = new Column("id").SetP("val");
+                    Assert.AreEqual("id=@val", e.ToString());
+                });
 
                 e = new Column("id").SetVarCustom("1");
                 Assert.AreEqual("id=1", e.ToString());

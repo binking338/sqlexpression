@@ -9,6 +9,7 @@ using Dapper;
 using SqlExpression;
 using SqlExpression.Extension;
 using SqlExpression.Extension.Dapper;
+using SqlExpression.Extension.DapperRepository;
 
 namespace SqlExpression.Extension.Dialect.Mysql
 {

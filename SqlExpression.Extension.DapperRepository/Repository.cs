@@ -44,12 +44,29 @@ namespace SqlExpression.Extension.DapperRepository
             return null;
         }
 
-        public virtual int Update<T>(TEntity entity, Func<TEntity, T> columns = null, Func<TSchema, ISimpleValue> filter = null, object param = null)
+        public virtual int Update<Partial>(Partial entity, Func<TSchema, ISimpleValue> filter = null, object param = null)
+        {
+            var columns = Properties2Columns<Partial>(filter == null);
+            var exp = schema.Table
+                               .UpdateVarParam(columns)
+                               .Where(filter?.Invoke(schema) ?? schema.PK().AllEqVarParam());
+            var dic = Properties2Dictionary(entity, null);
+            if (filter != null && param != null) Properties2Dictionary(param, dic);
+            param = dic;
+            var missingParams = CheckMissingParams(exp, param);
+            if (missingParams.Any())
+            {
+                throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
+            }
+            return connection.Execute(exp, dic);
+        }
+
+        public virtual int Update<T>(TEntity entity, Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter = null, object param = null)
         {
             return Update(entity, (TSchema s) => Properties2Columns<T>(), filter, param);
         }
 
-        public virtual int Update(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null, Func<TSchema, ISimpleValue> filter = null, object param = null)
+        public virtual int Update(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns, Func<TSchema, ISimpleValue> filter = null, object param = null)
         {
             if (columns == null) columns = s => s.All(false);
             var exp = schema.Table
@@ -363,7 +380,7 @@ namespace SqlExpression.Extension.DapperRepository
             {
                 return paramNotProvided;
             }
-            if(param == null)
+            if (param == null)
             {
                 paramNotProvided.AddRange(paramNames);
                 return paramNotProvided;
@@ -404,7 +421,7 @@ namespace SqlExpression.Extension.DapperRepository
         }
 
         private static ConcurrentDictionary<Type, IEnumerable<IColumn>> Cache4Properties2Columns { get; } = new ConcurrentDictionary<Type, IEnumerable<IColumn>>();
-        protected IEnumerable<IColumn> Properties2Columns<T>()
+        protected IEnumerable<IColumn> Properties2Columns<T>(bool excludePK = false)
         {
             var type = typeof(T);
             if (Cache4Properties2Columns.TryGetValue(type, out var columns))
@@ -416,7 +433,9 @@ namespace SqlExpression.Extension.DapperRepository
             var list = new List<IColumn>();
             foreach (var property in properties)
             {
-                var item = schema.AllMapped().First(i => i.Alias == property.Name);
+                var item = schema.AllMapped().FirstOrDefault(i => i.Alias == property.Name);
+                if (item == null) throw new ArgumentException(string.Format(Error.ColumnNotDefined, property.Name));
+                if (excludePK && schema.PKMapped().Contains(item)) continue;
                 list.Add((item.Value as IColumn));
             }
             Cache4Properties2Columns.TryAdd(type, list);
