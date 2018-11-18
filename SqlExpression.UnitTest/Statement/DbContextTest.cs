@@ -31,6 +31,9 @@ namespace SqlExpression.UnitTest.Statement
             db.Foo.Insert(entity);
             Assert.AreEqual("INSERT INTO foo(foo.id,foo.name,foo.age,foo.gender,foo.isdel) VALUES(@Id,@Name,@Age,@Gender,@Isdel)", DapperExtensions.LastSql);
 
+            db.Foo.InsertPartial(entity);
+            Assert.AreEqual("INSERT INTO foo(foo.id,foo.name,foo.age,foo.gender,foo.isdel) VALUES(@Id,@Name,@Age,@Gender,@Isdel)", DapperExtensions.LastSql);
+
             db.Foo.Insert(entity, foo => new { foo.Name, foo.Age });
             Assert.AreEqual("INSERT INTO foo(foo.name,foo.age) VALUES(@Name,@Age)", DapperExtensions.LastSql);
 
@@ -49,6 +52,12 @@ namespace SqlExpression.UnitTest.Statement
 
             db.Foo.Update(entity);
             Assert.AreEqual("UPDATE foo SET foo.name=@Name,foo.age=@Age,foo.gender=@Gender,foo.isdel=@Isdel WHERE foo.id=@Id", DapperExtensions.LastSql);
+
+            db.Foo.UpdatePartial(entity);
+            Assert.AreEqual("UPDATE foo SET foo.name=@Name,foo.age=@Age,foo.gender=@Gender,foo.isdel=@Isdel WHERE foo.id=@Id", DapperExtensions.LastSql);
+
+            db.Foo.UpdatePartial(entity, foo => foo.Age > 18);
+            Assert.AreEqual("UPDATE foo SET foo.name=@Name,foo.age=@Age,foo.gender=@Gender,foo.isdel=@Isdel WHERE foo.age>18", DapperExtensions.LastSql);
 
             db.Foo.Update(entity, foo => new { foo.Name, foo.Age });
             Assert.AreEqual("UPDATE foo SET foo.name=@Name,foo.age=@Age WHERE foo.id=@Id", DapperExtensions.LastSql);

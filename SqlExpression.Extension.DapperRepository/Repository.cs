@@ -31,11 +31,6 @@ namespace SqlExpression.Extension.DapperRepository
             set { schema = value; }
         }
 
-        public virtual object Insert<T>(TEntity entity, Func<TEntity, T> columns = null)
-        {
-            return Insert(entity, (TSchema s) => Properties2Columns<T>());
-        }
-
         public virtual object Insert(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null)
         {
             var exp = schema.Table
@@ -44,13 +39,28 @@ namespace SqlExpression.Extension.DapperRepository
             return null;
         }
 
-        public virtual int Update<Partial>(Partial entity, Func<TSchema, ISimpleValue> filter = null, object param = null)
+        public virtual object Insert<T>(TEntity entity, Func<TEntity, T> columns = null)
         {
-            var columns = Properties2Columns<Partial>(filter == null);
+            return Insert(entity, (TSchema s) => Properties2Columns<T>());
+        }
+
+        public virtual object InsertPartial<Partial>(Partial entity)
+        {
             var exp = schema.Table
-                               .UpdateVarParam(columns)
-                               .Where(filter?.Invoke(schema) ?? schema.PK().AllEqVarParam());
-            var dic = Properties2Dictionary(entity, null);
+                            .InsertVarParam(Properties2Columns<Partial>());
+            var rows = connection.Execute(exp, entity);
+            return null;
+        }
+
+        public virtual int Update(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null, Func<TSchema, ISimpleValue> filter = null, object param = null)
+        {
+            if (columns == null) columns = s => s.All(false);
+            var exp = schema.Table
+                            .UpdateVarParam(columns(schema))
+                            .Where(filter?.Invoke(schema) ?? schema.PK().AllEqVarParam());
+            var paramNames = columns(schema).Select(c => exp.Option.Column2ParamContractHandler(c.Name));
+            if (filter == null) paramNames = paramNames.Concat(schema.PK().Select(c => exp.Option.Column2ParamContractHandler(c.Name)));
+            var dic = Properties2Dictionary(entity, null, paramNames);
             if (filter != null && param != null) Properties2Dictionary(param, dic);
             param = dic;
             var missingParams = CheckMissingParams(exp, param);
@@ -63,18 +73,16 @@ namespace SqlExpression.Extension.DapperRepository
 
         public virtual int Update<T>(TEntity entity, Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter = null, object param = null)
         {
-            return Update(entity, (TSchema s) => Properties2Columns<T>(), filter, param);
+            return Update(entity, (TSchema s) => Properties2Columns<T>(true), filter, param);
         }
 
-        public virtual int Update(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns, Func<TSchema, ISimpleValue> filter = null, object param = null)
+        public virtual int UpdatePartial<Partial>(Partial entity, Func<TSchema, ISimpleValue> filter = null, object param = null)
         {
-            if (columns == null) columns = s => s.All(false);
+            var columns = Properties2Columns<Partial>(true);
             var exp = schema.Table
-                            .UpdateVarParam(columns(schema))
-                            .Where(filter?.Invoke(schema) ?? schema.PK().AllEqVarParam());
-            var paramNames = columns(schema).Select(c => exp.Option.Column2ParamContractHandler(c.Name));
-            if (filter == null) paramNames = paramNames.Concat(schema.PK().Select(c => exp.Option.Column2ParamContractHandler(c.Name)));
-            var dic = Properties2Dictionary(entity, null, paramNames);
+                               .UpdateVarParam(columns)
+                               .Where(filter?.Invoke(schema) ?? schema.PK().AllEqVarParam());
+            var dic = Properties2Dictionary(entity, null);
             if (filter != null && param != null) Properties2Dictionary(param, dic);
             param = dic;
             var missingParams = CheckMissingParams(exp, param);
@@ -229,64 +237,64 @@ namespace SqlExpression.Extension.DapperRepository
             return connection.QuerySingleOrDefault<TEntity>(exp, param);
         }
 
-        public virtual IEnumerable<T> QueryPartial<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
+        public virtual IEnumerable<Partial> QueryPartial<Partial>(Func<TEntity, Partial> columns, Func<TSchema, ISimpleValue> filter, object param = null)
         {
-            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
+            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<Partial>())
                             .Where(filter(schema));
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.Query<T>(exp, param);
+            return connection.Query<Partial>(exp, param);
         }
 
-        public virtual T QueryPartialFirst<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
+        public virtual Partial QueryPartialFirst<Partial>(Func<TEntity, Partial> columns, Func<TSchema, ISimpleValue> filter, object param = null)
         {
-            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
+            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<Partial>())
                             .Where(filter(schema));
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.QueryFirst<T>(exp, param);
+            return connection.QueryFirst<Partial>(exp, param);
         }
 
-        public virtual T QueryPartialFirstOrDefault<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
+        public virtual Partial QueryPartialFirstOrDefault<Partial>(Func<TEntity, Partial> columns, Func<TSchema, ISimpleValue> filter, object param = null)
         {
-            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
+            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<Partial>())
                             .Where(filter(schema));
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.QueryFirstOrDefault<T>(exp, param);
+            return connection.QueryFirstOrDefault<Partial>(exp, param);
         }
 
-        public virtual T QueryPartialSingle<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
+        public virtual Partial QueryPartialSingle<Partial>(Func<TEntity, Partial> columns, Func<TSchema, ISimpleValue> filter, object param = null)
         {
-            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
+            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<Partial>())
                             .Where(filter(schema));
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.QuerySingle<T>(exp, param);
+            return connection.QuerySingle<Partial>(exp, param);
         }
 
-        public virtual T QueryPartialSingleOrDefault<T>(Func<TEntity, T> columns, Func<TSchema, ISimpleValue> filter, object param = null)
+        public virtual Partial QueryPartialSingleOrDefault<Partial>(Func<TEntity, Partial> columns, Func<TSchema, ISimpleValue> filter, object param = null)
         {
-            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<T>())
+            var exp = schema.Select(columns == null ? schema.All() : Properties2Columns<Partial>())
                             .Where(filter(schema));
             var missingParams = CheckMissingParams(exp, param);
             if (missingParams.Any())
             {
                 throw new ArgumentException(string.Format(Error.ParamMissing, string.Join(",", missingParams)), nameof(param));
             }
-            return connection.QuerySingleOrDefault<T>(exp, param);
+            return connection.QuerySingleOrDefault<Partial>(exp, param);
         }
 
         public virtual long Count(Func<TSchema, ISimpleValue> filter, object param = null)
@@ -426,6 +434,7 @@ namespace SqlExpression.Extension.DapperRepository
             var type = typeof(T);
             if (Cache4Properties2Columns.TryGetValue(type, out var columns))
             {
+                if (excludePK) return columns.Except(schema.PK());
                 return columns;
             }
 
@@ -435,10 +444,11 @@ namespace SqlExpression.Extension.DapperRepository
             {
                 var item = schema.AllMapped().FirstOrDefault(i => i.Alias == property.Name);
                 if (item == null) throw new ArgumentException(string.Format(Error.ColumnNotDefined, property.Name));
-                if (excludePK && schema.PKMapped().Contains(item)) continue;
                 list.Add((item.Value as IColumn));
             }
             Cache4Properties2Columns.TryAdd(type, list);
+
+            if (excludePK) return list.Except(schema.PK());
             return list;
         }
 
