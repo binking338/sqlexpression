@@ -19,6 +19,8 @@ namespace SqlExpression.Extension.DapperRepository
         internal TSchema schema;
         internal IDbConnection connection;
 
+        public static Func<IInsertStatement, ISqlStatement> AppendReturnIdStatementHandler { get; set; }
+
         public Repository(IDbConnection connection)
         {
             this.schema = new TSchema();
@@ -31,10 +33,29 @@ namespace SqlExpression.Extension.DapperRepository
             set { schema = value; }
         }
 
+        protected virtual ISqlStatement AppendReturnIdStatement(IInsertStatement insert)
+        {
+            return AppendReturnIdStatementHandler?.Invoke(insert) ?? insert;
+        }
+
+        public void Test()
+        {
+        }
+
         public virtual object Insert(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null)
         {
             var exp = schema.Table
                             .InsertVarParam(columns?.Invoke(schema) ?? schema.All());
+            if (schema.PK().Count() > 1)
+            {
+                var expReturnId = AppendReturnIdStatement(exp);
+                if(expReturnId != exp)
+                {
+                    var id = connection.ExecuteScalar<object>(expReturnId, entity);
+                    typeof(TEntity).GetProperty(schema.PKMapped().First().Alias).SetValue(entity, id);
+                    return id;
+                }
+            }
             var rows = connection.Execute(exp, entity);
             return null;
         }
@@ -48,6 +69,15 @@ namespace SqlExpression.Extension.DapperRepository
         {
             var exp = schema.Table
                             .InsertVarParam(Properties2Columns<Partial>());
+            if (schema.PK().Count() > 1)
+            {
+                var expReturnId = AppendReturnIdStatement(exp);
+                if (expReturnId != exp)
+                {
+                    var id = connection.ExecuteScalar<object>(expReturnId, entity);
+                    return id;
+                }
+            }
             var rows = connection.Execute(exp, entity);
             return null;
         }
@@ -429,7 +459,7 @@ namespace SqlExpression.Extension.DapperRepository
         }
 
         private static ConcurrentDictionary<Type, IEnumerable<IColumn>> Cache4Properties2Columns { get; } = new ConcurrentDictionary<Type, IEnumerable<IColumn>>();
-        protected IEnumerable<IColumn> Properties2Columns<T>(bool excludePK = false)
+        internal IEnumerable<IColumn> Properties2Columns<T>(bool excludePK = false)
         {
             var type = typeof(T);
             if (Cache4Properties2Columns.TryGetValue(type, out var columns))
