@@ -95,5 +95,30 @@ namespace SqlExpression.UnitTest.Statement
             db.Foo.QueryPartial(foo => new { foo.Id, foo.Name, foo.Age }, foo => foo.Id.EqVarParam(), new { Id = 1 });
             Assert.AreEqual("SELECT foo.id,foo.name,foo.age FROM foo WHERE foo.id=@Id", DapperExtensions.LastSql);
         }
+
+        [TestMethod]
+        public void TestJoin()
+        {
+            var connection = FakeItEasy.A.Fake<IDbConnection>();
+            var command = FakeItEasy.A.Fake<IDbCommand>();
+            var reader = FakeItEasy.A.Fake<IDataReader>();
+            FakeItEasy.A.CallTo(() => connection.CreateCommand()).ReturnsLazily(args => command);
+            FakeItEasy.A.CallTo(() => command.ExecuteNonQuery()).ReturnsLazily(args => 1);
+            FakeItEasy.A.CallTo(() => command.ExecuteScalar()).ReturnsLazily(args => 1);
+            FakeItEasy.A.CallTo(() => command.ExecuteReader()).ReturnsLazily((arg) => reader);
+            FakeItEasy.A.CallTo(() => reader.NextResult()).ReturnsLazily(args => false);
+            FakeItEasy.A.CallTo(() => reader.Read()).ReturnsLazily(args => false);
+
+            var db = new TestDb(connection);
+            var foo = db.Foo.Schema;
+            var bar = db.Bar.Schema;
+            var e = foo.Join(bar, foo.Name == bar.Name)
+                .Where(bar.Age > 18)
+                .Select(foo.AllMapped())
+                .OrderBy(foo.Age.Desc());
+
+            db.Connection.Query(e.Map<Entity.Foo>());
+            Assert.AreEqual("SELECT foo.id AS Id,foo.name AS Name,foo.age AS Age,foo.gender AS Gender,foo.isdel AS Isdel FROM foo JOIN bar ON foo.name=bar.name WHERE bar.age>18 ORDER BY foo.age DESC", DapperExtensions.LastSql);
+        }
     }
 }
