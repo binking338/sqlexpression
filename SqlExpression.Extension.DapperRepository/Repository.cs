@@ -19,7 +19,15 @@ namespace SqlExpression.Extension.DapperRepository
         internal TSchema schema;
         internal IDbConnection connection;
 
-        public static Func<IInsertStatement, ISqlStatement> AppendReturnIdStatementHandler { get; set; }
+        /// <summary>
+        /// 是否校验参数
+        /// </summary>
+        public static bool EnableCheckParam { get; set; } = true;
+
+        /// <summary>
+        /// 附加返回自增主键语句
+        /// </summary>
+        public virtual Func<IInsertStatement, ISqlStatement> AppendReturnIdStatementHandler { get; set; }
 
         public Repository(IDbConnection connection)
         {
@@ -415,6 +423,7 @@ namespace SqlExpression.Extension.DapperRepository
         internal List<string> CheckMissingParams(ISqlStatement exp, object param)
         {
             var paramNotProvided = new List<string>();
+            if (!EnableCheckParam) return paramNotProvided;
             var paramNames = exp.Params;
             if (paramNames == null || !paramNames.Any())
             {
