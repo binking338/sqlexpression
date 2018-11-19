@@ -52,7 +52,8 @@ namespace SqlExpression.Extension.DapperRepository
                 if(expReturnId != exp)
                 {
                     var id = connection.ExecuteScalar<object>(expReturnId, entity);
-                    typeof(TEntity).GetProperty(schema.PKMapped().First().Alias).SetValue(entity, id);
+                    id = Convert.ChangeType(id, typeof(TEntity).GetProperty(schema.PKMapped().First().Alias).PropertyType);
+                    SetPropertyHandler(typeof(TEntity), schema.PKMapped().First().Alias).Invoke(entity, id);
                     return id;
                 }
             }
@@ -75,6 +76,7 @@ namespace SqlExpression.Extension.DapperRepository
                 if (expReturnId != exp)
                 {
                     var id = connection.ExecuteScalar<object>(expReturnId, entity);
+                    id = Convert.ChangeType(id, typeof(TEntity).GetProperty(schema.PKMapped().First().Alias).PropertyType);
                     return id;
                 }
             }
@@ -402,7 +404,7 @@ namespace SqlExpression.Extension.DapperRepository
                 {
                     if (propertyNames == null || propertyNames.Contains(property.Name))
                     {
-                        dic[property.Name] = property.GetValue(src);
+                        dic[property.Name] = GetPropertyHandler(type, property.Name).Invoke(src);
                     }
                 }
             }
@@ -480,6 +482,54 @@ namespace SqlExpression.Extension.DapperRepository
 
             if (excludePK) return list.Except(schema.PK());
             return list;
+        }
+
+        private static ConcurrentDictionary<string, Func<object, object>> Cache4GetPrimaryKeyHandlers { get; } = new ConcurrentDictionary<string, Func<object, object>>();
+        internal Func<object, object> GetPropertyHandler(Type entityType, string propName)
+        {
+            var key = string.Format("{0}:{1}", entityType.FullName, propName);
+            if (Cache4GetPrimaryKeyHandlers.TryGetValue(key, out var handler))
+            {
+                return handler;
+            }
+
+            var propInfo = entityType.GetProperty(propName);
+
+            var paramExpr = System.Linq.Expressions.Expression.Parameter(typeof(object));
+            var getPropExpr = System.Linq.Expressions.Expression.Call(System.Linq.Expressions.Expression.TypeAs(paramExpr, entityType) , propInfo.GetMethod);
+            var convertExpr = System.Linq.Expressions.Expression.Convert(getPropExpr, typeof(object));
+
+            handler = System.Linq.Expressions.Expression.Lambda<Func<object, object>>(convertExpr, paramExpr).Compile();
+
+            Cache4GetPrimaryKeyHandlers.TryAdd(key, handler);
+
+            return handler;
+        }
+
+        private static ConcurrentDictionary<string, Action<object, object>> Cache4SetPrimaryKeyHandlers { get; } = new ConcurrentDictionary<string, Action<object, object>>();
+        internal Action<object, object> SetPropertyHandler(Type entityType, string propName)
+        {
+            var key = string.Format("{0}:{1}", entityType.FullName, propName);
+            if (Cache4SetPrimaryKeyHandlers.TryGetValue(key, out var handler))
+            {
+                return handler;
+            }
+
+            var propInfo = entityType.GetProperty(propName);
+            var propType = propInfo.PropertyType;
+
+            var paramExpr = System.Linq.Expressions.Expression.Parameter(typeof(object));
+            var valExpr = System.Linq.Expressions.Expression.Parameter(typeof(object));
+            var pkTypeExpr = System.Linq.Expressions.Expression.Constant(propType);
+            var changeTypeExpr = System.Linq.Expressions.Expression.Call(typeof(Convert).GetMethod("ChangeType", new[] { typeof(object), typeof(Type) }), valExpr, pkTypeExpr);
+            var convertExpr = System.Linq.Expressions.Expression.Convert(changeTypeExpr, propType);
+            var setExpr = System.Linq.Expressions.Expression.Call(System.Linq.Expressions.Expression.TypeAs(paramExpr, entityType), propInfo.SetMethod, convertExpr);
+
+            handler = System.Linq.Expressions.Expression.Lambda<Action<object, object>>(setExpr, paramExpr, valExpr).Compile();
+
+            Cache4SetPrimaryKeyHandlers.TryAdd(key, handler);
+
+            return handler;
         }
 
         #endregion
