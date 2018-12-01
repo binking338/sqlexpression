@@ -529,8 +529,8 @@ namespace SqlExpression.Extension.DapperRepository
 
             var paramExpr = System.Linq.Expressions.Expression.Parameter(typeof(object));
             var valExpr = System.Linq.Expressions.Expression.Parameter(typeof(object));
-            var pkTypeExpr = System.Linq.Expressions.Expression.Constant(propType);
-            var changeTypeExpr = System.Linq.Expressions.Expression.Call(typeof(Convert).GetMethod("ChangeType", new[] { typeof(object), typeof(Type) }), valExpr, pkTypeExpr);
+            var propTypeExpr = System.Linq.Expressions.Expression.Constant(propType);
+            var changeTypeExpr = System.Linq.Expressions.Expression.Call(typeof(Convert).GetMethod("ChangeType", new[] { typeof(object), typeof(Type) }), valExpr, propTypeExpr);
             var convertExpr = System.Linq.Expressions.Expression.Convert(changeTypeExpr, propType);
             var setExpr = System.Linq.Expressions.Expression.Call(System.Linq.Expressions.Expression.TypeAs(paramExpr, entityType), propInfo.SetMethod, convertExpr);
 
