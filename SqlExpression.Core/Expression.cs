@@ -369,26 +369,30 @@ namespace SqlExpression
 
         protected override string Build()
         {
-            var valueType = Value?.GetType();
-            if (Value == null || Value is DBNull)
+            TypeCode typeCode = TypeCode.Empty;
+            if (Value != null)
             {
-                return "NULL";
+                var type = Value.GetType();
+                if (type.IsEnum)
+                {
+                    return Convert.ToInt64(Value).ToString();
+                }
+                typeCode = Type.GetTypeCode(type);
             }
-            else if (valueType == typeof(string) || valueType == typeof(char))
+            switch (typeCode)
             {
-                return string.Format("'{0}'", Value);
-            }
-            else if (valueType == typeof(DateTime))
-            {
-                return string.Format("'{0:yyyy-MM-dd HH:mm:ss}'", Value);
-            }
-            else if (valueType.IsEnum)
-            {
-                return Convert.ToInt32(Value).ToString();
-            }
-            else
-            {
-                return Value?.ToString();
+                case TypeCode.Empty:
+                case TypeCode.DBNull:
+                    return "NULL";
+                case TypeCode.Object:
+                    return Value.ToString();
+                case TypeCode.Char:
+                case TypeCode.String:
+                    return string.Format("'{0}'", Value);
+                case TypeCode.DateTime:
+                    return string.Format("'{0:yyyy-MM-dd HH:mm:ss}'", Value);
+                default:
+                    return Value.ToString();
             }
         }
 
