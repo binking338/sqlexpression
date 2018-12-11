@@ -128,51 +128,6 @@ namespace SqlExpression.Extension.Dialect.Mysql
         }
 
         /// <summary>
-        /// 返回计数sql语句
-        /// SELECT COUNT(*) AS __totalcount__ FROM ({0})
-        /// </summary>
-        /// <param name="select"></param>
-        /// <returns></returns>
-        public static SimpleQueryStatement ToCountSql(this ISelectStatement select)
-        {
-            return ToCountSql(select.Query);
-        }
-
-        /// <summary>
-        /// 返回计数sql语句
-        /// SELECT COUNT(*) AS __totalcount__ FROM ({0})
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public static SimpleQueryStatement ToCountSql(this IQueryStatement query)
-        {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new Column("*")).As("__totalcount__") }),
-                                            new FromClause(new SubQueryExpression(query)));
-        }
-
-        /// <summary>
-        /// 判断是否存在sql语句
-        /// SELECT EXISTS({0}) AS __exists__
-        /// </summary>
-        /// <param name="select"></param>
-        /// <returns></returns>
-        public static SimpleQueryStatement ToExistsSql(this ISelectStatement select)
-        {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new ExistsExpression(new SubQueryExpression(select.Query))).As("__exists__") }));
-        }
-
-        /// <summary>
-        /// 判断是否存在sql语句
-        /// SELECT EXISTS({0}) AS __exists__
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public static SimpleQueryStatement ToExistsSql(this IQueryStatement query)
-        {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { (new ExistsExpression(new SubQueryExpression(query))).As("__exists__") }));
-        }
-
-        /// <summary>
         /// 返回插入的自增Key
         /// </summary>
         /// <returns>The identifier.</returns>
