@@ -107,7 +107,7 @@ namespace SqlExpression.Extension
             return new AliasTableExpression(table, alias);
         }
 
-        public static SelectItemExpression As(this ISimpleValue val, string alias)
+        public static SelectItemExpression As(this ISimpleValue val, string alias = null)
         {
             return new SelectItemExpression(val, alias);
         }
