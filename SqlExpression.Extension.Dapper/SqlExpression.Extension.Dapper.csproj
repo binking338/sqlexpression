@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageProjectUrl>https://github.com/binking338/sqlexpression</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/binking338/sqlexpression.git</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
+    <Product>SqlExpression.Extension.Dapper</Product>
+    <Description>SqlExpression.Extension.Dapper</Description>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
