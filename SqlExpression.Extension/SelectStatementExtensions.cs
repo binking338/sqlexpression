@@ -692,7 +692,7 @@ namespace SqlExpression.Extension
         public static SimpleQueryStatement ToCountSql(this IQueryStatement query)
         {
             return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new AllColumns(null)).As("__totalcount__") }),
-                                            new FromClause(new SubQueryExpression(query)));
+                                            new FromClause(new SubQueryExpression(query).As("t")));
         }
 
         /// <summary>
