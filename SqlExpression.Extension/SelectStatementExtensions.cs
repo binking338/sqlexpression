@@ -674,7 +674,7 @@ namespace SqlExpression.Extension
 
         /// <summary>
         /// 返回计数sql语句
-        /// SELECT COUNT(*) AS __totalcount__ FROM ({0})
+        /// SELECT COUNT(*) FROM ({0}) AS __totalcount__
         /// </summary>
         /// <param name="select"></param>
         /// <returns></returns>
@@ -685,14 +685,14 @@ namespace SqlExpression.Extension
 
         /// <summary>
         /// 返回计数sql语句
-        /// SELECT COUNT(*) AS __totalcount__ FROM ({0})
+        /// SELECT COUNT(*) FROM ({0}) AS __totalcount__
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
         public static SimpleQueryStatement ToCountSql(this IQueryStatement query)
         {
-            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new AllColumns(null)).As("__totalcount__") }),
-                                            new FromClause(new SubQueryExpression(query).As("t")));
+            return new SimpleQueryStatement(new SelectClause(new List<ISelectItemExpression>() { AggregateFunctionExpression.Count(new AllColumns(null)).As(null) }),
+                                            new FromClause(new SubQueryExpression(query).As("__totalcount__")));
         }
 
         /// <summary>

@@ -262,7 +262,7 @@ namespace SqlExpression.UnitTest.Statement
                 .Where(foo.Name == "hero")
                 .Select(foo.All())
                 .ToCountSql();
-            Assert.AreEqual("SELECT COUNT(*) AS __totalcount__ FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero') AS t", exp.ToString());
+            Assert.AreEqual("SELECT COUNT(*) FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero') AS __totalcount__", exp.ToString());
         }
 
         [TestMethod]
@@ -275,7 +275,7 @@ namespace SqlExpression.UnitTest.Statement
                 .Select(foo.All())
                 .OrderBy(foo.Age.Desc())
                 .ToCountSql();
-            Assert.AreEqual("SELECT COUNT(*) AS __totalcount__ FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero') AS t", exp.ToString());
+            Assert.AreEqual("SELECT COUNT(*) FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero') AS __totalcount__", exp.ToString());
         }
 
         [TestMethod]
@@ -410,7 +410,7 @@ namespace SqlExpression.UnitTest.Statement
             var exp = foo.Select(foo.All()).Where(foo.Name == "hero")
                       .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
                       .ToCountSql();
-            Assert.AreEqual("SELECT COUNT(*) AS __totalcount__ FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero') AS t", exp.ToString());
+            Assert.AreEqual("SELECT COUNT(*) FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero') AS __totalcount__", exp.ToString());
         }
 
         [TestMethod]
@@ -423,7 +423,7 @@ namespace SqlExpression.UnitTest.Statement
                       .Union(bar.Select(bar.All()).Where(bar.Age == "hero"))
                       .OrderBy(foo.Age.Desc())
                       .ToCountSql();
-            Assert.AreEqual("SELECT COUNT(*) AS __totalcount__ FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero') AS t", exp.ToString());
+            Assert.AreEqual("SELECT COUNT(*) FROM (SELECT foo.id,foo.name,foo.age,foo.gender,foo.isdel FROM foo WHERE foo.name='hero' UNION SELECT bar.id,bar.name,bar.age,bar.gender,bar.isdel FROM bar WHERE bar.age='hero') AS __totalcount__", exp.ToString());
         }
 
         [TestMethod]
