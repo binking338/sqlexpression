@@ -117,6 +117,9 @@ namespace SqlExpression.UnitTest.Statement
                 .Select(foo.AllMapped())
                 .OrderBy(foo.Age.Desc());
 
+            db.Connection.Query<Entity.Foo>(e);
+            Assert.AreEqual("SELECT foo.id AS Id,foo.name AS Name,foo.age AS Age,foo.gender AS Gender,foo.isdel AS Isdel FROM foo JOIN bar ON foo.name=bar.name WHERE bar.age>18 ORDER BY foo.age DESC", DapperExtensions.LastSql);
+
             db.Connection.Query(e.Map<Entity.Foo>());
             Assert.AreEqual("SELECT foo.id AS Id,foo.name AS Name,foo.age AS Age,foo.gender AS Gender,foo.isdel AS Isdel FROM foo JOIN bar ON foo.name=bar.name WHERE bar.age>18 ORDER BY foo.age DESC", DapperExtensions.LastSql);
 
