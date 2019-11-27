@@ -46,15 +46,11 @@ namespace SqlExpression.Extension.DapperRepository
             return AppendReturnIdStatementHandler?.Invoke(insert) ?? insert;
         }
 
-        public void Test()
-        {
-        }
-
         public virtual object Insert(TEntity entity, Func<TSchema, IEnumerable<IColumn>> columns = null)
         {
             var exp = schema.Table
                             .InsertVarParam(columns?.Invoke(schema) ?? schema.All());
-            if (schema.PK().Count() > 1)
+            if (schema.PK().Count() >= 1)
             {
                 var expReturnId = AppendReturnIdStatement(exp);
                 if(expReturnId != exp)
@@ -78,7 +74,7 @@ namespace SqlExpression.Extension.DapperRepository
         {
             var exp = schema.Table
                             .InsertVarParam(Properties2Columns<Partial>());
-            if (schema.PK().Count() > 1)
+            if (schema.PK().Count() >= 1)
             {
                 var expReturnId = AppendReturnIdStatement(exp);
                 if (expReturnId != exp)
