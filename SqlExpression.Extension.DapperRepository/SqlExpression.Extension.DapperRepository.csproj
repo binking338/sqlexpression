@@ -9,7 +9,8 @@
     <RepositoryType>github</RepositoryType>
     <Product>SqlExpression.Extension.DapperRepository</Product>
     <Description>SqlExpression.Extension.DapperRepository</Description>
-    <Version>3.0.1</Version>
+    <Version>3.0.1.1</Version>
+    <AssemblyVersion>3.0.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
