@@ -2904,7 +2904,7 @@ namespace SqlExpression
                 {
                     _params.AddRange(item.Value.ResolveParams());
                 }
-                _params.AddRange(From.Dataset.ResolveParams());
+                if (From != null) _params.AddRange(From.Dataset.ResolveParams());
                 if (Where != null) _params.AddRange(Where.Filter.ResolveParams());
                 if (GroupBy != null) _params.AddRange(GroupBy.Having.ResolveParams());
                 return _params.Distinct();
