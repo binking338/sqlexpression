@@ -3505,5 +3505,18 @@ namespace SqlExpression
             var result = string.Join(separator, wrapArray);
             return result;
         }
+
+        /// <summary>
+        /// 获取Sql字符串文本
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static string ToSqlLiteral(this string val)
+        {
+            return val?.Replace(@"\", @"\\")
+                ?.Replace(@"'", @"\'")
+                ?.Replace(@"%", @"\%")
+                ?.Replace(@"?", @"\?");
+        }
     }
 }
